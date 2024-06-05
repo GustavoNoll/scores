@@ -1,0 +1,3 @@
+npx sequelize db:migrate
+
+docker exec -it scores_backend /bin/sh
