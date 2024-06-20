@@ -5,17 +5,22 @@ import db from '.';
 import DeviceScore from './deviceScore';
 import FieldMeasure from './fieldMeasure';
 import AcsInform from './acsInform';
+import Client from './client';
 
 class Device extends Model {
   declare id: number;
   declare deviceTag: string;
   declare serialNumber: string;
+  declare pppoeUsername: string;
+  declare mac: string;
   declare manufacturer: string;
   declare oui: string;
   declare productClass: string;
   declare modelName: string;
   declare hardwareVersion: string;
   declare softwareVersion: string;
+  declare createdAt: Date;
+  declare updatedAt: Date;
 }
 
 Device.init({
@@ -58,6 +63,14 @@ Device.init({
     type: sequelize.STRING,
     allowNull: true,
   },
+  pppoe_username: {
+    type: sequelize.STRING,
+    allowNull: true,
+  },
+  mac: {
+    type: sequelize.STRING,
+    allowNull: true,
+  },
   client_id: {
     type: sequelize.INTEGER,
     allowNull: true,
@@ -87,15 +100,18 @@ Device.hasMany(DeviceScore, {
   as: 'device_scores',
   foreignKey: 'deviceId'
 });
+DeviceScore.belongsTo(Device);
 
 Device.hasMany(FieldMeasure, {
   as: 'field_measures',
   foreignKey: 'deviceId'
 });
+FieldMeasure.belongsTo(Device);
 
 Device.hasMany(AcsInform, {
   as: 'acs_informs',
   foreignKey: 'deviceTag'
 });
+AcsInform.belongsTo(Device);
 
 export default Device;

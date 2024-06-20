@@ -3,12 +3,16 @@ import { Model } from 'sequelize';
 import sequelize from 'sequelize';
 import db from '.';
 import Client from './client';
+import FieldScoreRule from './fieldScoreRule';
 
 class Cto extends Model {
   declare id: number;
+  declare integrationId: string;
   declare description: string;
   declare latitude: number;
   declare longitude: number;
+  declare createdAt: Date;
+  declare updatedAt: Date;
 }
 
 Cto.init({
@@ -16,6 +20,11 @@ Cto.init({
     type: sequelize.INTEGER,
     primaryKey: true,
     autoIncrement: true,
+    allowNull: false,
+  },
+  integrationId: {
+    type: sequelize.STRING,
+    unique: true,
     allowNull: false,
   },
   description: {
@@ -30,12 +39,12 @@ Cto.init({
     type: sequelize.FLOAT,
     allowNull: false,
   },
-  created_at: {
+  createdAt: {
     allowNull: false,
     type: sequelize.DATE,
     defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
   },
-  updated_at: {
+  updatedAt: {
     allowNull: false,
     type: sequelize.DATE,
     defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
@@ -47,8 +56,9 @@ Cto.init({
   underscored: true
 });
 
-Cto.hasMany(Client, {
-  as: 'clients',
+Cto.hasMany(FieldScoreRule, {
+  as: 'field_score_rules',
   foreignKey: 'ctoId'
-})
+});
+FieldScoreRule.belongsTo(Cto);
 export default Cto;

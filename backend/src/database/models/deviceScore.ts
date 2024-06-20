@@ -1,7 +1,7 @@
 // models/deviceScore.ts
 import { Model } from 'sequelize';
-import sequelize from 'sequelize';
 import db from '.';
+import sequelize from 'sequelize';
 import Device from './device';
 
 class DeviceScore extends Model {
@@ -9,7 +9,8 @@ class DeviceScore extends Model {
   declare deviceId: number;
   declare field: string;
   declare value: number;
-  declare timestamp: Date;
+  declare createdAt: Date;
+  declare updatedAt: Date;
 }
 
 DeviceScore.init({
@@ -35,16 +36,16 @@ DeviceScore.init({
     type: sequelize.FLOAT,
     allowNull: false,
   },
-  created_at: {
+  createdAt: {
     allowNull: false,
     type: sequelize.DATE,
     defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
   },
-  updated_at: {
+  updatedAt: {
     allowNull: false,
     type: sequelize.DATE,
     defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
-  }
+  },
 }, {
   sequelize: db,
   tableName: 'device_scores',
@@ -52,6 +53,10 @@ DeviceScore.init({
   underscored: true,
 });
 
-DeviceScore.belongsTo(Device);
+// Associações (descomente e ajuste conforme necessário)
+/*DeviceScore.belongsTo(Device, {
+  foreignKey: 'deviceId',
+  as: 'device'
+});*/
 
 export default DeviceScore;

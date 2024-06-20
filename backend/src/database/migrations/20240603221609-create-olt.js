@@ -10,6 +10,11 @@ module.exports = {
         allowNull: false,
         autoIncrement: true,
       },
+      integration_id: {
+        type: Sequelize.STRING,
+        unique: true,
+        allowNull: false,
+      },
       description: Sequelize.STRING,
       latitude: Sequelize.FLOAT,
       longitude: Sequelize.FLOAT,

@@ -2,11 +2,13 @@
 import { Model } from 'sequelize';
 import sequelize from 'sequelize';
 import db from '.';
+import Device from './device';
 
 class AcsInform extends Model {
   declare id: number;
   declare deviceTag: number;
   declare jsonData: any;
+  declare createdAt: Date;
 }
 
 AcsInform.init({
@@ -28,7 +30,7 @@ AcsInform.init({
     type: sequelize.JSONB,
     allowNull: false,
   },
-  created_at: {
+  createdAt: {
     allowNull: false,
     type: sequelize.DATE,
     defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),

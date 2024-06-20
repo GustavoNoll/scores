@@ -3,14 +3,16 @@ import { Model } from 'sequelize';
 import sequelize from 'sequelize';
 import db from '.';
 import Device from './device';
+import Client from './client';
 
 class FieldMeasure extends Model {
   declare id: number;
+  declare clientId: number;
   declare deviceId: number;
   declare field: string;
   declare value: number;
-  declare created_at: Date;
-  declare updated_at: Date;
+  declare createdAt: Date;
+  declare updatedAt: Date;
 }
 
 FieldMeasure.init({
@@ -20,14 +22,22 @@ FieldMeasure.init({
     autoIncrement: true,
     allowNull: false,
   },
-  device_id: {
+  clientId: {
+    type: sequelize.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'clients',
+      key: 'id',
+    },
+    onDelete: 'CASCADE',
+  },
+  deviceId: {
     type: sequelize.INTEGER,
     allowNull: false,
     references: {
       model: 'devices',
       key: 'id',
     },
-    onUpdate: 'CASCADE',
     onDelete: 'CASCADE',
   },
   field: {
@@ -38,12 +48,12 @@ FieldMeasure.init({
     type: sequelize.FLOAT,
     allowNull: false,
   },
-  created_at: {
+  createdAt: {
     allowNull: false,
     type: sequelize.DATE,
     defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
   },
-  updated_at: {
+  updatedAt: {
     primaryKey: true,
     allowNull: false,
     type: sequelize.DATE,
@@ -55,7 +65,5 @@ FieldMeasure.init({
   timestamps: true,
   underscored: true
 });
-
-FieldMeasure.belongsTo(Device);
 
 export default FieldMeasure;

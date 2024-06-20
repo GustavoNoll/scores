@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from "express";
-import ClientService from "../services/clientService";
+import CtoService from "../services/ctoService";
 
-class ClientController {
-  private service = new ClientService();
+class CtoController {
+  private service = new CtoService();
 
   async getAll(req: Request, res: Response, next: NextFunction){
     try {
@@ -15,12 +15,13 @@ class ClientController {
 
   async create(req: Request, res: Response, next: NextFunction){
     try {
-      const { status, message } = await this.service.createClient(req.body)
+      const { status, message } = await this.service.createCto(req.body)
       res.status(status).json(message)
     } catch (error) {
+      console.log(error)
       next(error)
     }
 
   }
 }
-export default ClientController
+export default CtoController

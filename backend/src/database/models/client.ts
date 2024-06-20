@@ -2,12 +2,16 @@
 import { Model } from 'sequelize';
 import sequelize from 'sequelize';
 import db from '.';
-import Olt from './olt';
+import FieldMeasure from './fieldMeasure';
+import DeviceScore from './deviceScore';
+import Device from './device';
 import Cto from './cto';
+import Olt from './olt';
 
 
 class Client extends Model {
   declare id: number;
+  declare integrationId: string;
   declare pppoeUsername: string;
   declare latitude: number;
   declare longitude: number;
@@ -16,6 +20,10 @@ class Client extends Model {
   declare mac: string;
   declare ctoId: number;
   declare oltId: number;
+  declare active: boolean;
+  declare activeTimestamp: Date;
+  declare createdAt: Date;
+  declare updatedAt: Date;
 }
 
 Client.init({
@@ -25,21 +33,26 @@ Client.init({
     allowNull: false,
     primaryKey: true
   },
-  pppoe_username: {
+  integrationId: {
     type: sequelize.STRING,
+    unique: true,
     allowNull: false,
+  },
+  pppoeUsername: {
+    type: sequelize.STRING,
+    allowNull: true,
   },
   latitude: {
     type: sequelize.FLOAT,
-    allowNull: true,
+    allowNull: false,
   },
   longitude: {
     type: sequelize.FLOAT,
-    allowNull: true,
+    allowNull: false,
   },
   name: {
     type: sequelize.STRING,
-    allowNull: false,
+    allowNull: true,
   },
   serialNumber: {
     type: sequelize.STRING,
@@ -48,8 +61,13 @@ Client.init({
   mac: {
     type: sequelize.STRING,
     allowNull: true,
+    set(value: string) {
+      if (value){
+        this.setDataValue('mac', value.toLowerCase());
+      }
+    },
   },
-  cto_id: {
+  ctoId: {
     type: sequelize.INTEGER,
     allowNull: true,
     references: {
@@ -57,7 +75,7 @@ Client.init({
       key: 'id'
     },
   },
-  olt_id: {
+  oltId: {
     type: sequelize.INTEGER,
     allowNull: true,
     references: {
@@ -65,12 +83,22 @@ Client.init({
       key: 'id'
     },
   },
-  created_at: {
+  active: {
+    allowNull: false,
+    type: sequelize.BOOLEAN,
+    defaultValue: true,
+  },
+  activeTimestamp: {
     allowNull: false,
     type: sequelize.DATE,
     defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
   },
-  updated_at: {
+  createdAt: {
+    allowNull: false,
+    type: sequelize.DATE,
+    defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
+  },
+  updatedAt: {
     allowNull: false,
     type: sequelize.DATE,
     defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
@@ -81,5 +109,36 @@ Client.init({
   timestamps: true,
   underscored: true
 });
+
+Client.hasMany(DeviceScore, {
+  as: 'device_scores',
+  foreignKey: 'clientId'
+});
+DeviceScore.belongsTo(Client)
+
+Client.hasMany(FieldMeasure, {
+  as: 'field_measures',
+  foreignKey: 'clientId'
+});
+FieldMeasure.belongsTo(Client)
+
+Client.hasOne(Device, {
+  as: 'device',
+  foreignKey: 'clientId'
+});
+Device.belongsTo(Client);
+
+
+Cto.hasMany(Client, {
+  as: 'clients',
+  foreignKey: 'ctoId'
+});
+Client.belongsTo(Cto);
+
+Olt.hasMany(Client, {
+  as: 'clients',
+  foreignKey: 'oltId'
+});
+Client.belongsTo(Olt);
 
 export default Client;

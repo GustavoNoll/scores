@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from "express";
-import ClientService from "../services/clientService";
+import OltService from "../services/oltService";
 
-class ClientController {
-  private service = new ClientService();
+class OltController {
+  private service = new OltService();
 
   async getAll(req: Request, res: Response, next: NextFunction){
     try {
@@ -15,7 +15,7 @@ class ClientController {
 
   async create(req: Request, res: Response, next: NextFunction){
     try {
-      const { status, message } = await this.service.createClient(req.body)
+      const { status, message } = await this.service.createOlt(req.body)
       res.status(status).json(message)
     } catch (error) {
       next(error)
@@ -23,4 +23,4 @@ class ClientController {
 
   }
 }
-export default ClientController
+export default OltController

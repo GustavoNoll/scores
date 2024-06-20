@@ -10,6 +10,16 @@ module.exports = {
         autoIncrement: true,
         allowNull: false,
       },
+      client_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'clients',
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
+      },
       device_id: {
         type: Sequelize.INTEGER,
         allowNull: false,

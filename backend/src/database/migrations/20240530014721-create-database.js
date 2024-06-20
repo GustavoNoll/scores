@@ -10,9 +10,14 @@ module.exports = {
         allowNull: false,
         primaryKey: true
       },
+      integration_id: {
+        type: Sequelize.STRING,
+        unique: true,
+        allowNull: false,
+      },
       pppoe_username: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       latitude: {
         type: Sequelize.FLOAT,
@@ -24,7 +29,17 @@ module.exports = {
       },
       name: {
         type: Sequelize.STRING,
+        allowNull: true,
+      },
+      active: {
         allowNull: false,
+        type: Sequelize.BOOLEAN,
+        defaultValue: true,
+      },
+      active_timestamp: {
+        allowNull: false,
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
       },
       created_at: {
         allowNull: false,

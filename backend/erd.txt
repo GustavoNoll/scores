@@ -1,60 +1,69 @@
-
-Olt     
-#id       
-#description  
-#latitude     
-#longitude    
-
-Cto     
-#id       
-#description  
-#latitude     
-#longitude    
-
-Client   
-#id   
-#pppoe_username
-#serial_number
-#mac          
-#cto_id       
-#olt_id       
-#latitude     
-#longitude    
-
-Device   
-#id
-#device_tag
-#client_id
-#serial_number
-#manufacturer 
-#oui          
-#product_class
-#model_name   
-#hardware_version
-#software_version
-#created_at
-#updated_at  
-
-AcsInforms
-#id
-#device_tag    
-#json_data    
-#created_at
-#updated_at    
-
-DeviceScores
-#id     
-#device_id    
-#field        
-#value        
-#created_at
-#updated_at  
-
-
-FieldMeasures
-#id 
-#device_id
-#field
-#value
-#created_at
-#updated_at  
+1. Olt (Optical Line Terminal)
+id: Identificador único.
+description: Descrição do OLT.
+integration_id: ID para integração com sistemas externos.
+latitude: Latitude do OLT.
+longitude: Longitude do OLT.
+2. Cto (Concentrator Terminal Outlet)
+id: Identificador único.
+integration_id: ID para integração com sistemas externos.
+description: Descrição do CTO.
+latitude: Latitude do CTO.
+longitude: Longitude do CTO.
+3. Client
+id: Identificador único.
+integration_id: ID para integração com sistemas externos.
+pppoe_username: Nome de usuário PPPoE do cliente.
+serial_number: Número de série do equipamento do cliente.
+mac: Endereço MAC do cliente.
+cto_id: Chave estrangeira para a tabela Cto.
+olt_id: Chave estrangeira para a tabela Olt.
+latitude: Latitude do cliente.
+longitude: Longitude do cliente.
+4. Device
+id: Identificador único.
+device_tag: Tag do dispositivo.
+client_id: Chave estrangeira para a tabela Client.
+pppoe_username: Nome de usuário PPPoE do dispositivo.
+mac: Endereço MAC do dispositivo.
+serial_number: Número de série do dispositivo.
+manufacturer: Fabricante do dispositivo.
+oui: Identificador OUI.
+product_class: Classe do produto.
+model_name: Nome do modelo.
+hardware_version: Versão do hardware.
+software_version: Versão do software.
+created_at: Data de criação.
+updated_at: Data de atualização.
+5. AcsInforms
+id: Identificador único.
+device_tag: Tag do dispositivo.
+json_data: Dados JSON recebidos do ACS.
+created_at: Data de criação.
+updated_at: Data de atualização.
+6. DeviceScores
+id: Identificador único.
+client_id: Chave estrangeira para a tabela Client.
+device_id: Chave estrangeira para a tabela Device.
+field: Campo avaliado.
+value: Valor do campo avaliado (0 a 1, representando quão boa é a medida).
+created_at: Data de criação.
+updated_at: Data de atualização.
+7. FieldMeasures
+id: Identificador único.
+device_id: Chave estrangeira para a tabela Device.
+client_id: Chave estrangeira para a tabela Client.
+field: Campo medido.
+value: Valor medido bruto (ex.: 83 graus para temperatura).
+created_at: Data de criação.
+updated_at: Data de atualização.
+8.FieldScoreRules
+id: Identificador único.
+field: Campo avaliado (ex.: temperatura, latência).
+good_threshold: Valor a partir do qual a medida é considerada boa (score = 1).
+medium_threshold: Valor a partir do qual a medida é considerada média (score = 0.5).
+poor_threshold: Valor a partir do qual a medida é considerada ruim (score = 0.25).
+critical_threshold: Valor a partir do qual a medida é considerada crítica (score = 0).
+progression_rate: Taxa de progressão do score com base no valor medido (ex.: a cada X unidades acima do médio para bom, o score aumenta em Y).
+olt_id: Chave estrangeira para a tabela Olt.
+cto_id: Chave estrangeira para a tabela Cto.

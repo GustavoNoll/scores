@@ -43,6 +43,14 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: true,
       },
+      pppoe_username: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      mac: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
       client_id: {
         type: Sequelize.INTEGER,
         allowNull: true,
