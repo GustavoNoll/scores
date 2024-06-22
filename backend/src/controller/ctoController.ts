@@ -18,7 +18,6 @@ class CtoController {
       const { status, message } = await this.service.create(req.body)
       res.status(status).json(message)
     } catch (error) {
-      console.log(error)
       next(error)
     }
 
