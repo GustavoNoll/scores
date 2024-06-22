@@ -8,10 +8,16 @@ import OltInterface from "../interfaces/oltInterface";
 class OltService {
   private model: ModelStatic<Olt> = Olt;
 
-  async getAll(){
-    const olts = await this.model.findAll()
-    return resp(200, olts)
+  async get(olt?: any) {
+    try {
+      const olts = await this.model.findAll({ where: olt });
+      return resp(200, olts);
+    } catch (error) {
+      // Lide com erros conforme necessário
+      return resp(500, { message: 'Error retrieving OLTS', error });
+    }
   }
+
 
   async createOlt(olt: OltInterface) {
     const { error } = schema.olt.validate(olt)

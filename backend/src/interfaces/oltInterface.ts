@@ -1,4 +1,5 @@
 interface OltInterface {
+  id?: number;
   integrationId?: string;
   description?: string;
   latitude?: number;

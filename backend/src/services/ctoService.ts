@@ -8,9 +8,14 @@ import CtoInterface from "../interfaces/ctoInterface";
 class CtoService {
   private model: ModelStatic<Cto> = Cto;
 
-  async getAll(){
-    const ctos = await this.model.findAll()
-    return resp(200, ctos)
+  async get(cto?: any) {
+    try {
+      const ctos = await this.model.findAll({ where: cto });
+      return resp(200, ctos);
+    } catch (error) {
+      // Lide com erros conforme necessário
+      return resp(500, { message: 'Error retrieving Ctos', error });
+    }
   }
 
   async createCto(cto: CtoInterface) {

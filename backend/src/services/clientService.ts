@@ -8,9 +8,14 @@ import respM from "../utils/respM";
 class ClientService {
   private model: ModelStatic<Client> = Client;
 
-  async getAll(){
-    const clients = await this.model.findAll()
-    return resp(200, clients)
+  async get(client?: any) {
+    try {
+      const clients = await this.model.findAll({ where: client });
+      return resp(200, clients);
+    } catch (error) {
+      // Lide com erros conforme necessário
+      return resp(500, { message: 'Error retrieving Clients', error });
+    }
   }
 
   async createClient(client: ClientInterface) {

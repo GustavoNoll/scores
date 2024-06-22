@@ -4,9 +4,9 @@ import OltService from "../services/oltService";
 class OltController {
   private service = new OltService();
 
-  async getAll(req: Request, res: Response, next: NextFunction){
+  async get(req: Request, res: Response, next: NextFunction){
     try {
-      const { status, message } = await this.service.getAll()
+      const { status, message } = await this.service.get(req.params)
       res.status(status).json(message)
     } catch (error) {
       next(error)
