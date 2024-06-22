@@ -13,11 +13,6 @@ module.exports = {
       device_tag: {
         type: Sequelize.STRING,
         allowNull: false,
-        references: {
-          model: 'devices', // Nome da tabela device
-          key: 'device_tag',
-        },
-        onDelete: 'CASCADE',
       },
       json_data: {
         type: Sequelize.JSON,

@@ -18,7 +18,7 @@ class CtoService {
     }
   }
 
-  async createCto(cto: CtoInterface) {
+  async create(cto: CtoInterface) {
     const { error } = schema.cto.validate(cto)
     if (error) return respM(422, error.message);
     const createdCto = await this.model.create({ ...cto })

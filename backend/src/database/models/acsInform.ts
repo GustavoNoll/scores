@@ -2,11 +2,10 @@
 import { Model } from 'sequelize';
 import sequelize from 'sequelize';
 import db from '.';
-import Device from './device';
 
 class AcsInform extends Model {
   declare id: number;
-  declare deviceTag: number;
+  declare deviceTag: string;
   declare jsonData: any;
   declare createdAt: Date;
 }
@@ -18,13 +17,9 @@ AcsInform.init({
     autoIncrement: true,
     allowNull: false,
   },
-  deviceId: {
-    type: sequelize.INTEGER,
+  deviceTag: {
+    type: sequelize.STRING,
     allowNull: false,
-    references: {
-      model: 'devices',
-      key: 'id',
-    },
   },
   jsonData: {
     type: sequelize.JSONB,

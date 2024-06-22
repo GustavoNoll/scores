@@ -1,7 +1,7 @@
 interface CtoInterface {
-  integrationId?: string;
+  integrationId: string;
   description?: string;
-  latitude?: number;
-  longitude?: number;
+  latitude: number;
+  longitude: number;
 }
 export default CtoInterface;

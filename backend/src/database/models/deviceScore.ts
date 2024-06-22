@@ -2,7 +2,6 @@
 import { Model } from 'sequelize';
 import db from '.';
 import sequelize from 'sequelize';
-import Device from './device';
 
 class DeviceScore extends Model {
   declare id: number;
@@ -53,10 +52,5 @@ DeviceScore.init({
   underscored: true,
 });
 
-// Associações (descomente e ajuste conforme necessário)
-/*DeviceScore.belongsTo(Device, {
-  foreignKey: 'deviceId',
-  as: 'device'
-});*/
 
 export default DeviceScore;

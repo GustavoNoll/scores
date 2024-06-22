@@ -18,7 +18,7 @@ class ClientService {
     }
   }
 
-  async createClient(client: ClientInterface) {
+  async create(client: ClientInterface) {
     const { error } = schema.client.validate(client)
     if (error) return respM(422, error.message);
     const createdClient = await this.model.create({ ...client })

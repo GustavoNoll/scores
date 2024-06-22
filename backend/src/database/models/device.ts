@@ -5,7 +5,7 @@ import db from '.';
 import DeviceScore from './deviceScore';
 import FieldMeasure from './fieldMeasure';
 import AcsInform from './acsInform';
-import Client from './client';
+
 
 class Device extends Model {
   declare id: number;

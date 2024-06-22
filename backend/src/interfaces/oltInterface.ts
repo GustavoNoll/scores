@@ -1,8 +1,7 @@
 interface OltInterface {
-  id?: number;
-  integrationId?: string;
+  integrationId: string;
   description?: string;
-  latitude?: number;
-  longitude?: number;
+  latitude: number;
+  longitude: number;
 }
 export default OltInterface;

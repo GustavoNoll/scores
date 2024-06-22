@@ -2,8 +2,6 @@
 import { Model } from 'sequelize';
 import sequelize from 'sequelize';
 import db from '.';
-import Device from './device';
-import Client from './client';
 
 class FieldMeasure extends Model {
   declare id: number;

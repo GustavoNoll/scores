@@ -24,4 +24,9 @@ const olt = joi.object({
   integrationId: joi.string().required()
 })
 
-export = { client, cto, olt}
+const acsInform = joi.object({
+  deviceTag: joi.string().required(),
+  jsonData: joi.object().required()
+})
+
+export = { client, cto, olt, acsInform }

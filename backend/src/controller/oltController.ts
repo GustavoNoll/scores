@@ -15,7 +15,7 @@ class OltController {
 
   async create(req: Request, res: Response, next: NextFunction){
     try {
-      const { status, message } = await this.service.createOlt(req.body)
+      const { status, message } = await this.service.create(req.body)
       res.status(status).json(message)
     } catch (error) {
       next(error)

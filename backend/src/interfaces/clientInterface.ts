@@ -1,5 +1,7 @@
 interface ClientInterface {
-  integrationId?: string;
+  integrationId: string;
   name?: string;
+  latitude: number;
+  longitude: number;
 }
 export default ClientInterface;

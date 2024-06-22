@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from "express";
-import CtoService from "../services/ctoService";
+import AcsInformService from "../services/acsInformService";
 
-class CtoController {
-  private service = new CtoService();
+class AcsInformController {
+  private service = new AcsInformService();
 
   async get(req: Request, res: Response, next: NextFunction){
     try {
@@ -15,13 +15,13 @@ class CtoController {
 
   async create(req: Request, res: Response, next: NextFunction){
     try {
+      console.log(req.body)
       const { status, message } = await this.service.create(req.body)
       res.status(status).json(message)
     } catch (error) {
-      console.log(error)
       next(error)
     }
 
   }
 }
-export default CtoController
+export default AcsInformController
