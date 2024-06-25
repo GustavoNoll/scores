@@ -9,5 +9,6 @@ clientRouter.get('/clients', control.get.bind(control))
 clientRouter.get('/clients/:integrationId', control.get.bind(control))
 
 clientRouter.post('/clients', control.create.bind(control))
+clientRouter.patch('/clients/:integrationId', control.update.bind(control))
 
 export default clientRouter;

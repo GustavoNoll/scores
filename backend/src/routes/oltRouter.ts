@@ -9,5 +9,6 @@ oltRouter.get('/olts', control.get.bind(control))
 oltRouter.get('/olts/:integrationId', control.get.bind(control))
 
 oltRouter.post('/olts', control.create.bind(control))
+oltRouter.patch('/olts/:integrationId', control.update.bind(control))
 
 export default oltRouter;

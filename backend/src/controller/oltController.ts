@@ -20,7 +20,16 @@ class OltController {
     } catch (error) {
       next(error)
     }
+  }
 
+  async update(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { integrationId } = req.params; // Assumindo que o integrationId vem da URL
+      const { status, message } = await this.service.update(integrationId, req.body);
+      res.status(status).json(message);
+    } catch (error) {
+      next(error);
+    }
   }
 }
 export default OltController

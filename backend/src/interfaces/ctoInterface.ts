@@ -1,7 +1,14 @@
-interface CtoInterface {
+interface CtoCreateInterface {
   integrationId: string;
-  description?: string;
+  description: string;
   latitude: number;
   longitude: number;
 }
-export default CtoInterface;
+
+interface CtoUpdateInterface {
+  description: string;
+  latitude: number;
+  longitude: number;
+}
+
+export { CtoCreateInterface, CtoUpdateInterface };

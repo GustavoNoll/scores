@@ -9,6 +9,7 @@ import Cto from './cto';
 import Olt from './olt';
 
 
+
 class Client extends Model {
   declare id: number;
   declare integrationId: string;
@@ -107,7 +108,14 @@ Client.init({
   sequelize: db,
   tableName: 'clients',
   timestamps: true,
-  underscored: true
+  underscored: true,
+  hooks: {
+    beforeUpdate: (client: Client, options: any) => {
+      if (client.changed('active')) {
+        client.activeTimestamp = new Date();
+      }
+    }
+  }
 });
 
 Client.hasMany(DeviceScore, {

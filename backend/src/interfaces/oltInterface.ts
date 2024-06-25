@@ -1,7 +1,14 @@
-interface OltInterface {
+interface OltCreateInterface {
   integrationId: string;
-  description?: string;
+  description: string;
   latitude: number;
   longitude: number;
 }
-export default OltInterface;
+
+interface OltUpdateInterface {
+  description: string;
+  latitude: number;
+  longitude: number;
+}
+
+export { OltCreateInterface, OltUpdateInterface };

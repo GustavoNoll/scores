@@ -112,6 +112,8 @@ Device.hasMany(AcsInform, {
   as: 'acs_informs',
   foreignKey: 'deviceTag'
 });
-AcsInform.belongsTo(Device);
+AcsInform.belongsTo(Device, {
+  foreignKey: 'deviceTag',
+});
 
 export default Device;

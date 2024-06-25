@@ -12,7 +12,6 @@ class AcsInformService {
     try {
       const acsInforms = await this.model.findAll({
         where: acsInform,
-        attributes: ['id', 'deviceTag', 'jsonData', 'createdAt']
       });
       return resp(200, acsInforms);
     } catch (error) {
@@ -24,10 +23,7 @@ class AcsInformService {
   async create(acsInform: AcsInformInterface) {
     const { error } = schema.acsInform.validate(acsInform)
     if (error) return respM(422, error.message);
-    const created = await this.model.create({ ...acsInform,
-     }, {
-      returning: ['id', 'device_tag', 'json_data', 'created_at']
-    })
+    const created = await this.model.create({ ...acsInform })
     return resp(201, created)
   }
 }
