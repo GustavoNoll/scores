@@ -30,12 +30,12 @@ Device.init({
     autoIncrement: true,
     allowNull: false,
   },
-  device_tag: {
+  deviceTag: {
     type: sequelize.STRING,
     allowNull: false,
     unique: true,
   },
-  serial_number: {
+  serialNumber: {
     type: sequelize.STRING,
     allowNull: true,
   },
@@ -47,23 +47,23 @@ Device.init({
     type: sequelize.STRING,
     allowNull: true,
   },
-  product_class: {
+  productClass: {
     type: sequelize.STRING,
     allowNull: true,
   },
-  model_name: {
+  modelName: {
     type: sequelize.STRING,
     allowNull: true,
   },
-  hardware_version: {
+  hardwareVersion: {
     type: sequelize.STRING,
     allowNull: true,
   },
-  software_version: {
+  softwareVersion: {
     type: sequelize.STRING,
     allowNull: true,
   },
-  pppoe_username: {
+  pppoeUsername: {
     type: sequelize.STRING,
     allowNull: true,
   },
@@ -71,7 +71,7 @@ Device.init({
     type: sequelize.STRING,
     allowNull: true,
   },
-  client_id: {
+  clientId: {
     type: sequelize.INTEGER,
     allowNull: true,
     references: {
@@ -79,12 +79,12 @@ Device.init({
       key: 'id',
     },
   },
-  created_at: {
+  createdAt: {
     allowNull: false,
     type: sequelize.DATE,
     defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
   },
-  updated_at: {
+  updatedAt: {
     allowNull: false,
     type: sequelize.DATE,
     defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
