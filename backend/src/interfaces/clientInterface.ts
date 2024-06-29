@@ -6,8 +6,8 @@ interface ClientInterface {
   pppoeUsername: string;
   serialNumber?: string;
   mac?: string;
-  ctoIntegrationId: number;
-  oltIntegrationId: number;
+  ctoIntegrationId: string;
+  oltIntegrationId: string;
   active: boolean;
 }
 export default ClientInterface;

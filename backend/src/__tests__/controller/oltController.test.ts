@@ -56,7 +56,7 @@ describe('OltController', () => {
 
   describe('create', () => {
     it('should respond with status and message from service', async () => {
-      const mockRequestBody = { /* mock request body */ };
+      const mockRequestBody = { latitude: 5, longitude: 5, integrationId: 1 };
       const mockServiceResponse = { status: 201, message: 'Olt created successfully' };
       MockOltService.prototype.create.mockResolvedValue(mockServiceResponse);
 
@@ -73,10 +73,29 @@ describe('OltController', () => {
       const errorMessage = 'Service error';
       MockOltService.prototype.create.mockRejectedValue(new Error(errorMessage));
 
-      mockRequest.body = { /* mock request body */ };
+      mockRequest.body = { latitude: 5, longitude: 5, integrationId: 1 };
 
       await controller.create(mockRequest as Request, mockResponse as Response, mockNextFunction);
 
+      expect(mockNextFunction).toHaveBeenCalled();
+    });
+  });
+  describe('update', () => {
+    it('should respond with status and message from service', async () => {
+      const mockRequestBody = { latitude: 1, longitude: 1 };
+      const mockServiceResponse = { status: 200, message: 'Olt updated successfully' };
+      MockOltService.prototype.update.mockResolvedValue(mockServiceResponse);
+      mockRequest.body = mockRequestBody;
+      mockRequest.params = { integrationId: '1' }
+      await controller.update(mockRequest as Request, mockResponse as Response, mockNextFunction);
+      expect(mockResponse.status).toHaveBeenCalledWith(mockServiceResponse.status);
+      expect(mockResponse.json).toHaveBeenCalledWith(mockServiceResponse.message);
+      expect(mockNextFunction).not.toHaveBeenCalled();
+    });
+    it('should call next function on error', async () => {
+      const errorMessage = 'Service error';
+      MockOltService.prototype.update.mockRejectedValue(new Error(errorMessage));
+      await controller.update(mockRequest as Request, mockResponse as Response, mockNextFunction);
       expect(mockNextFunction).toHaveBeenCalled();
     });
   });

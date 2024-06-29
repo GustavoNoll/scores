@@ -80,4 +80,23 @@ describe('CtoController', () => {
       expect(mockNextFunction).toHaveBeenCalled();
     });
   });
+  describe('update', () => {
+    it('should respond with status and message from service', async () => {
+      const mockRequestBody = { /* mock request body */ };
+      const mockServiceResponse = { status: 200, message: 'Cto updated successfully' };
+      MockCtoService.prototype.update.mockResolvedValue(mockServiceResponse);
+      mockRequest.params = { /* mock params */ };
+      mockRequest.body = mockRequestBody;
+      await controller.update(mockRequest as Request, mockResponse as Response, mockNextFunction);
+      expect(mockResponse.status).toHaveBeenCalledWith(mockServiceResponse.status);
+      expect(mockResponse.json).toHaveBeenCalledWith(mockServiceResponse.message);
+      expect(mockNextFunction).not.toHaveBeenCalled();
+    });
+    it('should call next function on error', async () => {
+      const errorMessage = 'Service error';
+      MockCtoService.prototype.update.mockRejectedValue(new Error(errorMessage));
+      await controller.update(mockRequest as Request, mockResponse as Response, mockNextFunction);
+      expect(mockNextFunction).toHaveBeenCalled();
+    });
+  });
 });

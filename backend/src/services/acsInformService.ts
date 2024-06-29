@@ -16,7 +16,7 @@ class AcsInformService {
       return resp(200, acsInforms);
     } catch (error) {
       // Lide com erros conforme necessário
-      return resp(500, { message: 'Error retrieving acsInform', error });
+      return resp(500, { message: 'Error retrieving AcsInforms', error });
     }
   }
 

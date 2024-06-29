@@ -47,7 +47,6 @@ class ClientService {
   }
 
   async update(integrationId: string, client: Partial<ClientInterface>) {
-    console.log(client)
     const { error } = schema.clientUpdate.validate(client);
     if (error) return respM(422, error.message);
 

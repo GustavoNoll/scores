@@ -1,5 +1,5 @@
 interface AcsInformInterface {
   deviceTag: string;
-  jsonData: JSON;
+  jsonData: Record<string, any>;
 }
 export default AcsInformInterface;

@@ -13,7 +13,26 @@ describe('ClientController', () => {
   let mockRequest: Partial<Request>;
   let mockResponse: Partial<Response>;
   let mockNextFunction: jest.MockedFunction<NextFunction>;
-
+  describe('update', () => {
+    it('should respond with status and message from service', async () => {
+      const mockRequestBody = { /* mock request body */ };
+      const mockServiceResponse = { status: 200, message: 'Client updated successfully' };
+      MockClientService.prototype.update.mockResolvedValue(mockServiceResponse);
+      mockRequest.body = mockRequestBody;
+      mockRequest.params = {}
+      await controller.update(mockRequest as Request, mockResponse as Response, mockNextFunction);
+      expect(mockResponse.status).toHaveBeenCalledWith(mockServiceResponse.status);
+      expect(mockResponse.json).toHaveBeenCalledWith(mockServiceResponse.message);
+      expect(mockNextFunction).not.toHaveBeenCalled();
+    });
+    it('should call next function on error', async () => {
+      const errorMessage = 'Service error';
+      MockClientService.prototype.update.mockRejectedValue(new Error(errorMessage));
+      mockRequest.body = { /* mock request body */ };
+      await controller.update(mockRequest as Request, mockResponse as Response, mockNextFunction);
+      expect(mockNextFunction).toHaveBeenCalled();
+    });
+  });
   beforeEach(() => {
     controller = new ClientController();
     mockRequest = {};

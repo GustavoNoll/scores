@@ -25,6 +25,15 @@ class Client extends Model {
   declare activeTimestamp: Date;
   declare createdAt: Date;
   declare updatedAt: Date;
+
+  static associate(models: any) {
+    Client.hasMany(models.DeviceScore, { as: 'device_scores', foreignKey: 'clientId' });
+    Client.hasMany(models.FieldMeasure, { as: 'field_measures', foreignKey: 'clientId' });
+    Client.hasOne(models.Device, { as: 'device', foreignKey: 'clientId' });
+    Client.belongsTo(models.Cto, { as: 'cto', foreignKey: 'ctoId' });
+    Client.belongsTo(models.Olt, { as: 'olt', foreignKey: 'oltId' });
+  }
+
 }
 
 Client.init({
@@ -117,36 +126,5 @@ Client.init({
     }
   }
 });
-
-Client.hasMany(DeviceScore, {
-  as: 'device_scores',
-  foreignKey: 'clientId'
-});
-DeviceScore.belongsTo(Client)
-
-Client.hasMany(FieldMeasure, {
-  as: 'field_measures',
-  foreignKey: 'clientId'
-});
-FieldMeasure.belongsTo(Client)
-
-Client.hasOne(Device, {
-  as: 'device',
-  foreignKey: 'clientId'
-});
-Device.belongsTo(Client);
-
-
-Cto.hasMany(Client, {
-  as: 'clients',
-  foreignKey: 'ctoId'
-});
-Client.belongsTo(Cto);
-
-Olt.hasMany(Client, {
-  as: 'clients',
-  foreignKey: 'oltId'
-});
-Client.belongsTo(Olt);
 
 export default Client;
