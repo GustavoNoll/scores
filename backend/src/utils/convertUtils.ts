@@ -1,0 +1,21 @@
+export function standardizeMac(mac: string): string | null {
+  const macRegex = /^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/;
+
+  if (!macRegex.test(mac)) return null;
+
+  return mac.toUpperCase().replace(/[:-]/g, ':');
+}
+export function serialNumberShortForm(serialNumber: string): string | null {
+  if (!serialNumber) return null;
+  if (serialNumber.length === 12) return serialNumber.toUpperCase();
+
+  if (/0000\w{8}0000/.test(serialNumber)) {
+    return serialNumber.slice(4, -4).toUpperCase();
+  }
+
+  const upcaseSerialNumber = serialNumber.toUpperCase();
+  const serialNumberPrefix = Buffer.from(upcaseSerialNumber.slice(0, 8), 'hex').toString();
+  const serialNumberShortForm = (serialNumberPrefix + upcaseSerialNumber.slice(8, 16)).replace(/\x00/g, '');
+  
+  return serialNumberShortForm;
+}

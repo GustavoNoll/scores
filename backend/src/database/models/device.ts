@@ -41,27 +41,27 @@ Device.init({
   },
   manufacturer: {
     type: sequelize.STRING,
-    allowNull: true,
+    allowNull: false,
   },
   oui: {
     type: sequelize.STRING,
-    allowNull: true,
+    allowNull: false,
   },
   productClass: {
     type: sequelize.STRING,
-    allowNull: true,
+    allowNull: false,
   },
   modelName: {
     type: sequelize.STRING,
-    allowNull: true,
+    allowNull: false,
   },
   hardwareVersion: {
     type: sequelize.STRING,
-    allowNull: true,
+    allowNull: false,
   },
   softwareVersion: {
     type: sequelize.STRING,
-    allowNull: true,
+    allowNull: false,
   },
   pppoeUsername: {
     type: sequelize.STRING,

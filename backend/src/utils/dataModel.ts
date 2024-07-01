@@ -1,0 +1,195 @@
+import Device from "../database/models/device";
+import { serialNumberShortForm, standardizeMac } from "./convertUtils";
+import { CpuUsage, MemoryUsage, RxPower, Temperature, TxPower, Uptime, Voltage, WifiConnectedDevices, WifiNetworks } from "./dataModelTypes";
+
+class DataModel {
+  public manufacturer: string;
+  public oui: string;
+  public productClass: string;
+  public modelName: string;
+  public hardwareVersion: string;
+  public softwareVersion: string;
+
+  constructor({
+    manufacturer,
+    oui,
+    productClass,
+    modelName,
+    hardwareVersion,
+    softwareVersion,
+  }: {
+    manufacturer: string;
+    oui: string;
+    productClass: string;
+    modelName: string;
+    hardwareVersion: string;
+    softwareVersion: string;
+  }) {
+    this.manufacturer = manufacturer;
+    this.oui = oui;
+    this.productClass = productClass;
+    this.modelName = modelName;
+    this.hardwareVersion = hardwareVersion;
+    this.softwareVersion = softwareVersion;
+  }
+
+  matches(device: Device): boolean {
+    return (
+      (this.manufacturer === '*' || this.manufacturer.toLowerCase() === device.manufacturer.toLowerCase()) &&
+      (this.oui === '*' || this.oui.toLowerCase() === device.oui.toLowerCase()) &&
+      (this.productClass === '*' || this.productClass.toLowerCase() === device.productClass.toLowerCase()) &&
+      (this.modelName === '*' || this.modelName.toLowerCase() === device.modelName.toLowerCase()) &&
+      (this.hardwareVersion === '*' || this.hardwareVersion.toLowerCase() === device.hardwareVersion.toLowerCase()) &&
+      (this.softwareVersion === '*' || this.softwareVersion.toLowerCase() === device.softwareVersion.toLowerCase())
+    );
+  }
+
+  translateFields(jsonData: object): any {
+    let data = {
+      uptime: this.getUptime(jsonData),
+      temperature: this.getTemperature(jsonData),
+      rxPower: this.getRxPower(jsonData),
+      txPower: this.getTxPower(jsonData),
+      voltage: this.getVoltage(jsonData),
+      memoryUsage: this.getMemoryUsage(jsonData),
+      cpuUsage: this.getCpuUsage(jsonData),
+      wifiConnectedDevices: this.getWifiConnectedDevices(jsonData),
+      wifiNetworks: this.getWifiNetworks(jsonData)
+    }
+    return data;
+  }
+
+  getUptime(jsonData: object): Uptime {
+    return null; // Por enquanto retorna null, implemente conforme sua necessidade
+  }
+
+  getTemperature(jsonData: object): Temperature {
+    return null; // Por enquanto retorna null, implemente conforme sua necessidade
+  }
+
+  getRxPower(jsonData: object): RxPower {
+    return null; // Por enquanto retorna null, implemente conforme sua necessidade
+  }
+
+  getTxPower(jsonData: object): TxPower {
+    return null; // Por enquanto retorna null, implemente conforme sua necessidade
+  }
+
+  getVoltage(jsonData: object): Voltage {
+    return null; // Por enquanto retorna null, implemente conforme sua necessidade
+  }
+
+  getMemoryUsage(jsonData: object): MemoryUsage {
+    return null; // Por enquanto retorna null, implemente conforme sua necessidade
+  }
+
+  getCpuUsage(jsonData: object): CpuUsage {
+    return null;
+  }
+
+  getWifiConnectedDevices(jsonData: object): WifiConnectedDevices{
+    return []; // Retorna array vazio por padrão
+  }
+
+  getWifiNetworks(jsonData: object): WifiNetworks{
+    return [];
+  }
+  
+  static getBaseDevice(jsonData: any): any {
+    return {
+      manufacturer: this.getManufacturer(jsonData),
+      oui: this.getOui(jsonData),
+      productClass: this.getProductClass(jsonData),
+      modelName: this.getModelName(jsonData),
+      hardwareVersion: this.getHardwareVersion(jsonData),
+      softwareVersion: this.getSoftwareVersion(jsonData),
+      pppoeUsername: this.getPPPoeUsername(jsonData),
+      mac: this.getMac(jsonData),
+      serialNumber: this.getSerialNumber(jsonData),
+    };
+  }
+  private static getBaseObject(jsonData: any): any {
+    return jsonData.Device || jsonData.InternetGatewayDevice || {};
+  }
+
+  private static getPPPoeUsername(jsonData: any): string | null {
+    const igdPath = ['InternetGatewayDevice', 'WANDevice', 'WANConnectionDevice', 'WANPPPConnection'];
+    const devicePath = ['Device', 'PPP', 'Interface']
+    let username = deepFind(jsonData, [...igdPath, 'Username']);
+    if (username) return username;
+
+    username = deepFind(jsonData, [...devicePath, 'Username']);
+    return username;
+  }
+
+  private static getMac(jsonData: any): string | null {
+    const igdPath = ['InternetGatewayDevice', 'WANDevice', 'WANConnectionDevice', 'WANPPPConnection', 'MACAddress'];
+    const lanPath = ['Device', 'LAN', 'MACAddress'];
+    const ethernetPath = ['Device', 'Ethernet', 'Link', 'MACAddress'];
+
+    let macAddress = deepFind(jsonData, igdPath);
+    if (macAddress) return standardizeMac(macAddress);
+
+    macAddress = deepFind(jsonData, lanPath);
+    if (macAddress) return standardizeMac(macAddress);
+
+    macAddress = deepFind(jsonData, ethernetPath);
+    return standardizeMac(macAddress);
+  }
+
+  private static getSerialNumber(jsonData: any): string | null {
+    const base = this.getBaseObject(jsonData);
+    return serialNumberShortForm(base.DeviceInfo?.SerialNumber || null);
+  }
+
+  private static getManufacturer(jsonData: any): string | null {
+    const base = this.getBaseObject(jsonData);
+    return base.DeviceInfo?.Manufacturer || null;
+  }
+
+  private static getOui(jsonData: any): string | null {
+    const base = this.getBaseObject(jsonData);
+    return base.DeviceInfo?.ManufacturerOUI || null;
+  }
+
+  private static getProductClass(jsonData: any): string | null {
+    const base = this.getBaseObject(jsonData);
+    return base.DeviceInfo?.ProductClass || null;
+  }
+
+  private static getModelName(jsonData: any): string | null {
+    const base = this.getBaseObject(jsonData);
+    return base.DeviceInfo?.ModelName || null;
+  }
+
+  private static getHardwareVersion(jsonData: any): string | null {
+    const base = this.getBaseObject(jsonData);
+    return base.DeviceInfo?.HardwareVersion || null;
+  }
+
+  private static getSoftwareVersion(jsonData: any): string | null {
+    const base = this.getBaseObject(jsonData);
+    return base.DeviceInfo?.SoftwareVersion || null;
+  }
+}
+
+function deepFind(obj: any, keys: string[]): any {
+  for (const key of keys) {
+    if (typeof obj !== 'object' || obj === null) return null;
+
+    if (Array.isArray(obj)) {
+      for (const item of obj) {
+        const result = deepFind(item, keys);
+        if (result !== null) return result;
+      }
+      return null;
+    } else {
+      obj = obj[key];
+      keys = keys.slice(1)
+    }
+  }
+  return obj || null;
+}
+
+
+export default DataModel
