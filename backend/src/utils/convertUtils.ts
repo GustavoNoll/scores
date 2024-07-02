@@ -19,3 +19,30 @@ export function serialNumberShortForm(serialNumber: string): string | null {
   
   return serialNumberShortForm;
 }
+
+export function deepFind(obj: any, keys: string[]): any {
+  for (const key of keys) {
+    if (typeof obj !== 'object' || obj === null) return null;
+
+    if (Array.isArray(obj)) {
+      for (const item of obj) {
+        const result = deepFind(item, keys);
+        if (result !== null) return result;
+      }
+      return null;
+    } else {
+      obj = obj[key];
+      keys = keys.slice(1)
+    }
+  }
+  return obj || null;
+}
+
+export function rssiStringTonNumber(rssi: string): number {
+  const numericPart = rssi.replace('dBm', '');
+  
+  // Convert the remaining string to a number
+  const rssiNumber = parseInt(numericPart, 10);
+  
+  return rssiNumber;
+}

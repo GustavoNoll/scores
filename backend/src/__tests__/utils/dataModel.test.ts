@@ -66,20 +66,20 @@ describe('DataModel', () => {
     const jsonData = {
       InternetGatewayDevice: {
         DeviceInfo: {
-          Manufacturer: 'ACME Corp',
-          ManufacturerOUI: 'ABC123',
-          ProductClass: 'Router',
-          ModelName: 'Model X',
-          HardwareVersion: '1.0',
-          SoftwareVersion: '2.0',
-          SerialNumber: "aaaa12345678",
+          Manufacturer: { _value: 'ACME Corp' },
+          ManufacturerOUI: { _value: 'ABC123'},
+          ProductClass: { _value: 'Router' },
+          ModelName: {_value: 'Model X' },
+          HardwareVersion: { _value: '1.0' },
+          SoftwareVersion: { _value: '2.0' },
+          SerialNumber: { _value: "aaaa12345678"},
         },
         WANDevice: [
           {
             WANConnectionDevice: [
               {
                 WANPPPConnection: [
-                  { Username: 'user1', MACAddress: '00:11:22:33:44:55' }
+                  { Username: { _value: 'user1' }, MACAddress: { _value: '00:11:22:33:44:55' } }
                 ]
               }
             ]
@@ -108,21 +108,21 @@ describe('DataModel', () => {
     const jsonData = {
       Device: {
         DeviceInfo: {
-          Manufacturer: 'ACME Corp',
-          ManufacturerOUI: 'ABC123',
-          ProductClass: 'Router',
-          ModelName: 'Model X',
-          HardwareVersion: '1.0',
-          SoftwareVersion: '2.0',
-          SerialNumber: "AAAA12345678",
+          Manufacturer: { _value: 'ACME Corp' },
+          ManufacturerOUI: { _value: 'ABC123'},
+          ProductClass: { _value: 'Router' },
+          ModelName: {_value: 'Model X' },
+          HardwareVersion: { _value: '1.0' },
+          SoftwareVersion: { _value: '2.0' },
+          SerialNumber: { _value: "aaaa12345678"},
         },
         PPP: {
           Interface: [
-            { Username: 'user2' }
+            { Username: { _value: 'user2' } }
           ]
         },
         LAN: {
-          MACAddress: '66-77-88-99:aa:BB'
+          MACAddress:{ _value:  '66-77-88-99:aa:BB' }
         },
       },
     };
@@ -147,22 +147,22 @@ describe('DataModel', () => {
     const jsonData = {
       Device: {
         DeviceInfo: {
-          Manufacturer: 'ACME Corp',
-          ManufacturerOUI: 'ABC123',
-          ProductClass: 'Router',
-          ModelName: 'Model X',
-          HardwareVersion: '1.0',
-          SoftwareVersion: '2.0',
-          SerialNumber: "AAAA12345678",
+          Manufacturer: { _value: 'ACME Corp' },
+          ManufacturerOUI: { _value: 'ABC123'},
+          ProductClass: { _value: 'Router' },
+          ModelName: {_value: 'Model X' },
+          HardwareVersion: { _value: '1.0' },
+          SoftwareVersion: { _value: '2.0' },
+          SerialNumber: { _value: "aaaa12345678"},
         },
         Ethernet: {
           Link: [
-            { MACAddress: 'CC:DD:EE:FF:00:11' }
+            { MACAddress: { _value: 'CC:DD:EE:FF:00:11' } }
           ]
         },
         PPP: {
           Interface: [
-            { Username: 'user2' }
+            { Username: {_value: 'user2'} }
           ]
         },
       }

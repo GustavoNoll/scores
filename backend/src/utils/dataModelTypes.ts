@@ -13,12 +13,17 @@ type ConnectedDevice = {
   connection: string;
   rssi: number | null;
 };
+export type RssiDevice = {
+  mac: string;
+  rssi: number | null;
+}
 type Network = {
   index: number;
   wifi_type: string;
-  status: string;
-  auto_channel_enabled: boolean;
+  ssid: string;
+  autoChannelEnabled: boolean;
   channel: number;
+  rssiDevices: RssiDevice[];
 }
 export type WifiNetworks = Network[];
 export const DataModelTypes = {

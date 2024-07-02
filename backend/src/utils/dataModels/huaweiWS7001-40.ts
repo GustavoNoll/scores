@@ -1,5 +1,6 @@
+import { deepFind, rssiStringTonNumber } from '../convertUtils';
 import DataModel from '../dataModel';
-import { Uptime, Temperature, RxPower, TxPower, Voltage, MemoryUsage, CpuUsage, WifiConnectedDevices, WifiNetworks } from '../dataModelTypes';
+import { Uptime, WifiConnectedDevices, WifiNetworks, RssiDevice } from '../dataModelTypes';
 
 class HuaweiWS7001_40Model extends DataModel {
   constructor() {
@@ -13,40 +14,50 @@ class HuaweiWS7001_40Model extends DataModel {
     });
   }
 
-  getUptime(jsonData: object): Uptime {
-    return 1;
+  getUptime(jsonData: any): Uptime {
+    return jsonData.InternetGatewayDevice?.DeviceInfo?.UpTime?._value || null;
   }
 
-  getTemperature(jsonData: object): Temperature {
-    return null;
-  }
-
-  getRxPower(jsonData: object): RxPower {
-    return null;
-  }
-
-  getTxPower(jsonData: object): TxPower {
-    return null;
-  }
-
-  getVoltage(jsonData: object): Voltage {
-    return null;
-  }
-
-  getMemoryUsage(jsonData: object): MemoryUsage {
-    return null;
-  }
-
-  getCpuUsage(jsonData: object): CpuUsage {
-    return null;
-  }
-
-  getWifiConnectedDevices(jsonData: object): WifiConnectedDevices{
+  getWifiConnectedDevices(jsonData: any): WifiConnectedDevices{
     return []; 
   }
 
-  getWifiNetworks(jsonData: object): WifiNetworks{
-    return [];
+  getWifiNetworks(jsonData: any): WifiNetworks{
+    let wifiNetworks: WifiNetworks = []
+    const wlans = deepFind(jsonData, ['InternetGatewayDevice', 'LANDevice', '1', 'WLANConfiguration'])
+    if (!wlans) return wifiNetworks
+    for (const wlan in wlans){
+      let channel = deepFind(wlans[wlan], ['Channel', '_value'])
+      if (deepFind(wlans[wlan], ['Status', '_value']) != 'Up')  continue
+      if (channel === null) continue
+      let wifi_type = (channel >= 36 ? '5G' : '2.4G');
+
+      wifiNetworks.push(
+        {
+          index: +wlan,
+          wifi_type: wifi_type,
+          ssid: deepFind(wlans[wlan], ['SSID', '_value']),
+          autoChannelEnabled: deepFind(wlans[wlan], ['AutoChannelEnable', '_value']),
+          channel: channel,
+          rssiDevices: this.getRssiDevices(wlans[wlan])
+        }
+      )
+    } 
+    return wifiNetworks;
+  }
+
+  getRssiDevices(wlanData: any): RssiDevice[] {
+    let rssiDevices: RssiDevice[] = []
+    const associatedDevices = wlanData?.AssociatedDevice
+    for (const index in associatedDevices) {
+      let mac = deepFind(associatedDevices[index], ['AssociatedDeviceMACAddress', '_value'])
+      let rssi = deepFind(associatedDevices[index], ['AssociatedDeviceRssi', '_value'])
+      if( mac === null || rssi === null) continue
+      rssi = rssiStringTonNumber(rssi)
+      rssiDevices.push({ mac, rssi })
+    }
+    return rssiDevices
+
   }
 }
 

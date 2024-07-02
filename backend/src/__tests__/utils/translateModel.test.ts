@@ -30,6 +30,4 @@ describe('translateModel', () => {
     const model = translateModel(device);
     expect(model).toBeUndefined();
   });
-
-  
 });

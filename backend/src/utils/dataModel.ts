@@ -1,5 +1,5 @@
 import Device from "../database/models/device";
-import { serialNumberShortForm, standardizeMac } from "./convertUtils";
+import { deepFind, serialNumberShortForm, standardizeMac } from "./convertUtils";
 import { CpuUsage, MemoryUsage, RxPower, Temperature, TxPower, Uptime, Voltage, WifiConnectedDevices, WifiNetworks } from "./dataModelTypes";
 
 class DataModel {
@@ -44,7 +44,7 @@ class DataModel {
     );
   }
 
-  translateFields(jsonData: object): any {
+  translateFields(jsonData: any): any {
     let data = {
       uptime: this.getUptime(jsonData),
       temperature: this.getTemperature(jsonData),
@@ -59,39 +59,39 @@ class DataModel {
     return data;
   }
 
-  getUptime(jsonData: object): Uptime {
+  getUptime(jsonData: any): Uptime {
     return null; // Por enquanto retorna null, implemente conforme sua necessidade
   }
 
-  getTemperature(jsonData: object): Temperature {
+  getTemperature(jsonData: any): Temperature {
     return null; // Por enquanto retorna null, implemente conforme sua necessidade
   }
 
-  getRxPower(jsonData: object): RxPower {
+  getRxPower(jsonData: any): RxPower {
     return null; // Por enquanto retorna null, implemente conforme sua necessidade
   }
 
-  getTxPower(jsonData: object): TxPower {
+  getTxPower(jsonData: any): TxPower {
     return null; // Por enquanto retorna null, implemente conforme sua necessidade
   }
 
-  getVoltage(jsonData: object): Voltage {
+  getVoltage(jsonData: any): Voltage {
     return null; // Por enquanto retorna null, implemente conforme sua necessidade
   }
 
-  getMemoryUsage(jsonData: object): MemoryUsage {
+  getMemoryUsage(jsonData: any): MemoryUsage {
     return null; // Por enquanto retorna null, implemente conforme sua necessidade
   }
 
-  getCpuUsage(jsonData: object): CpuUsage {
+  getCpuUsage(jsonData: any): CpuUsage {
     return null;
   }
 
-  getWifiConnectedDevices(jsonData: object): WifiConnectedDevices{
+  getWifiConnectedDevices(jsonData: any): WifiConnectedDevices{
     return []; // Retorna array vazio por padrão
   }
 
-  getWifiNetworks(jsonData: object): WifiNetworks{
+  getWifiNetworks(jsonData: any): WifiNetworks{
     return [];
   }
   
@@ -108,24 +108,24 @@ class DataModel {
       serialNumber: this.getSerialNumber(jsonData),
     };
   }
-  private static getBaseObject(jsonData: any): any {
+  private static getBaseany(jsonData: any): any {
     return jsonData.Device || jsonData.InternetGatewayDevice || {};
   }
 
   private static getPPPoeUsername(jsonData: any): string | null {
     const igdPath = ['InternetGatewayDevice', 'WANDevice', 'WANConnectionDevice', 'WANPPPConnection'];
     const devicePath = ['Device', 'PPP', 'Interface']
-    let username = deepFind(jsonData, [...igdPath, 'Username']);
+    let username = deepFind(jsonData, [...igdPath, 'Username', '_value']);
     if (username) return username;
 
-    username = deepFind(jsonData, [...devicePath, 'Username']);
+    username = deepFind(jsonData, [...devicePath, 'Username', '_value']);
     return username;
   }
 
   private static getMac(jsonData: any): string | null {
-    const igdPath = ['InternetGatewayDevice', 'WANDevice', 'WANConnectionDevice', 'WANPPPConnection', 'MACAddress'];
-    const lanPath = ['Device', 'LAN', 'MACAddress'];
-    const ethernetPath = ['Device', 'Ethernet', 'Link', 'MACAddress'];
+    const igdPath = ['InternetGatewayDevice', 'WANDevice', 'WANConnectionDevice', 'WANPPPConnection', 'MACAddress', '_value'];
+    const lanPath = ['Device', 'LAN', 'MACAddress', '_value'];
+    const ethernetPath = ['Device', 'Ethernet', 'Link', 'MACAddress', '_value'];
 
     let macAddress = deepFind(jsonData, igdPath);
     if (macAddress) return standardizeMac(macAddress);
@@ -138,57 +138,39 @@ class DataModel {
   }
 
   private static getSerialNumber(jsonData: any): string | null {
-    const base = this.getBaseObject(jsonData);
-    return serialNumberShortForm(base.DeviceInfo?.SerialNumber || null);
+    const base = this.getBaseany(jsonData);
+    return serialNumberShortForm(base.DeviceInfo?.SerialNumber?._value || null);
   }
 
   private static getManufacturer(jsonData: any): string | null {
-    const base = this.getBaseObject(jsonData);
-    return base.DeviceInfo?.Manufacturer || null;
+    const base = this.getBaseany(jsonData);
+    return base.DeviceInfo?.Manufacturer?._value || null;
   }
 
   private static getOui(jsonData: any): string | null {
-    const base = this.getBaseObject(jsonData);
-    return base.DeviceInfo?.ManufacturerOUI || null;
+    const base = this.getBaseany(jsonData);
+    return base.DeviceInfo?.ManufacturerOUI?._value || null;
   }
 
   private static getProductClass(jsonData: any): string | null {
-    const base = this.getBaseObject(jsonData);
-    return base.DeviceInfo?.ProductClass || null;
+    const base = this.getBaseany(jsonData);
+    return base.DeviceInfo?.ProductClass?._value || null;
   }
 
   private static getModelName(jsonData: any): string | null {
-    const base = this.getBaseObject(jsonData);
-    return base.DeviceInfo?.ModelName || null;
+    const base = this.getBaseany(jsonData);
+    return base.DeviceInfo?.ModelName?._value || null;
   }
 
   private static getHardwareVersion(jsonData: any): string | null {
-    const base = this.getBaseObject(jsonData);
-    return base.DeviceInfo?.HardwareVersion || null;
+    const base = this.getBaseany(jsonData);
+    return base.DeviceInfo?.HardwareVersion?._value || null;
   }
 
   private static getSoftwareVersion(jsonData: any): string | null {
-    const base = this.getBaseObject(jsonData);
-    return base.DeviceInfo?.SoftwareVersion || null;
+    const base = this.getBaseany(jsonData);
+    return base.DeviceInfo?.SoftwareVersion?._value || null;
   }
-}
-
-function deepFind(obj: any, keys: string[]): any {
-  for (const key of keys) {
-    if (typeof obj !== 'object' || obj === null) return null;
-
-    if (Array.isArray(obj)) {
-      for (const item of obj) {
-        const result = deepFind(item, keys);
-        if (result !== null) return result;
-      }
-      return null;
-    } else {
-      obj = obj[key];
-      keys = keys.slice(1)
-    }
-  }
-  return obj || null;
 }
 
 
