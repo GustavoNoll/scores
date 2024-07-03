@@ -1,8 +1,24 @@
 import path from "path";
 import fs from 'fs';
 import ZteF670LModel from "../../../utils/dataModels/zteF670Lv9";
+import Device from "../../../database/models/device";
+import translateModel from "../../../utils/translateModel";
 
 describe('translateFields', () => { 
+
+  it('should return the correct model for a matching device', () => {
+    const device = Device.build({
+      manufacturer: 'Zte',
+      oui: '00259E',
+      productClass: 'F670L',
+      modelName: 'F670L',
+      hardwareVersion: 'v9.0',
+      softwareVersion: '1.4',
+    });
+
+    const model = translateModel(device);
+    expect(model).toBeInstanceOf(ZteF670LModel);
+  });
   it('should translate fields from huawei model', () => {
     const model = new ZteF670LModel();
     const jsonContent = fs.readFileSync(path.join(__dirname, './informTests/zte_f670l_v9.json'), 'utf-8');
