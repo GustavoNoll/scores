@@ -37,7 +37,8 @@ export function deepFind(obj: any, keys: string[]): any {
       keys = keys.slice(1)
     }
   }
-  return obj || null;
+  // Retornar o valor de obj, mesmo se for 0 ou falsy
+  return obj !== undefined ? obj : null;
 }
 
 export function rssiStringTonNumber(rssi: string | number): number {
@@ -84,4 +85,33 @@ export function stringPercentToFloat(str: string | null): number | null {
   }
 
   return null;
+}
+
+export function usedPercentByTotalAndFree(total: string | number | null, free: string | number | null): number | null {
+  if (total === null || free === null) return null;
+
+  let totalFloat: number;
+  let freeFloat: number;
+
+  // Converter total para float se for string
+  if (typeof total === 'string') {
+    totalFloat = parseFloat(total);
+    if (isNaN(totalFloat)) return null; // Retornar null se a conversão falhar
+  } else {
+    totalFloat = total;
+  }
+
+  // Converter free para float se for string
+  if (typeof free === 'string') {
+    freeFloat = parseFloat(free);
+    if (isNaN(freeFloat)) return null; // Retornar null se a conversão falhar
+  } else {
+    freeFloat = free;
+  }
+
+  // Calcular a quantidade usada
+  const usedFloat = totalFloat - freeFloat;
+  
+  // Calcular a porcentagem usada
+  return parseFloat((usedFloat / totalFloat).toFixed(2));
 }

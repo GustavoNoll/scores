@@ -1,9 +1,9 @@
 import { deepFind, findWifiNetworkByMac, rssiStringTonNumber, standardizeMac, stringPercentToFloat, stringToFloat } from '../convertUtils';
 import DataModel from '../dataModel';
-import { Uptime, WifiConnectedDevices, WifiNetworks, RssiDevice, CpuUsage, Temperature, MemoryUsage, RxPower, TxPower } from '../dataModelTypes';
+import { Uptime, WifiConnectedDevices, WifiNetworks, RssiDevice, CpuUsage, Temperature, MemoryUsage, RxPower, TxPower, Voltage } from '../dataModelTypes';
 import { getWifiNetworks } from '../trVersions/tr069';
 
-class ZteF670LModel extends DataModel {
+class ZteF670Lv9Model extends DataModel {
   constructor() {
     super({
       manufacturer: 'ZTE',
@@ -94,6 +94,11 @@ class ZteF670LModel extends DataModel {
   getWifiNetworks(jsonData: any): WifiNetworks{
     return getWifiNetworks(jsonData, 'X_ZTE-COM_Rssi')
   }
+
+  getVoltage(jsonData: any): Voltage {
+    const voltageStr = deepFind(jsonData, [ 'InternetGatewayDevice', 'WANDevice', '1', 'X_ZTE-COM_WANPONInterfaceConfig', 'SupplyVoltage', '_value'])
+    return stringToFloat(voltageStr);
+  }
 }
 
-export default ZteF670LModel
+export default ZteF670Lv9Model

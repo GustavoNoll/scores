@@ -1,6 +1,6 @@
 import path from "path";
 import fs from 'fs';
-import ZteF670LModel from "../../../utils/dataModels/zteF670Lv9";
+import ZteF670Lv9Model from "../../../utils/dataModels/zteF670Lv9";
 import Device from "../../../database/models/device";
 import translateModel from "../../../utils/translateModel";
 
@@ -17,10 +17,10 @@ describe('translateFields', () => {
     });
 
     const model = translateModel(device);
-    expect(model).toBeInstanceOf(ZteF670LModel);
+    expect(model).toBeInstanceOf(ZteF670Lv9Model);
   });
-  it('should translate fields from huawei model', () => {
-    const model = new ZteF670LModel();
+  it('should translate fields from zte model', () => {
+    const model = new ZteF670Lv9Model();
     const jsonContent = fs.readFileSync(path.join(__dirname, './informTests/zte_f670l_v9.json'), 'utf-8');
 
     // Convert the JSON content to a JavaScript object
@@ -32,7 +32,7 @@ describe('translateFields', () => {
       temperature: 49.71,
       txPower: 2.35,
       uptime: 28792,
-      voltage: null,
+      voltage: 3190,
       wifiConnectedDevices: [
         {
           active: true,
@@ -95,7 +95,7 @@ describe('translateFields', () => {
       ],
       wifiNetworks:  [
          {
-           autoChannelEnabled: null,
+           autoChannelEnabled: false,
            channel: 11,
            index: 1,
            rssiDevices:  [

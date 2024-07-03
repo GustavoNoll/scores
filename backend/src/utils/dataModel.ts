@@ -46,13 +46,13 @@ class DataModel {
 
   translateFields(jsonData: any): any {
     let data = {
-      uptime: this.getUptime(jsonData),
-      temperature: this.getTemperature(jsonData),
-      rxPower: this.getRxPower(jsonData),
-      txPower: this.getTxPower(jsonData),
-      voltage: this.getVoltage(jsonData),
-      memoryUsage: this.getMemoryUsage(jsonData),
-      cpuUsage: this.getCpuUsage(jsonData),
+      uptime: this.getUptime(jsonData), // seconds
+      temperature: this.getTemperature(jsonData), // celsius
+      rxPower: this.getRxPower(jsonData), // dbm
+      txPower: this.getTxPower(jsonData), // dbm
+      voltage: this.getVoltage(jsonData), // mv
+      memoryUsage: this.getMemoryUsage(jsonData), // 0-1
+      cpuUsage: this.getCpuUsage(jsonData), // 0-1
       wifiConnectedDevices: this.getWifiConnectedDevices(jsonData),
       wifiNetworks: this.getWifiNetworks(jsonData)
     }

@@ -4,7 +4,7 @@ import Device from '../../database/models/device';
 import ZteF670LModel from '../../utils/dataModels/zteF670Lv9';
 
 describe('translateModel', () => {
-  it('should return the correct model for a matching device', () => {
+  it('should return the correct model for a matching huawei', () => {
     const device = Device.build({
       manufacturer: 'Huawei Technologies Co., Ltd',
       oui: '00259E',
@@ -18,7 +18,7 @@ describe('translateModel', () => {
     expect(model).toBeInstanceOf(HuaweiWS7001_40Model);
   });
 
-  it('should return the correct model for a matching device', () => {
+  it('should return the correct model for a matching zte', () => {
     const device = Device.build({
       manufacturer: 'Zte',
       oui: '00259E',
