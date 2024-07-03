@@ -60,7 +60,7 @@ class DataModel {
   }
 
   getUptime(jsonData: any): Uptime {
-    return null; // Por enquanto retorna null, implemente conforme sua necessidade
+    return jsonData.InternetGatewayDevice?.DeviceInfo?.UpTime?._value || null;
   }
 
   getTemperature(jsonData: any): Temperature {

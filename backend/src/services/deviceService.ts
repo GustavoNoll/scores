@@ -13,6 +13,10 @@ class DeviceService {
 
       if (!device) {
         const baseDevice = DataModel.getBaseDevice(acsInform.jsonData)
+        if(Object.values(baseDevice).some(value => value === null || value === undefined)){
+          console.log('Falha ao pegar informações base do dispositivo');
+          return
+        }
         device = await this.model.create({ ...baseDevice, deviceTag: acsInform.deviceTag });
         //UPDATE fields attributes
         const modelInstance = translateModel(device);
@@ -20,6 +24,7 @@ class DeviceService {
           const fields = modelInstance.translateFields(acsInform.jsonData)
         } else {
           console.log('Nenhum modelo correspondente encontrado para o dispositivo.');
+          return
         }
       } else {
         const modelInstance = translateModel(device);
@@ -27,10 +32,11 @@ class DeviceService {
           const fields = modelInstance.translateFields(acsInform.jsonData)
         } else {
           console.log('Nenhum modelo correspondente encontrado para o dispositivo.');
+          return
         }
       }
   
-      //acsInform.destroy();
+      acsInform.destroy();
     } catch (error) {
       console.error(`Erro ao processar acsInform ${acsInform.id} no deviceService:`, error);
     }

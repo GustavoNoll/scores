@@ -1,5 +1,5 @@
 import path from "path";
-import HuaweiWS7001_40Model from '../../utils/dataModels/huaweiWS7001-40';
+import HuaweiWS7001_40Model from '../../../utils/dataModels/huaweiWS7001-40';
 import fs from 'fs';
 
 describe('translateFields', () => { 
@@ -17,7 +17,22 @@ describe('translateFields', () => {
       txPower: null,
       uptime: 10546,
       voltage: null,
-      wifiConnectedDevices: [],
+      wifiConnectedDevices: [
+        {
+          active: true,
+          mac: "B0:47:BF:BA:FF:D3",
+          rssi: -74,
+          wifiIndex: 1,
+          connection: "2.4G"
+        },
+        {
+          active: true,
+          mac: "7C:1C:68:43:EA:4A",
+          rssi: -54,
+          wifiIndex: 1,
+          connection: "2.4G"
+        },
+      ],
       wifiNetworks:  [
          {
            autoChannelEnabled: true,

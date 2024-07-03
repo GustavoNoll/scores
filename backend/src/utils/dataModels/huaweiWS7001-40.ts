@@ -1,6 +1,7 @@
-import { deepFind, rssiStringTonNumber } from '../convertUtils';
+import { deepFind, findWifiNetworkByMac, rssiStringTonNumber, standardizeMac } from '../convertUtils';
 import DataModel from '../dataModel';
 import { Uptime, WifiConnectedDevices, WifiNetworks, RssiDevice } from '../dataModelTypes';
+import { getWifiNetworks } from '../trVersions/tr069';
 
 class HuaweiWS7001_40Model extends DataModel {
   constructor() {
@@ -14,51 +15,51 @@ class HuaweiWS7001_40Model extends DataModel {
     });
   }
 
-  getUptime(jsonData: any): Uptime {
-    return jsonData.InternetGatewayDevice?.DeviceInfo?.UpTime?._value || null;
-  }
-
   getWifiConnectedDevices(jsonData: any): WifiConnectedDevices{
-    return []; 
+    let devices: WifiConnectedDevices = []
+    const lanDevices = deepFind(jsonData, ['InternetGatewayDevice', 'LANDevice'])
+    for (const lanDeviceIndex in lanDevices) {
+      const hosts = deepFind(lanDevices[lanDeviceIndex], ["Hosts", "Host"])
+
+      if (hosts === null) continue
+
+      for (const hostIndex in hosts) {
+        const host = hosts[hostIndex]
+        const active = deepFind(host, ['Active', '_value'])
+        if (active === null || !active) continue
+
+        let mac = deepFind(host, ['MACAddress', '_value'])
+        mac = standardizeMac(mac)
+
+        let connection: string = 'ethernet'
+        let rssi: number | null = null
+        let wifiIndex: number | null = null
+        
+        const layer2Interface = deepFind(host, ['Layer2Interface', '_value']); 
+        if (layer2Interface){
+          const result = findWifiNetworkByMac(this.getWifiNetworks(jsonData), mac);
+          if (result){
+            wifiIndex = result.index
+            connection = result.connection
+            rssi = result.rssi
+          }
+        }
+        devices.push({
+          mac: mac,
+          wifiIndex: wifiIndex,
+          active: true,
+          connection: connection,
+          rssi: rssi
+        })
+      }
+    }
+    return devices; 
   }
 
   getWifiNetworks(jsonData: any): WifiNetworks{
-    let wifiNetworks: WifiNetworks = []
-    const wlans = deepFind(jsonData, ['InternetGatewayDevice', 'LANDevice', '1', 'WLANConfiguration'])
-    if (!wlans) return wifiNetworks
-    for (const wlan in wlans){
-      let channel = deepFind(wlans[wlan], ['Channel', '_value'])
-      if (deepFind(wlans[wlan], ['Status', '_value']) != 'Up')  continue
-      if (channel === null) continue
-      let wifi_type = (channel >= 36 ? '5G' : '2.4G');
-
-      wifiNetworks.push(
-        {
-          index: +wlan,
-          wifi_type: wifi_type,
-          ssid: deepFind(wlans[wlan], ['SSID', '_value']),
-          autoChannelEnabled: deepFind(wlans[wlan], ['AutoChannelEnable', '_value']),
-          channel: channel,
-          rssiDevices: this.getRssiDevices(wlans[wlan])
-        }
-      )
-    } 
-    return wifiNetworks;
+    return getWifiNetworks(jsonData)
   }
 
-  getRssiDevices(wlanData: any): RssiDevice[] {
-    let rssiDevices: RssiDevice[] = []
-    const associatedDevices = wlanData?.AssociatedDevice
-    for (const index in associatedDevices) {
-      let mac = deepFind(associatedDevices[index], ['AssociatedDeviceMACAddress', '_value'])
-      let rssi = deepFind(associatedDevices[index], ['AssociatedDeviceRssi', '_value'])
-      if( mac === null || rssi === null) continue
-      rssi = rssiStringTonNumber(rssi)
-      rssiDevices.push({ mac, rssi })
-    }
-    return rssiDevices
-
-  }
 }
 
 export default HuaweiWS7001_40Model
