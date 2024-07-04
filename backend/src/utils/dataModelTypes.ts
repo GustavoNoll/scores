@@ -27,6 +27,17 @@ export type Network = {
   rssiDevices: RssiDevice[];
 }
 export type WifiNetworks = Network[];
+export type TranslateFields = {
+  uptime: Uptime; //seconds 
+  temperature: Temperature; // celsius
+  rxPower: RxPower, // dbm
+  txPower: TxPower, // dbm
+  voltage: Voltage, // mv
+  memoryUsage: MemoryUsage, // 0-1
+  cpuUsage: CpuUsage, // 0-1
+  wifiConnectedDevices: WifiConnectedDevices,
+  wifiNetworks: WifiNetworks
+}
 export const DataModelTypes = {
   Uptime: null as Uptime,
   Temperature: null as Temperature,

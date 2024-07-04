@@ -23,7 +23,7 @@ export async function processAcsInforms() {
     // Processamento de cada acs inform encontrado
     for (const acsInform of acsInforms) {
       console.log(`Processando acs inform: ${acsInform.deviceTag}`);
-      new DeviceService().processAcsInform(acsInform)
+      await new DeviceService().processAcsInform(acsInform)
 
     }
 

@@ -7,11 +7,11 @@ class TplinkEC200_G5v3 extends DataModel {
   constructor() {
     super({
       manufacturer: 'TP-Link',
-      oui: '00259E',
+      oui: '*',
       productClass: 'IGD',
-      modelName: 'F670L',
+      modelName: '*',
       hardwareVersion: 'EC220-G5 v2 00000003',
-      softwareVersion: '1.4',
+      softwareVersion: '*',
     });
   }
 
@@ -57,7 +57,7 @@ class TplinkEC200_G5v3 extends DataModel {
   getCpuUsage(jsonData: any): CpuUsage {
     const cpuUsage = deepFind(jsonData, ['InternetGatewayDevice', 'DeviceInfo', 'ProcessStatus', 'CPUUsage', '_value']);
 
-    return cpuUsage;
+    return cpuUsage / 100;
   }
 
   

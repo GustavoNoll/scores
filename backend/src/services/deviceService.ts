@@ -13,7 +13,14 @@ class DeviceService {
 
       if (!device) {
         const baseDevice = DataModel.getBaseDevice(acsInform.jsonData)
-        if(Object.values(baseDevice).some(value => value === null || value === undefined)){
+        console.log(baseDevice)
+        const mandatoryFields = ['manufacturer', 'oui', 'productClass', 'modelName', 'hardwareVersion', 'softwareVersion'];
+        const areMandatoryFieldsValid = mandatoryFields.every(field => baseDevice[field] !== null && baseDevice[field] !== undefined);
+
+        const optionalFields = ['pppoeUsername', 'mac', 'serialNumber'];
+        const isAtLeastOneOptionalFieldValid = optionalFields.some(field => baseDevice[field] !== null && baseDevice[field] !== undefined);
+
+        if (!(areMandatoryFieldsValid && isAtLeastOneOptionalFieldValid)) {
           console.log('Falha ao pegar informações base do dispositivo');
           return
         }
@@ -30,6 +37,7 @@ class DeviceService {
         const modelInstance = translateModel(device);
         if (modelInstance) {
           const fields = modelInstance.translateFields(acsInform.jsonData)
+          console.log(fields)
         } else {
           console.log('Nenhum modelo correspondente encontrado para o dispositivo.');
           return

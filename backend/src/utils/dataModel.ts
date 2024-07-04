@@ -1,6 +1,6 @@
 import Device from "../database/models/device";
 import { deepFind, serialNumberShortForm, standardizeMac } from "./convertUtils";
-import { CpuUsage, MemoryUsage, RxPower, Temperature, TxPower, Uptime, Voltage, WifiConnectedDevices, WifiNetworks } from "./dataModelTypes";
+import { CpuUsage, MemoryUsage, RxPower, Temperature, TranslateFields, TxPower, Uptime, Voltage, WifiConnectedDevices, WifiNetworks } from "./dataModelTypes";
 
 class DataModel {
   public manufacturer: string;
@@ -34,6 +34,9 @@ class DataModel {
   }
 
   matches(device: Device): boolean {
+    console.log(device.manufacturer) 
+    console.log(device.oui)
+    console.log(device.modelName)
     return (
       (this.manufacturer === '*' || this.manufacturer.toLowerCase() === device.manufacturer.toLowerCase()) &&
       (this.oui === '*' || this.oui.toLowerCase() === device.oui.toLowerCase()) &&
@@ -44,7 +47,7 @@ class DataModel {
     );
   }
 
-  translateFields(jsonData: any): any {
+  translateFields(jsonData: any): TranslateFields {
     let data = {
       uptime: this.getUptime(jsonData), // seconds
       temperature: this.getTemperature(jsonData), // celsius
@@ -113,8 +116,9 @@ class DataModel {
   }
 
   private static getPPPoeUsername(jsonData: any): string | null {
-    const igdPath = ['InternetGatewayDevice', 'WANDevice', 'WANConnectionDevice', 'WANPPPConnection'];
+    const igdPath = ['InternetGatewayDevice', 'WANDevice', '1', 'WANConnectionDevice', '1', 'WANPPPConnection', '1'];
     const devicePath = ['Device', 'PPP', 'Interface']
+    console.log(deepFind(jsonData, [...igdPath]))
     let username = deepFind(jsonData, [...igdPath, 'Username', '_value']);
     if (username) return username;
 
@@ -123,7 +127,7 @@ class DataModel {
   }
 
   private static getMac(jsonData: any): string | null {
-    const igdPath = ['InternetGatewayDevice', 'WANDevice', 'WANConnectionDevice', 'WANPPPConnection', 'MACAddress', '_value'];
+    const igdPath = ['InternetGatewayDevice', 'WANDevice', '1', 'WANConnectionDevice', '1', 'WANPPPConnection', '1', 'MACAddress', '_value'];
     const lanPath = ['Device', 'LAN', 'MACAddress', '_value'];
     const ethernetPath = ['Device', 'Ethernet', 'Link', 'MACAddress', '_value'];
 
@@ -144,6 +148,7 @@ class DataModel {
 
   private static getManufacturer(jsonData: any): string | null {
     const base = this.getBaseany(jsonData);
+    console.log(base.DeviceInfo)
     return base.DeviceInfo?.Manufacturer?._value || null;
   }
 
