@@ -74,17 +74,19 @@ describe('DataModel', () => {
           SoftwareVersion: { _value: '2.0' },
           SerialNumber: { _value: "aaaa12345678"},
         },
-        WANDevice: [
+        WANDevice: 
+        { '1':
           {
-            WANConnectionDevice: [
-              {
-                WANPPPConnection: [
-                  { Username: { _value: 'user1' }, MACAddress: { _value: '00:11:22:33:44:55' } }
-                ]
-              }
-            ]
+            WANConnectionDevice: {
+              '1':
+                {
+                  WANPPPConnection: {
+                    '1': { Username: { _value: 'user1' }, MACAddress: { _value: '00:11:22:33:44:55' } }
+                  }
+                }
+            }
           }
-        ]
+        }
       }
     };
 

@@ -34,9 +34,6 @@ class DataModel {
   }
 
   matches(device: Device): boolean {
-    console.log(device.manufacturer) 
-    console.log(device.oui)
-    console.log(device.modelName)
     return (
       (this.manufacturer === '*' || this.manufacturer.toLowerCase() === device.manufacturer.toLowerCase()) &&
       (this.oui === '*' || this.oui.toLowerCase() === device.oui.toLowerCase()) &&
@@ -118,7 +115,7 @@ class DataModel {
   private static getPPPoeUsername(jsonData: any): string | null {
     const igdPath = ['InternetGatewayDevice', 'WANDevice', '1', 'WANConnectionDevice', '1', 'WANPPPConnection', '1'];
     const devicePath = ['Device', 'PPP', 'Interface']
-    console.log(deepFind(jsonData, [...igdPath]))
+
     let username = deepFind(jsonData, [...igdPath, 'Username', '_value']);
     if (username) return username;
 
@@ -148,7 +145,6 @@ class DataModel {
 
   private static getManufacturer(jsonData: any): string | null {
     const base = this.getBaseany(jsonData);
-    console.log(base.DeviceInfo)
     return base.DeviceInfo?.Manufacturer?._value || null;
   }
 

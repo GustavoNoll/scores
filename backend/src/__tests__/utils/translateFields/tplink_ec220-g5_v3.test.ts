@@ -26,7 +26,7 @@ describe('translateFields', () => {
     // Convert the JSON content to a JavaScript object
     const data = JSON.parse(jsonContent);
     expect(model.translateFields(data)).toEqual({
-      cpuUsage: 2,
+      cpuUsage: 0.02,
       memoryUsage: 0.47,
       rxPower: 0,
       temperature: null,
