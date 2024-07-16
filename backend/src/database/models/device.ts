@@ -19,6 +19,7 @@ class Device extends Model {
   declare modelName: string;
   declare hardwareVersion: string;
   declare softwareVersion: string;
+  declare clientId: number;
   declare createdAt: Date;
   declare updatedAt: Date;
 }

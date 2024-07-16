@@ -27,15 +27,6 @@ export async function processAcsInforms() {
 
     }
 
-    // Após o processamento, destruir todos os acs informs
-    /*await AcsInform.destroy({
-      where: {
-        createdAt: {
-          [Op.lt]: startTime
-        }
-      }
-    });*/
-
     const timestamp = new Date().toISOString();
     console.log(`Processamento completo em ${timestamp}`);
   } catch (error) {
