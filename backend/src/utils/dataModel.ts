@@ -1,6 +1,6 @@
 import Device from "../database/models/device";
 import { deepFind, serialNumberShortForm, standardizeMac } from "./convertUtils";
-import { CpuUsage, MemoryUsage, RxPower, Temperature, TranslateFields, TxPower, Uptime, Voltage, WifiConnectedDevices, WifiNetworks } from "./dataModelTypes";
+import { CpuUsage, MemoryUsage, RxPower, Temperature, TranslateFields, TxPower, Uptime, Voltage, ConnectedDevices, WifiNetworks } from "./dataModelTypes";
 
 class DataModel {
   public manufacturer: string;
@@ -53,7 +53,7 @@ class DataModel {
       voltage: this.getVoltage(jsonData), // mv
       memoryUsage: this.getMemoryUsage(jsonData), // 0-1
       cpuUsage: this.getCpuUsage(jsonData), // 0-1
-      wifiConnectedDevices: this.getWifiConnectedDevices(jsonData),
+      connectedDevices: this.getConnectedDevices(jsonData),
       wifiNetworks: this.getWifiNetworks(jsonData)
     }
     return data;
@@ -87,7 +87,7 @@ class DataModel {
     return null;
   }
 
-  getWifiConnectedDevices(jsonData: any): WifiConnectedDevices{
+  getConnectedDevices(jsonData: any): ConnectedDevices{
     return []; // Retorna array vazio por padrão
   }
 

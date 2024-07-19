@@ -1,6 +1,6 @@
 import { deepFind, findWifiNetworkByMac, rssiStringTonNumber, standardizeMac, stringPercentToFloat, stringToFloat, usedPercentByTotalAndFree } from '../convertUtils';
 import DataModel from '../dataModel';
-import { Uptime, WifiConnectedDevices, WifiNetworks, RssiDevice, CpuUsage, Temperature, MemoryUsage, RxPower, TxPower } from '../dataModelTypes';
+import { Uptime, ConnectedDevices, WifiNetworks, RssiDevice, CpuUsage, Temperature, MemoryUsage, RxPower, TxPower } from '../dataModelTypes';
 import { getWifiNetworks } from '../trVersions/tr069';
 
 class TplinkEC200_G5v3 extends DataModel {
@@ -15,8 +15,8 @@ class TplinkEC200_G5v3 extends DataModel {
     });
   }
 
-  getWifiConnectedDevices(jsonData: any): WifiConnectedDevices{
-    let devices: WifiConnectedDevices = []
+  getConnectedDevices(jsonData: any): ConnectedDevices{
+    let devices: ConnectedDevices = []
     const lanDevices = deepFind(jsonData, ['InternetGatewayDevice', 'LANDevice'])
     for (const lanDeviceIndex in lanDevices) {
       const hosts = deepFind(lanDevices[lanDeviceIndex], ["Hosts", "Host"])

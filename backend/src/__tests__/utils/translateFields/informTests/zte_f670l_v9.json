@@ -6,8 +6,8 @@
       "Description":{"_object":false, "_writable":false},
       "DeviceLog":{"_object":false, "_writable":false},
       "HardwareVersion":{"_object":false, "_timestamp":"2024-07-03T00:20:46.604Z", "_type":"xsd:string", "_value":"V9.0", "_writable":false},
-      "Manufacturer":{"_object":false, "_writable":false},
-      "ManufacturerOUI":{"_object":false, "_writable":false},
+      "Manufacturer":{"_object":false, "_writable":false, "_value": "ZTE"},
+      "ManufacturerOUI":{"_object":false, "_writable":false, "_value": "1232"},
       "MemoryStatus":
        {"_object":true,
         "_writable":false,
@@ -3150,7 +3150,7 @@
        {"Agent":{"_object":true, "_writable":true},
         "Controller":
          {"AL_MAC":{"_object":false, "_writable":false},
-          "Manufacturer":{"_object":false, "_writable":false},
+          "Manufacturer":{"_object":false, "_writable":false, "_value": "ZTE"},
           "ModelName":{"_object":false, "_writable":false},
           "STA":{"_object":true, "_writable":true},
           "SerialNumber":{"_object":false, "_writable":false},

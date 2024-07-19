@@ -1,6 +1,6 @@
 import { deepFind, findWifiNetworkByMac, rssiStringTonNumber, standardizeMac } from '../convertUtils';
 import DataModel from '../dataModel';
-import { Uptime, WifiConnectedDevices, WifiNetworks, RssiDevice } from '../dataModelTypes';
+import { Uptime, ConnectedDevices, WifiNetworks, RssiDevice } from '../dataModelTypes';
 import { getWifiNetworks } from '../trVersions/tr069';
 
 class HuaweiWS7001_40Model extends DataModel {
@@ -15,8 +15,8 @@ class HuaweiWS7001_40Model extends DataModel {
     });
   }
 
-  getWifiConnectedDevices(jsonData: any): WifiConnectedDevices{
-    let devices: WifiConnectedDevices = []
+  getConnectedDevices(jsonData: any): ConnectedDevices{
+    let devices: ConnectedDevices = []
     const lanDevices = deepFind(jsonData, ['InternetGatewayDevice', 'LANDevice'])
     for (const lanDeviceIndex in lanDevices) {
       const hosts = deepFind(lanDevices[lanDeviceIndex], ["Hosts", "Host"])

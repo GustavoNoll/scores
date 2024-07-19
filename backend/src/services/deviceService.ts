@@ -15,7 +15,6 @@ class DeviceService {
   async processAcsInform(acsInform: AcsInform) {
     try {
       let device = await this.model.findOne({ where: { deviceTag: acsInform.deviceTag } });
-
       if (!device) {
         const baseDevice = DataModel.getBaseDevice(acsInform.jsonData);
 

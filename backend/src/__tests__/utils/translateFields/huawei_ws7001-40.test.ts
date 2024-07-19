@@ -17,7 +17,7 @@ describe('translateFields', () => {
       txPower: null,
       uptime: 10546,
       voltage: null,
-      wifiConnectedDevices: [
+      connectedDevices: [
         {
           active: true,
           mac: "B0:47:BF:BA:FF:D3",

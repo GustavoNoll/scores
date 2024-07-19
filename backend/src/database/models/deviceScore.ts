@@ -26,6 +26,7 @@ DeviceScore.init({
       model: 'devices',
       key: 'id',
     },
+    onDelete: 'CASCADE',
   },
   field: {
     type: sequelize.STRING,

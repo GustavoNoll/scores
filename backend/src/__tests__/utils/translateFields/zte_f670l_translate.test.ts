@@ -33,7 +33,7 @@ describe('translateFields', () => {
       txPower: 2.35,
       uptime: 28792,
       voltage: 3190,
-      wifiConnectedDevices: [
+      connectedDevices: [
         {
           active: true,
           mac: "3C:9C:0F:71:9E:8B",
@@ -90,8 +90,6 @@ describe('translateFields', () => {
           wifiIndex: null,
           connection: "ethernet"
         },
-        
-        
       ],
       wifiNetworks:  [
          {

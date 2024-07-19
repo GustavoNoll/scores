@@ -54,7 +54,7 @@ describe('DataModel', () => {
       txPower: null,
       uptime: null,
       voltage: null,
-      wifiConnectedDevices: [],
+      connectedDevices: [],
       wifiNetworks: []
     };
 

@@ -1,6 +1,6 @@
 import { ModelStatic } from "sequelize";
 import FieldMeasure from "../database/models/fieldMeasure";
-import { TranslateFields, WifiNetworks } from "../utils/dataModelTypes";
+import { ConnectedDevices, TranslateFields, WifiNetworks } from "../utils/dataModelTypes";
 import Device from "../database/models/device";
 
 const NUM_WORST_RSSI_VALUES = 3;
@@ -10,7 +10,7 @@ class FieldMeasureService {
 
   private createGeneralFieldMeasures(device: Device, translateFields: TranslateFields) {
     return Object.entries(translateFields)
-      .filter(([field]) => field !== "wifiConnectedDevices" && field !== "wifiNetworks")
+      .filter(([field]) => field !== "connectedDevices" && field !== "wifiNetworks")
       .map(([field, value]) => {
         if ((field === "cpuUsage" || field === "memoryUsage") && typeof value === "number" && (value < 0 || value > 1)) {
           value = null;
@@ -27,8 +27,8 @@ class FieldMeasureService {
       });
   }
 
-  private createWifiFieldMeasures(device: Device, wifiNetworks: WifiNetworks) {
-    let totalConnectedDevices = 0;
+  private createWifiFieldMeasures(device: Device, wifiNetworks: WifiNetworks, connectedDevices: ConnectedDevices) {
+    let totalConnectedDevices = connectedDevices.length;
     let connectedDevices2G = 0;
     let connectedDevices5G = 0;
     let autoChannel2G: number | null = null;
@@ -38,12 +38,11 @@ class FieldMeasureService {
     wifiNetworks.forEach(network => {
       const { wifi_type, autoChannelEnabled, rssiDevices } = network;
 
-      totalConnectedDevices += rssiDevices.length;
 
-      if (wifi_type === '2g') {
+      if (wifi_type === '2.4G') {
         connectedDevices2G += rssiDevices.length;
         autoChannel2G = autoChannelEnabled ? 1 : 0;
-      } else if (wifi_type === '5g') {
+      } else if (wifi_type === '5G') {
         connectedDevices5G += rssiDevices.length;
         autoChannel5G = autoChannelEnabled ? 1 : 0;
       }
@@ -111,9 +110,9 @@ class FieldMeasureService {
     ];
   }
 
-  async generateFieldMeasures(device: Device, translateFields: TranslateFields) {
-    const generalFieldMeasures = this.createGeneralFieldMeasures(device, translateFields);
-    const wifiFieldMeasures = this.createWifiFieldMeasures(device, translateFields.wifiNetworks);
+  async generateFieldMeasures(device: Device, translatedFields: TranslateFields) {
+    const generalFieldMeasures = this.createGeneralFieldMeasures(device, translatedFields);
+    const wifiFieldMeasures = this.createWifiFieldMeasures(device, translatedFields.wifiNetworks, translatedFields.connectedDevices);
 
     const fieldMeasures = [...generalFieldMeasures, ...wifiFieldMeasures];
 

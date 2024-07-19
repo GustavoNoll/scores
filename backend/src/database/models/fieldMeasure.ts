@@ -44,7 +44,7 @@ FieldMeasure.init({
   },
   value: {
     type: sequelize.FLOAT,
-    allowNull: false,
+    allowNull: true,
   },
   createdAt: {
     allowNull: false,

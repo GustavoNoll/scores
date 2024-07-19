@@ -6,7 +6,7 @@ export type TxPower = number | null;
 export type Voltage = number | null;
 export type MemoryUsage = number | null;
 export type CpuUsage = number | null;
-export type WifiConnectedDevices = ConnectedDevice[];
+export type ConnectedDevices = ConnectedDevice[];
 type ConnectedDevice = {
   wifiIndex: number | null,
   mac: string;
@@ -35,7 +35,7 @@ export type TranslateFields = {
   voltage: Voltage, // mv
   memoryUsage: MemoryUsage, // 0-1
   cpuUsage: CpuUsage, // 0-1
-  wifiConnectedDevices: WifiConnectedDevices,
+  connectedDevices: ConnectedDevices,
   wifiNetworks: WifiNetworks
 }
 export const DataModelTypes = {
@@ -46,6 +46,6 @@ export const DataModelTypes = {
   Voltage: null as Voltage,
   MemoryUsage: null as MemoryUsage,
   CpuUsage: null as CpuUsage,
-  WifiConnectedDevices: [] as WifiConnectedDevices,
+  ConnectedDevices: [] as ConnectedDevices,
   WifiNetworks: [] as WifiNetworks
 };
