@@ -31,6 +31,7 @@ describe('DeviceService', () => {
     await AcsInform.destroy({ where: {}, truncate: true });
     await Client.destroy({ where: {}, truncate: true, cascade: true });
     await Device.destroy({ where: {}, truncate: true, cascade: true});
+    await FieldMeasure.destroy({ where: {}, truncate: true, cascade: true});
   });
 
   afterEach(() => {
@@ -67,7 +68,7 @@ describe('DeviceService', () => {
       expect(device).not.toBeNull();
       expect(device?.clientId).toBe(client.id);
       const fieldMeasures = await FieldMeasure.findAll({ where: { deviceId: device?.id } });
-      console.log(fieldMeasures)
+
       expect(fieldMeasures.length).toBeGreaterThan(0);
   
       // Verificar valores específicos dos field measures
