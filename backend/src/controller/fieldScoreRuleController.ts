@@ -6,7 +6,7 @@ class FieldScoreRuleController {
 
   async get(req: Request, res: Response, next: NextFunction){
     try {
-      const { status, message } = await this.service.get(req.params)
+      const { status, message } = await this.service.get()
       res.status(status).json(message)
     } catch (error) {
       next(error)
@@ -24,8 +24,7 @@ class FieldScoreRuleController {
 
   async update(req: Request, res: Response, next: NextFunction) {
     try {
-      const { id } = req.params;
-      const { status, message } = await this.service.update(parseInt(id), req.body);
+      const { status, message } = await this.service.update(req.body);
       res.status(status).json(message);
     } catch (error) {
       next(error);

@@ -9,9 +9,9 @@ import { FieldScoreRuleCreateInterface, FieldScoreRuleUpdateInterface } from "..
 class FieldScoreRuleService {
   private model: ModelStatic<FieldScoreRule> = FieldScoreRule;
 
-  async get(fieldScoreRule?: any) {
+  async get() {
     try {
-      const fieldScoresRules = await this.model.findAll({ where: fieldScoreRule });
+      const fieldScoresRules = await this.model.findAll({ where: {} });
       return resp(200, fieldScoresRules);
     } catch (error) {
       // Lide com erros conforme necessário
@@ -20,29 +20,25 @@ class FieldScoreRuleService {
   }
 
 
-  async create(fieldRule: FieldScoreRuleCreateInterface) {
-    const { error } = schema.create.validate(fieldRule);
+  async create(fieldScoreRuleData: FieldScoreRuleCreateInterface) {
+    const { error } = schema.create.validate(fieldScoreRuleData);
     if (error) return respM(422, error.message);
     try {
-      const createdFieldScoreRule = await this.model.create({ ...fieldRule })
+      const createdFieldScoreRule = await this.model.create({ ...fieldScoreRuleData })
       return resp(201, createdFieldScoreRule)
     } catch (error) {
       return resp(500, { message: 'Error creating FieldScoreRule', error });
     }
   }
 
-  async update(id: number, olt: FieldScoreRuleUpdateInterface) {
-    const { error } = schema.update.validate(olt);
+  async update(fieldScoreRuleData: FieldScoreRuleUpdateInterface) {
+    const { error } = schema.update.validate(fieldScoreRuleData);
     if (error) return respM(422, error.message);
 
     try {
-      const existingFieldScoreRule = await this.model.findOne({ where: { id } });
-      if (!existingFieldScoreRule) return respM(404, 'OLT not found');
-      await existingFieldScoreRule.update({ ...olt });
-
-      return resp(200, existingFieldScoreRule);
+      return resp(200, null);
     } catch (error) {
-      return resp(500, { message: 'Error updating OLT', error });
+      return resp(500, { message: 'Error updating FieldScoreRule', error });
     }
   }
 }
