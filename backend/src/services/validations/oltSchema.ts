@@ -1,6 +1,6 @@
 import joi from "joi"
 
-const oltCreate = joi.object({
+const create = joi.object({
   description: joi.string().required(),
   latitude: joi.number().min(0).max(90).required(),
   longitude: joi.number().min(-180).max(180).required(),
@@ -13,4 +13,4 @@ const oltUpdate = joi.object({
   longitude: joi.number().min(-180).max(180).optional(),
 })
 
-export = { oltCreate, oltUpdate }
+export = { create, oltUpdate }

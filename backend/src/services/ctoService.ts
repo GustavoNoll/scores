@@ -19,7 +19,7 @@ class CtoService {
   }
 
   async create(cto: CtoCreateInterface) {
-    const { error } = schema.ctoCreate.validate(cto)
+    const { error } = schema.create.validate(cto)
     if (error) return respM(422, error.message);
     try {
       const createdCto = await this.model.create({ ...cto })
@@ -33,7 +33,7 @@ class CtoService {
   }
 
   async update(integrationId: string, cto: CtoUpdateInterface) {
-    const { error } = schema.ctoUpdate.validate(cto);
+    const { error } = schema.update.validate(cto);
     if (error) return respM(422, error.message);
 
     try {

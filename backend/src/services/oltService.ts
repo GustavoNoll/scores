@@ -21,7 +21,7 @@ class OltService {
 
 
   async create(olt: OltCreateInterface) {
-    const { error } = schema.oltCreate.validate(olt)
+    const { error } = schema.create.validate(olt)
     if (error) return respM(422, error.message);
     try {
       const createdOlt = await this.model.create({ ...olt })

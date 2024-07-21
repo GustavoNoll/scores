@@ -12,7 +12,7 @@ describe('FieldMeasureService', () => {
     fieldMeasureService = new FieldMeasureService();
     const client = await Client.create({
       mac: '00:11:22:33:44:55',
-      pppoeUsername: '15107ESTER',
+      pppoeUsername: 'teste123',
       serialNumber: 'SN12345',
       integrationId: 'mockIntegrationId1',
       latitude: '0.0',
@@ -31,9 +31,6 @@ describe('FieldMeasureService', () => {
   });
 
   afterAll(async () => {
-    await FieldMeasure.destroy({ where: {}, truncate: true });
-    await Client.destroy({ where: {}, truncate: true, cascade: true });
-    await Device.destroy({ where: {}, truncate: true, cascade: true});
   });
 
   beforeEach(async () => {

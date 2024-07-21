@@ -57,10 +57,13 @@ describe("AcsInformService", () => {
         latitude: '0.0',
         longitude: '0.0'
       });
+      expect(client).not.toBeNull();
 
       await acsInformService.processAcsInform(mockAcsInform);
 
       const device = await Device.findOne({ where: { deviceTag: 'device123' } });
+
+      expect(client).not.toBeNull();
       expect(device).not.toBeNull();
       expect(device?.clientId).toBe(client.id);
       const fieldMeasures = await FieldMeasure.findAll({ where: { deviceId: device?.id } });

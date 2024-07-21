@@ -47,7 +47,7 @@ describe("CtoService", () => {
   describe("create", () => {
     it("should create an CTO successfully", async () => {
       const mockCto = { integrationId: "1", description: "aa", latitude: 5, longitude: 5 };
-      (schema.ctoCreate.validate as jest.Mock).mockReturnValue({ error: null });
+      (schema.create.validate as jest.Mock).mockReturnValue({ error: null });
       (Cto.create as jest.Mock).mockResolvedValue(mockCto);
       (resp as jest.Mock).mockReturnValue({ status: 201, data: mockCto });
 
@@ -60,7 +60,7 @@ describe("CtoService", () => {
 
     it("should handle validation errors", async () => {
       const error = { message: "Validation error" };
-      (schema.ctoCreate.validate as jest.Mock).mockReturnValue({ error });
+      (schema.create.validate as jest.Mock).mockReturnValue({ error });
       (respM as jest.Mock).mockReturnValue({ status: 422, message: error.message });
     
       const result = await ctoService.create({
@@ -76,7 +76,7 @@ describe("CtoService", () => {
 
     it("should handle unique constraint errors", async () => {
       const mockCto = { integrationId: "1", description: "", latitude: 0, longitude: 0 };
-      (schema.ctoCreate.validate as jest.Mock).mockReturnValue({ error: null });
+      (schema.create.validate as jest.Mock).mockReturnValue({ error: null });
       (Cto.create as jest.Mock).mockRejectedValue(new UniqueConstraintError({}));
       (respM as jest.Mock).mockReturnValue({ status: 409, message: "A cto with the provided integration ID already exists." });
     
@@ -92,7 +92,7 @@ describe("CtoService", () => {
       const mockCto = { integrationId: "1", description: "CTO1", latitude: 0, longitude: 0 };
       const updatedCto = { ...mockCto, description: "Updated CTO" };
 
-      (schema.ctoUpdate.validate as jest.Mock).mockReturnValue({ error: null });
+      (schema.update.validate as jest.Mock).mockReturnValue({ error: null });
       const mockUpdate = jest.fn().mockResolvedValue(updatedCto);
       (Cto.findOne as jest.Mock).mockResolvedValue({ update: mockUpdate });
       (resp as jest.Mock).mockReturnValue({ status: 200, data: updatedCto });
@@ -105,7 +105,7 @@ describe("CtoService", () => {
     });
 
     it("should handle CTO not found", async () => {
-      (schema.ctoUpdate.validate as jest.Mock).mockReturnValue({ error: null });
+      (schema.update.validate as jest.Mock).mockReturnValue({ error: null });
       (Cto.findOne as jest.Mock).mockResolvedValue(null);
       (respM as jest.Mock).mockReturnValue({ status: 404, message: "CTO not found" });
     
@@ -118,7 +118,7 @@ describe("CtoService", () => {
     it("should handle unique constraint errors on update", async () => {
       const mockCto = { integrationId: "2" };
       const updatedCto = { description: "", latitude: 0, longitude: 0 };
-      (schema.ctoUpdate.validate as jest.Mock).mockReturnValue({ error: null });
+      (schema.update.validate as jest.Mock).mockReturnValue({ error: null });
       (Cto.findOne as jest.Mock).mockResolvedValue({ update: jest.fn().mockRejectedValue(new UniqueConstraintError({})) });
       (respM as jest.Mock).mockReturnValue({ status: 409, message: "A cto with the provided integration ID already exists." });
 

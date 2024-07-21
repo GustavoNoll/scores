@@ -1,6 +1,6 @@
 import joi from 'joi';
 
-const clientCreate = joi.object({
+const create = joi.object({
   latitude: joi.number().min(0).max(90).required(),
   longitude: joi.number().min(-180).max(180).required(),
   mac: joi.alternatives().try(
@@ -15,7 +15,7 @@ const clientCreate = joi.object({
   active: joi.boolean().required()
 });
 
-const clientUpdate = joi.object({
+const update = joi.object({
   latitude: joi.number().min(0).max(90).optional(),
   longitude: joi.number().min(-180).max(180).optional(),
   mac: joi.alternatives().try(
@@ -29,4 +29,4 @@ const clientUpdate = joi.object({
   active: joi.boolean().optional()
 });
 
-export = { clientCreate, clientUpdate }
+export = { create, update }

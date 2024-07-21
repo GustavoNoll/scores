@@ -21,7 +21,7 @@ class ClientService {
   }
 
   async create(client: ClientInterface) {
-    const { error } = schema.clientCreate.validate(client)
+    const { error } = schema.create.validate(client)
     if (error) return respM(422, error.message);
     try {
       const cto = await Cto.findOne({ where: { integrationId: client.ctoIntegrationId } });
@@ -47,7 +47,7 @@ class ClientService {
   }
 
   async update(integrationId: string, client: Partial<ClientInterface>) {
-    const { error } = schema.clientUpdate.validate(client);
+    const { error } = schema.update.validate(client);
     if (error) return respM(422, error.message);
 
     try {

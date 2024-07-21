@@ -48,7 +48,7 @@ describe("OltService", () => {
   describe("create", () => {
     it("should create an OLT successfully", async () => {
       const mockOlt = { integrationId: "1", description: "aa", latitude: 5, longitude: 5 };
-      (schema.oltCreate.validate as jest.Mock).mockReturnValue({ error: null });
+      (schema.create.validate as jest.Mock).mockReturnValue({ error: null });
       (Olt.create as jest.Mock).mockResolvedValue(mockOlt);
       (resp as jest.Mock).mockReturnValue({ status: 201, data: mockOlt });
 
@@ -61,7 +61,7 @@ describe("OltService", () => {
 
     it("should handle validation errors", async () => {
       const error = { message: "Validation error" };
-      (schema.oltCreate.validate as jest.Mock).mockReturnValue({ error });
+      (schema.create.validate as jest.Mock).mockReturnValue({ error });
       (respM as jest.Mock).mockReturnValue({ status: 422, message: error.message });
     
       const result = await oltService.create({
@@ -77,7 +77,7 @@ describe("OltService", () => {
 
     it("should handle unique constraint errors", async () => {
       const mockOlt = { integrationId: "1", description: "", latitude: 0, longitude: 0 };
-      (schema.oltCreate.validate as jest.Mock).mockReturnValue({ error: null });
+      (schema.create.validate as jest.Mock).mockReturnValue({ error: null });
       (Olt.create as jest.Mock).mockRejectedValue(new UniqueConstraintError({}));
       (respM as jest.Mock).mockReturnValue({ status: 409, message: "A olt with the provided integration ID already exists." });
     

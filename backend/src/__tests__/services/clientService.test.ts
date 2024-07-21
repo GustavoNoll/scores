@@ -61,7 +61,7 @@ describe("ClientService", () => {
       const mockOlt = { id: 1 };
       const createdClient = { ...mockClient, id: 1, ctoId: mockCto.id, oltId: mockOlt.id };
       
-      (schema.clientCreate.validate as jest.Mock).mockReturnValue({ error: null });
+      (schema.create.validate as jest.Mock).mockReturnValue({ error: null });
       (Cto.findOne as jest.Mock).mockResolvedValue(mockCto);
       (Olt.findOne as jest.Mock).mockResolvedValue(mockOlt);
       (Client.create as jest.Mock).mockResolvedValue(createdClient);
@@ -82,7 +82,7 @@ describe("ClientService", () => {
 
     it("should handle validation errors", async () => {
       const error = { message: "Validation error" };
-      (schema.clientCreate.validate as jest.Mock).mockReturnValue({ error });
+      (schema.create.validate as jest.Mock).mockReturnValue({ error });
       (respM as jest.Mock).mockReturnValue({ status: 422, message: error.message });
 
       const result = await clientService.create({
@@ -107,7 +107,7 @@ describe("ClientService", () => {
         pppoeUsername: "",
         active: false
       };
-      (schema.clientCreate.validate as jest.Mock).mockReturnValue({ error: null });
+      (schema.create.validate as jest.Mock).mockReturnValue({ error: null });
       (Cto.findOne as jest.Mock).mockResolvedValue(null);
       (respM as jest.Mock).mockReturnValue({ status: 404, message: "CTO not found" });
 
@@ -128,7 +128,7 @@ describe("ClientService", () => {
       };
       const mockCto = { id: 1 };
 
-      (schema.clientCreate.validate as jest.Mock).mockReturnValue({ error: null });
+      (schema.create.validate as jest.Mock).mockReturnValue({ error: null });
       (Cto.findOne as jest.Mock).mockResolvedValue(mockCto);
       (Olt.findOne as jest.Mock).mockResolvedValue(null);
       (respM as jest.Mock).mockReturnValue({ status: 404, message: "OLT not found" });
@@ -149,7 +149,7 @@ describe("ClientService", () => {
         pppoeUsername: "",
         active: false
       };
-      (schema.clientCreate.validate as jest.Mock).mockReturnValue({ error: null });
+      (schema.create.validate as jest.Mock).mockReturnValue({ error: null });
       (Client.create as jest.Mock).mockRejectedValue(new UniqueConstraintError({}));
       (respM as jest.Mock).mockReturnValue({ status: 409, message: "A client with the provided integration ID already exists." });
       const mockCto = { id: 1 };
@@ -175,7 +175,7 @@ describe("ClientService", () => {
         integrationId: mockClient.integrationId
       };
 
-      (schema.clientUpdate.validate as jest.Mock).mockReturnValue({ error: null });
+      (schema.update.validate as jest.Mock).mockReturnValue({ error: null });
       (Client.findOne as jest.Mock).mockResolvedValue(mockExistingClient);
       (Cto.findOne as jest.Mock).mockResolvedValue(mockCto);
       (Olt.findOne as jest.Mock).mockResolvedValue(mockOlt);
@@ -192,7 +192,7 @@ describe("ClientService", () => {
 
     it("should handle client not found error", async () => {
       const mockClient = { integrationId: "1", ctoIntegrationId: "1", oltIntegrationId: "1" };
-      (schema.clientUpdate.validate as jest.Mock).mockReturnValue({ error: null });
+      (schema.update.validate as jest.Mock).mockReturnValue({ error: null });
       (Client.findOne as jest.Mock).mockResolvedValue(null);
       (respM as jest.Mock).mockReturnValue({ status: 404, message: "Client not found" });
 
@@ -217,7 +217,7 @@ describe("ClientService", () => {
       (Cto.findOne as jest.Mock).mockResolvedValue(mockCto);
       (Olt.findOne as jest.Mock).mockResolvedValue(mockOlt);
 
-      (schema.clientUpdate.validate as jest.Mock).mockReturnValue({ error: null });
+      (schema.update.validate as jest.Mock).mockReturnValue({ error: null });
       (Client.findOne as jest.Mock).mockResolvedValue(mockExistingClient);
       (respM as jest.Mock).mockReturnValue({ status: 409, message: "A client with the provided integration ID already exists." });
 
