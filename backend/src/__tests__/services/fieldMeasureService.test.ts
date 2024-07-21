@@ -11,7 +11,6 @@ describe('FieldMeasureService', () => {
   beforeAll(async () => {
     fieldMeasureService = new FieldMeasureService();
     const client = await Client.create({
-      id: 10,
       mac: '00:11:22:33:44:55',
       pppoeUsername: '15107ESTER',
       serialNumber: 'SN12345',
