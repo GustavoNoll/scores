@@ -29,7 +29,7 @@ DeviceScore.init({
     onDelete: 'CASCADE',
   },
   field: {
-    type: sequelize.STRING,
+    type: sequelize.TEXT,
     allowNull: false,
   },
   value: {

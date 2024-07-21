@@ -2,6 +2,7 @@ import { CronJob } from 'cron';
 import AcsInform from '../database/models/acsInform';
 import { Op } from 'sequelize';
 import DeviceService from '../services/deviceService';
+import AcsInformService from '../services/acsInformService';
 
 let startTime: Date | null = null;
 
@@ -23,7 +24,7 @@ export async function processAcsInforms() {
     // Processamento de cada acs inform encontrado
     for (const acsInform of acsInforms) {
       console.log(`Processando acs inform: ${acsInform.deviceTag}`);
-      await new DeviceService().processAcsInform(acsInform)
+      await new AcsInformService().processAcsInform(acsInform)
 
     }
 

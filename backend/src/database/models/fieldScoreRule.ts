@@ -27,7 +27,7 @@ FieldScoreRule.init({
     allowNull: false,
   },
   field: {
-    type: sequelize.STRING,
+    type: sequelize.TEXT,
     allowNull: false,
   },
   goodThreshold: {

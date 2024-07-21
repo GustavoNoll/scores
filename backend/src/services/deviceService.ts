@@ -8,42 +8,14 @@ import Client from "../database/models/client";
 
 class DeviceService {
   private model: ModelStatic<Device> = Device;
-
-  // 1. create devices/updates by tag
-  // 2. link device to client
-  // 3. Generate fields measures
-  async processAcsInform(acsInform: AcsInform) {
-    try {
-      let device = await this.model.findOne({ where: { deviceTag: acsInform.deviceTag } });
-      if (!device) {
-        const baseDevice = DataModel.getBaseDevice(acsInform.jsonData);
-
-        if (!this.minDataToCreateDevice(baseDevice)) {
-          console.log('Failed to retrieve minimal device information.');
-          return;
-        }
-
-        device = await this.createDevice(baseDevice, acsInform.deviceTag);
-      } else {
-        await this.updateDevice(device, acsInform.jsonData);
-      }
-
-      if (device.clientId !== null) {
-        const modelInstance = translateModel(device);
-        if (modelInstance) {
-          await this.processFields(device, modelInstance, acsInform);
-        } else {
-          console.log('No corresponding model found for the device.');
-        }
-      }else{
-        console.log("Device unlinked")
-      }
-
-      await acsInform.destroy();
-    } catch (error) {
-      console.error(`Error processing acsInform ${acsInform.id} in DeviceService:`, error);
-      throw error;
+  
+  async createDeviceByAcsInform(acsInform: AcsInform) {
+    const baseDevice = DataModel.getBaseDevice(acsInform.jsonData);
+    if (!this.minDataToCreateDevice(baseDevice)) {
+      console.log('Failed to retrieve minimal device information.');
+      return null;
     }
+    return await this.createDevice(baseDevice, acsInform.deviceTag);
   }
 
   private async linkDeviceToClient(device: Device) {
@@ -75,7 +47,7 @@ class DeviceService {
     return device;
   }
 
-  private async updateDevice(device: Device, updatedData: any) {
+  async updateDevice(device: Device, updatedData: any) {
     const baseDevice = DataModel.getBaseDevice(updatedData);
     await device.update({ ...baseDevice });
     await this.linkDeviceToClient(device);

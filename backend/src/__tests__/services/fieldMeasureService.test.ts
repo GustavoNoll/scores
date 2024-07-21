@@ -139,7 +139,6 @@ describe('FieldMeasureService', () => {
     await fieldMeasureService.generateFieldMeasures(device, translatedFields);
 
     const fieldMeasures = await FieldMeasure.findAll({ where: { deviceId: device.id } });
-    console.log(fieldMeasures)
     expect(fieldMeasures.length).toBe(26);
 
     const totalConnectedDevices = await FieldMeasure.findOne({ 

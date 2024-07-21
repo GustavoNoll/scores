@@ -2,12 +2,30 @@ import { ModelStatic } from "sequelize";
 import FieldMeasure from "../database/models/fieldMeasure";
 import { ConnectedDevices, TranslateFields, WifiNetworks } from "../utils/dataModelTypes";
 import Device from "../database/models/device";
+import AcsInform from "../database/models/acsInform";
+import translateModel from "../utils/translateModel";
 
 const NUM_WORST_RSSI_VALUES = 3;
 
 class FieldMeasureService {
   private model: ModelStatic<FieldMeasure> = FieldMeasure;
 
+
+  async processFields(device: Device, acsInform: AcsInform) : Promise<boolean> {
+    try {
+      const modelInstance = translateModel(device);
+      if (modelInstance) {
+        const fields = modelInstance.translateFields(acsInform.jsonData);
+        await this.generateFieldMeasures(device, fields);
+      } else {
+        console.log('No corresponding model found for the device.');
+      }
+      return true;
+    } catch (error) {
+      console.error(`Error processing fields for device ${device.id} in DeviceService:`, error);
+      return false;
+    }
+  }
   private createGeneralFieldMeasures(device: Device, translateFields: TranslateFields) {
     return Object.entries(translateFields)
       .filter(([field]) => field !== "connectedDevices" && field !== "wifiNetworks")
