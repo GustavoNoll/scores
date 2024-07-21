@@ -28,10 +28,7 @@ describe("AcsInformService", () => {
   });
   
   beforeEach(async () => {
-    await AcsInform.destroy({ where: {}, truncate: true });
-    await Client.destroy({ where: {}, truncate: true, cascade: true });
-    await Device.destroy({ where: {}, truncate: true, cascade: true});
-    await FieldMeasure.destroy({ where: {}, truncate: true, cascade: true});
+    await sequelize.sync({ force: true });
   });
 
   afterEach(() => {
@@ -122,20 +119,14 @@ describe("AcsInformService", () => {
 
       const mockAcsInform = await AcsInform.create(acsInformData);
 
-      const client = await Client.create({
-        mac: '00:11:22:33:44:55',
-        pppoeUsername: '15107ESTER',
-        serialNumber: 'SN12345',
-        integrationId: 'mockIntegrationId',
-        latitude: '0.0',
-        longitude: '0.0'
-      });
+      const client = await Client.findOne({ where: {integrationId: 'mockIntegrationId' } });
+
 
       await acsInformService.processAcsInform(mockAcsInform);
 
       const device = await Device.findOne({ where: { deviceTag: 'device123' } });
       expect(device).not.toBeNull();
-      expect(device?.clientId).toBe(client.id);
+      expect(device?.clientId).toBe(client?.id);
 
       const uptime = await FieldMeasure.findOne({ where: { deviceId: device?.id, field: 'uptime' } });
       expect(uptime?.value).toBe(28792);
