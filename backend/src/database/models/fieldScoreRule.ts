@@ -13,8 +13,8 @@ class FieldScoreRule extends Model {
   declare poorThreshold: string;
   declare criticalThreshold: string;
   declare progressionRate: string;
-  declare oltId: number;
-  declare ctoId: number;
+  declare oltId: number | null;
+  declare ctoId: number | null;
   declare createdAt: Date;
   declare updatedAt: Date;
 }
@@ -46,7 +46,7 @@ FieldScoreRule.init({
     type: sequelize.FLOAT,
     allowNull: false,
   },
-  progression_rate: {
+  progressionRate: {
     type: sequelize.FLOAT,
     allowNull: false,
   },

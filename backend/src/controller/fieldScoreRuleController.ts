@@ -21,14 +21,5 @@ class FieldScoreRuleController {
       next(error)
     }
   }
-
-  async update(req: Request, res: Response, next: NextFunction) {
-    try {
-      const { status, message } = await this.service.update(req.body);
-      res.status(status).json(message);
-    } catch (error) {
-      next(error);
-    }
-  }
 }
 export default FieldScoreRuleController

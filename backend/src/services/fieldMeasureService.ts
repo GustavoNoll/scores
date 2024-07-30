@@ -4,6 +4,7 @@ import { ConnectedDevices, TranslateFields, WifiNetworks } from "../utils/dataMo
 import Device from "../database/models/device";
 import AcsInform from "../database/models/acsInform";
 import translateModel from "../utils/translateModel";
+import { FIELD_AUTO_CHANNEL_2G, FIELD_AUTO_CHANNEL_5G, FIELD_AVERAGE_WORST_RSSI, FIELD_CONNECTED_DEVICES_2G, FIELD_CONNECTED_DEVICES_5G, FIELD_CPU_USAGE, FIELD_MEMORY_USAGE, FIELD_TOTAL_CONNECTED_DEVICES } from "../constants/fieldConstants";
 
 const NUM_WORST_RSSI_VALUES = 3;
 
@@ -30,7 +31,7 @@ class FieldMeasureService {
     return Object.entries(translateFields)
       .filter(([field]) => field !== "connectedDevices" && field !== "wifiNetworks")
       .map(([field, value]) => {
-        if ((field === "cpuUsage" || field === "memoryUsage") && typeof value === "number" && (value < 0 || value > 1)) {
+        if ((field === FIELD_CPU_USAGE || field === FIELD_MEMORY_USAGE) && typeof value === "number" && (value < 0 || value > 1)) {
           value = null;
         }
 
@@ -80,7 +81,7 @@ class FieldMeasureService {
       {
         clientId: device.clientId,
         deviceId: device.id,
-        field: 'totalConnectedDevices',
+        field: FIELD_TOTAL_CONNECTED_DEVICES,
         value: totalConnectedDevices,
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -88,7 +89,7 @@ class FieldMeasureService {
       {
         clientId: device.clientId,
         deviceId: device.id,
-        field: 'connectedDevices2G',
+        field: FIELD_CONNECTED_DEVICES_2G,
         value: connectedDevices2G,
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -96,7 +97,7 @@ class FieldMeasureService {
       {
         clientId: device.clientId,
         deviceId: device.id,
-        field: 'connectedDevices5G',
+        field: FIELD_CONNECTED_DEVICES_5G,
         value: connectedDevices5G,
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -104,7 +105,7 @@ class FieldMeasureService {
       {
         clientId: device.clientId,
         deviceId: device.id,
-        field: 'autoChannel2G',
+        field: FIELD_AUTO_CHANNEL_2G,
         value: autoChannel2G,
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -112,7 +113,7 @@ class FieldMeasureService {
       {
         clientId: device.clientId,
         deviceId: device.id,
-        field: 'autoChannel5G',
+        field: FIELD_AUTO_CHANNEL_5G,
         value: autoChannel5G,
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -120,7 +121,7 @@ class FieldMeasureService {
       {
         clientId: device.clientId,
         deviceId: device.id,
-        field: 'averageWorstRssi',
+        field: FIELD_AVERAGE_WORST_RSSI,
         value: averageWorstRssi,
         createdAt: new Date(),
         updatedAt: new Date(),

@@ -1,16 +1,16 @@
-import joi from "joi"
+import Joi from "joi"
+import { ALLOWED_FIELDS } from '../../constants/fieldConstants';
 
-const create = joi.object({
-  description: joi.string().required(),
-  latitude: joi.number().min(0).max(90).required(),
-  longitude: joi.number().min(-180).max(180).required(),
-  integrationId: joi.string().required()
-})
+const create = Joi.object({
+  field: Joi.string().valid(...ALLOWED_FIELDS).required(),
+  goodThreshold: Joi.number().required(),
+  mediumThreshold: Joi.number().required(),
+  poorThreshold: Joi.number().required(),
+  criticalThreshold: Joi.number().required(),
+  progressionRate: Joi.number().required(),
+  oltId: Joi.number().allow(null).required(),
+  ctoId: Joi.number().allow(null).required(),
+});
 
-const update = joi.object({
-  description: joi.string().optional(),
-  latitude: joi.number().min(0).max(90).optional(),
-  longitude: joi.number().min(-180).max(180).optional(),
-})
 
-export = { create, update }
+export = { create }
