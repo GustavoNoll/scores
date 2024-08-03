@@ -2,8 +2,7 @@
 import { Model } from 'sequelize';
 import db from '.';
 import sequelize from 'sequelize';
-import Client from './client';
-import FieldScoreRule from './fieldScoreRule';
+
 
 class Olt extends Model {
   declare id: number;
@@ -55,11 +54,5 @@ Olt.init({
   timestamps: true,
   underscored: true
 });
-
-Olt.hasMany(FieldScoreRule, {
-  as: 'field_score_rules',
-  foreignKey: 'oltId'
-});
-FieldScoreRule.belongsTo(Olt);
 
 export default Olt;

@@ -29,10 +29,8 @@ describe('FieldScoreRuleService', () => {
     const fieldScoreRuleData: FieldScoreRuleCreateInterface = {
       field: 'cpuUsage',
       goodThreshold: 80,
-      mediumThreshold: 50,
-      poorThreshold: 20,
       criticalThreshold: 10,
-      progressionRate: 1.5,
+      functionType: 'linear',
       oltId: olt.id,
       ctoId: cto.id
     };
@@ -42,19 +40,17 @@ describe('FieldScoreRuleService', () => {
     expect(response.message).toBeInstanceOf(FieldScoreRule);
     expect((response.message as FieldScoreRule).field).toBe('cpuUsage');
     expect((response.message as FieldScoreRule).goodThreshold).toBe(80);
-    expect((response.message as FieldScoreRule).mediumThreshold).toBe(50);
+    expect((response.message as FieldScoreRule).functionType).toBe('linear');
   });
 
   it('should create for nil nil', async () => {
     const fieldScoreRuleData: FieldScoreRuleCreateInterface = {
       field: 'cpuUsage',
       goodThreshold: 80,
-      mediumThreshold: 50,
-      poorThreshold: 20,
       criticalThreshold: 10,
-      progressionRate: 1.5,
       oltId: null,
-      ctoId: null
+      ctoId: null,
+      functionType: 'quadratic',
     };
 
     const response = await fieldScoreRuleService.create(fieldScoreRuleData);
@@ -62,17 +58,15 @@ describe('FieldScoreRuleService', () => {
     expect(response.message).toBeInstanceOf(FieldScoreRule);
     expect((response.message as FieldScoreRule).field).toBe('cpuUsage');
     expect((response.message as FieldScoreRule).goodThreshold).toBe(80);
-    expect((response.message as FieldScoreRule).mediumThreshold).toBe(50);
+    expect((response.message as FieldScoreRule).functionType).toBe('quadratic');
   })
 
   it('should update an existing field score rule if it already exists', async () => {
     const existingFieldScoreRuleData: FieldScoreRuleCreateInterface = {
       field: 'memoryUsage',
       goodThreshold: 75,
-      mediumThreshold: 45,
-      poorThreshold: 25,
       criticalThreshold: 5,
-      progressionRate: 2.0,
+      functionType: 'quadratic',
       oltId: olt.id,
       ctoId: cto.id
     };
@@ -83,16 +77,14 @@ describe('FieldScoreRuleService', () => {
     expect(response1.status).toBe(201);
     expect(response1.message).toBeInstanceOf(FieldScoreRule);
     expect((response1.message as FieldScoreRule).criticalThreshold).toBe(5);
-    expect((response1.message as FieldScoreRule).progressionRate).toBe(2.0);
+    expect((response1.message as FieldScoreRule).functionType).toBe('quadratic');
     expect((response1.message as FieldScoreRule).oltId).toBe(olt.id);
     expect((response1.message as FieldScoreRule).ctoId).toBe(cto.id);
     const updatedFieldScoreRuleData: FieldScoreRuleCreateInterface = {
       field: 'memoryUsage',
       goodThreshold: 80,
-      mediumThreshold: 50,
-      poorThreshold: 30,
       criticalThreshold: 10,
-      progressionRate: 2.5,
+      functionType: 'cubic',
       oltId: olt.id,
       ctoId: cto.id
     };
@@ -102,7 +94,7 @@ describe('FieldScoreRuleService', () => {
     expect(response2.message).toBeInstanceOf(FieldScoreRule);
 
     expect((response2.message as FieldScoreRule).criticalThreshold).toBe(10);
-    expect((response2.message as FieldScoreRule).progressionRate).toBe(2.5);
+    expect((response2.message as FieldScoreRule).functionType).toBe('cubic');
     expect((response1.message as FieldScoreRule).oltId).toBe(olt.id);
     expect((response1.message as FieldScoreRule).ctoId).toBe(cto.id);
 
@@ -119,10 +111,8 @@ describe('FieldScoreRuleService', () => {
     const newFieldScoreRuleData: FieldScoreRuleCreateInterface = {
       field: 'memoryUsage',
       goodThreshold: 80,
-      mediumThreshold: 50,
-      poorThreshold: 30,
       criticalThreshold: 10,
-      progressionRate: 2.5,
+      functionType: 'linear',
       oltId: olt.id,
       ctoId: null
     };
@@ -153,7 +143,7 @@ describe('FieldScoreRuleService', () => {
     const response = await fieldScoreRuleService.create(invalidData as any);
     expect(response.status).toBe(422);
     expect(response.message).toEqual({
-      "message": "\"field\" must be one of [uptime, txPower, cpuUsage, memoryUsage, rxPower, temperature, totalConnectedDevices, connectedDevices2G, connectedDevices5G, autoChannel2G, autoChannel5G, averageWorstRssi]"
+      "message": "\"field\" must be one of [uptime, txPower, cpuUsage, memoryUsage, rxPower, temperature, totalConnectedDevices, connectedDevices5GPer2G, autoChannel, averageWorstRssi]"
   })
   });
 
@@ -162,10 +152,8 @@ describe('FieldScoreRuleService', () => {
     const fieldScoreRuleData: FieldScoreRuleCreateInterface = {
       field: 'temperature',
       goodThreshold: 30,
-      mediumThreshold: 20,
-      poorThreshold: 10,
+      functionType: 'linear',
       criticalThreshold: 0,
-      progressionRate: 1.0,
       oltId: olt.id,
       ctoId: cto.id
     };

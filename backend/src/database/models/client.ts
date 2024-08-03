@@ -73,7 +73,10 @@ Client.init({
     allowNull: true,
     set(value: string) {
       if (value){
-        this.setDataValue('mac', value.toLowerCase());
+        const formattedValue = value.toLowerCase().replace(/[^a-f0-9]/g, '').match(/.{1,2}/g)
+        if (formattedValue) {
+          this.setDataValue('mac', formattedValue.join(':'));
+        }
       }
     },
   },

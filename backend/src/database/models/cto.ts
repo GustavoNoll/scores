@@ -56,9 +56,4 @@ Cto.init({
   underscored: true
 });
 
-Cto.hasMany(FieldScoreRule, {
-  as: 'field_score_rules',
-  foreignKey: 'ctoId'
-});
-FieldScoreRule.belongsTo(Cto);
 export default Cto;

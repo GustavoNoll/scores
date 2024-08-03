@@ -2,8 +2,6 @@ import { ModelStatic, Op } from "sequelize";
 import AcsInform from "../database/models/acsInform";
 import Device from "../database/models/device";
 import DataModel from "../utils/dataModel";
-import translateModel from "../utils/translateModel";
-import FieldMeasureService from "./fieldMeasureService";
 import Client from "../database/models/client";
 
 class DeviceService {
@@ -30,13 +28,21 @@ class DeviceService {
 
   private async findClientByAttributes(attributes: { mac?: string, pppoeUsername?: string, serialNumber?: string }) {
     const { mac, pppoeUsername, serialNumber } = attributes;
+    const conditions = [];  
+    if (pppoeUsername) {
+        conditions.push({ pppoeUsername });
+    }
+    if (serialNumber) {
+        conditions.push({ serialNumber });
+    }
+    if (mac) {
+        conditions.push({ mac });
+    }
+    if (conditions.length === 0) return null;
+
     return await Client.findOne({
       where: {
-        [Op.or]: [
-          { pppoeUsername },
-          { serialNumber },
-          { mac }
-        ].filter(condition => !!condition)
+        [Op.or]: conditions
       }
     });
   }
@@ -51,17 +57,6 @@ class DeviceService {
     const baseDevice = DataModel.getBaseDevice(updatedData);
     await device.update({ ...baseDevice });
     await this.linkDeviceToClient(device);
-  }
-
-  private async processFields(device: Device, translateModel: DataModel, acsInform: AcsInform) {
-    try {
-      const fieldMeasureService = new FieldMeasureService();
-      const fields = translateModel.translateFields(acsInform.jsonData);
-      await fieldMeasureService.generateFieldMeasures(device, fields);
-    } catch (error) {
-      console.error(`Error processing fields for device ${device.id} in DeviceService:`, error);
-      throw error;
-    }
   }
 
   private minDataToCreateDevice(baseDevice: any): boolean {

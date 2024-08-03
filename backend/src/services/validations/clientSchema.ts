@@ -10,8 +10,8 @@ const create = joi.object({
   integrationId: joi.string().required(),
   pppoeUsername: joi.string().optional(),
   serialNumber: joi.string().optional(),
-  ctoIntegrationId: joi.number().required(),
-  oltIntegrationId: joi.number().required(),
+  ctoIntegrationId: joi.string().required(),
+  oltIntegrationId: joi.string().required(),
   active: joi.boolean().required()
 });
 
@@ -24,8 +24,8 @@ const update = joi.object({
   ).optional(),
   pppoeUsername: joi.string().optional(),
   serialNumber: joi.string().optional(),
-  ctoIntegrationId: joi.number().optional(),
-  oltIntegrationId: joi.number().optional(),
+  ctoIntegrationId: joi.string().optional(),
+  oltIntegrationId: joi.string().optional(),
   active: joi.boolean().optional()
 });
 

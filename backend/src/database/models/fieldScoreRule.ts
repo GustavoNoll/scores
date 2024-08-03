@@ -4,19 +4,42 @@ import sequelize from 'sequelize';
 import db from '.';
 import Olt from './olt';
 import Cto from './cto';
+import Client from './client';
+import Device from './device';
 
 class FieldScoreRule extends Model {
   declare id: number;
   declare field: string;
   declare goodThreshold: number;
-  declare mediumThreshold: number;
-  declare poorThreshold: string;
-  declare criticalThreshold: string;
-  declare progressionRate: string;
+  declare criticalThreshold: number;
+  declare functionType: string;
   declare oltId: number | null;
   declare ctoId: number | null;
   declare createdAt: Date;
   declare updatedAt: Date;
+
+  static async getFieldScoreRuleForDevice(device: Device, field: string): Promise<FieldScoreRule | null> {
+    try {
+      const client = await Client.findByPk(device.clientId);
+
+      if (!client) {
+        return null; // Cliente não encontrado
+      }
+
+      // Obter a FieldScoreRule
+      const fieldScoreRule = await FieldScoreRule.findOne({
+        where: {
+          field: field,
+          oltId: client.oltId,
+          ctoId: client.ctoId
+        }
+      });
+      return fieldScoreRule;
+    } catch (error) {
+      console.error('Error retrieving FieldScoreRule:', error);
+      return null;
+    }
+  }
 }
 
 FieldScoreRule.init({
@@ -34,20 +57,12 @@ FieldScoreRule.init({
     type: sequelize.FLOAT,
     allowNull: false,
   },
-  mediumThreshold: {
-    type: sequelize.FLOAT,
-    allowNull: false,
-  },
-  poorThreshold: {
-    type: sequelize.FLOAT,
-    allowNull: false,
-  },
   criticalThreshold: {
     type: sequelize.FLOAT,
     allowNull: false,
   },
-  progressionRate: {
-    type: sequelize.FLOAT,
+  functionType: {
+    type: sequelize.TEXT,
     allowNull: false,
   },
   oltId: {

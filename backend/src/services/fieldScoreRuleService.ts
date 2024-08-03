@@ -4,6 +4,10 @@ import schema from "./validations/fieldScoreRuleSchema";
 import respM from "../utils/respM";
 import FieldScoreRule from "../database/models/fieldScoreRule";
 import { FieldScoreRuleCreateInterface, FieldScoreRuleUpdateInterface } from "../interfaces/fieldScoreRuleInterface";
+import Device from "../database/models/device";
+import Client from "../database/models/client";
+import Olt from "../database/models/olt";
+import Cto from "../database/models/cto";
 
 
 class FieldScoreRuleService {

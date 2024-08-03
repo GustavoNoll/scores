@@ -18,20 +18,12 @@ module.exports = {
         type: Sequelize.FLOAT,
         allowNull: false,
       },
-      medium_threshold: {
-        type: Sequelize.FLOAT,
-        allowNull: false,
-      },
-      poor_threshold: {
-        type: Sequelize.FLOAT,
-        allowNull: false,
-      },
       critical_threshold: {
         type: Sequelize.FLOAT,
         allowNull: false,
       },
-      progression_rate: {
-        type: Sequelize.FLOAT,
+      function_type: {
+        type: Sequelize.STRING,
         allowNull: false,
       },
       olt_id: {

@@ -1,10 +1,8 @@
 interface FieldScoreRuleCreateInterface {
   field: string;
   goodThreshold: number;
-  mediumThreshold: number;
-  poorThreshold: number;
   criticalThreshold: number;
-  progressionRate: number;
+  functionType: string;
   oltId: number | null;
   ctoId: number | null;
 }
@@ -12,10 +10,8 @@ interface FieldScoreRuleCreateInterface {
 interface FieldScoreRuleUpdateInterface {
   field: string;
   goodThreshold?: number;
-  mediumThreshold?: number;
-  poorThreshold?: number;
   criticalThreshold?: number;
-  progressionRate?: number;
+  functionType: string;
   oltId: number | null;
   ctoId: number | null;
 }

@@ -71,6 +71,14 @@ Device.init({
   mac: {
     type: sequelize.STRING,
     allowNull: true,
+    set(value: string) {
+      if (value){
+        const formattedValue = value.toLowerCase().replace(/[^a-f0-9]/g, '').match(/.{1,2}/g)
+        if (formattedValue) {
+          this.setDataValue('mac', formattedValue.join(':'));
+        }
+      }
+    },
   },
   clientId: {
     type: sequelize.INTEGER,
