@@ -9,10 +9,10 @@ import Device from './device';
 class FieldScoreRule extends Model {
   declare id: number;
   declare field: string;
-  declare goodThreshold: number;
-  declare goodThresholdAdditional: number | null;
-  declare criticalThreshold: number;
-  declare criticalThresholdAdditional: number | null;
+  declare goodThresholdLow: number | null;
+  declare goodThresholdHigh: number | null;
+  declare criticalThresholdLow: number | null;
+  declare criticalThresholdHigh: number | null;
   declare functionType: string;
   declare oltId: number | null;
   declare ctoId: number | null;
@@ -54,19 +54,19 @@ FieldScoreRule.init({
     type: sequelize.TEXT,
     allowNull: false,
   },
-  goodThreshold: {
+  goodThresholdLow: {
     type: sequelize.FLOAT,
     allowNull: false,
   },
-  goodThresholdAdditional: {
+  goodThresholdHigh: {
     type: sequelize.FLOAT,
     allowNull: true,
   },
-  criticalThreshold: {
+  criticalThresholdLow: {
     type: sequelize.FLOAT,
     allowNull: false,
   },
-  criticalThresholdAdditional: {
+  criticalThresholdHigh: {
     type: sequelize.FLOAT,
     allowNull: true,
   },

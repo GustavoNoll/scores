@@ -1,9 +1,9 @@
 interface FieldScoreRuleCreateInterface {
   field: string;
-  goodThreshold: number;
-  criticalThreshold: number;
-  goodThresholdAdditional?: number | null;
-  criticalThresholdAdditional?: number | null;
+  goodThresholdLow: number;
+  criticalThresholdLow: number;
+  goodThresholdHigh?: number | null;
+  criticalThresholdHigh?: number | null;
   functionType: string;
   oltId: number | null;
   ctoId: number | null;
@@ -13,8 +13,8 @@ interface FieldScoreRuleUpdateInterface {
   field: string;
   goodThreshold?: number;
   criticalThreshold?: number;
-  goodThresholdAdditional?: number | null;
-  criticalThresholdAdditional?: number | null;
+  goodThresholdHigh?: number | null;
+  criticalThresholdHigh?: number | null;
   functionType: string;
   oltId: number | null;
   ctoId: number | null;

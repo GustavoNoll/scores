@@ -60,10 +60,10 @@ updated_at: Data de atualização.
 8.FieldScoreRules
 id: Identificador único.
 field: Campo avaliado (ex.: temperatura, latência).
-good_threshold: Valor a partir do qual a medida é considerada boa (score = 1).
+good_threshold_low: Valor a partir do qual a medida é considerada boa (score = 1).
 medium_threshold: Valor a partir do qual a medida é considerada média (score = 0.5).
 poor_threshold: Valor a partir do qual a medida é considerada ruim (score = 0.25).
-critical_threshold: Valor a partir do qual a medida é considerada crítica (score = 0).
+critical_threshold_low: Valor a partir do qual a medida é considerada crítica (score = 0).
 progression_rate: Taxa de progressão do score com base no valor medido (ex.: a cada X unidades acima do médio para bom, o score aumenta em Y).
 olt_id: Chave estrangeira para a tabela Olt.
 cto_id: Chave estrangeira para a tabela Cto.

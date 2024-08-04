@@ -7,36 +7,36 @@ docker exec -it scores_backend /bin/sh
 FieldScoreRules
 
 1. field: 'uptime'
-   goodThreshold: 7
-   criticalThreshold: 20
-   goodThresholdAdditional: nil,
-   criticalThresholdAdditional: nil
+   goodThresholdLow: 7
+   criticalThresholdLow: 20
+   goodThresholdHigh: nil,
+   criticalThresholdHigh: nil
    functionType: 'cubic'
 
 2. field: 'rxPower'
-   goodThreshold: -25
-   criticalThreshold: -26
-   goodThresholdAdditional: -15,
-   criticalThresholdAdditional: -14,
+   goodThresholdLow: -25
+   criticalThresholdLow: -26
+   goodThresholdHigh: -15,
+   criticalThresholdHigh: -14,
    functionType: 'linear'
 
 2. field: 'temperature'
-   goodThreshold: 60
-   criticalThreshold: 80
-   goodThresholdAdditional: null,
-   criticalThresholdAdditional: null,
+   goodThresholdLow: 60
+   criticalThresholdLow: 80
+   goodThresholdHigh: null,
+   criticalThresholdHigh: null,
    functionType: 'linear'
 
 2. field: 'wifiConnectedDevicesCount'
-   goodThreshold: 5
-   criticalThreshold: 20
-   goodThresholdAdditional: null,
-   criticalThresholdAdditional: null,
+   goodThresholdLow: 5
+   criticalThresholdLow: 20
+   goodThresholdHigh: null,
+   criticalThresholdHigh: null,
    functionType: 'quadratic'
 
 2. field: 'averageWorstRssi'
-   goodThreshold: -60
-   criticalThreshold: -90
-   goodThresholdAdditional: null,
-   criticalThresholdAdditional: null,
+   goodThresholdLow: -60
+   criticalThresholdLow: -90
+   goodThresholdHigh: null,
+   criticalThresholdHigh: null,
    functionType: 'exponential'

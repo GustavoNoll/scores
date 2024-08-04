@@ -57,8 +57,8 @@ describe('FieldScoreRule Model', () => {
   it('should return the correct FieldScoreRule', async () => {
     const fieldScoreRule = await FieldScoreRule.create({
       field: 'uptime',
-      goodThreshold: 90,
-      criticalThreshold: 80,
+      goodThresholdLow: 90,
+      criticalThresholdLow: 80,
       functionType: 'linear',
       oltId: olt.id,
       ctoId: cto.id
@@ -71,8 +71,8 @@ describe('FieldScoreRule Model', () => {
     expect(result).not.toBeNull();
     expect(result?.id).toBe(fieldScoreRule.id);
     expect(result?.field).toBe('uptime');
-    expect(result?.goodThreshold).toBe(90);
-    expect(result?.criticalThreshold).toBe(80);
+    expect(result?.goodThresholdLow).toBe(90);
+    expect(result?.criticalThresholdLow).toBe(80);
   });
 
   it('should return null when client is not found', async () => {

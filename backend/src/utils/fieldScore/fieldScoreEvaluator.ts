@@ -4,128 +4,72 @@ import FieldScoreRule from "../../database/models/fieldScoreRule";
 
 
 export function evaluateFieldScore(value: number, rule: FieldScoreRule): number | null {
-  switch (rule.functionType) {
+
+  if (rule.goodThresholdHigh !== null &&
+    rule.criticalThresholdHigh !== null &&
+    rule.goodThresholdLow !== null &&
+    rule.criticalThresholdLow !== null){ 
+      if (value >= rule.goodThresholdLow && value <= rule.goodThresholdHigh) {
+        return 1;
+      } else if (value <= rule.criticalThresholdLow || value >= rule.criticalThresholdHigh) {
+        return 0;
+      } else {
+        if (value < rule.goodThresholdLow){
+          return calculateByFunctionType(value, rule.goodThresholdLow, rule.criticalThresholdLow, rule.functionType)
+        }else if ( value > rule.goodThresholdHigh){
+          return calculateByFunctionType(value, rule.goodThresholdHigh, rule.criticalThresholdHigh, rule.functionType)
+        }
+      }
+  } else if ((rule.goodThresholdLow !== null && rule.criticalThresholdLow !== null)){
+    if (value >= rule.goodThresholdLow) {
+      return 1;
+    } else if (value <= rule.criticalThresholdLow) {
+      return 0;
+    }else{
+      return calculateByFunctionType(value, rule.goodThresholdLow, rule.criticalThresholdLow, rule.functionType)
+    }
+  } else if ((rule.goodThresholdHigh !== null && rule.criticalThresholdHigh !== null)){
+    if (value <= rule.goodThresholdHigh) {
+      return 1;
+    } else if (value >= rule.criticalThresholdHigh) {
+      return 0;
+    }else{
+      return calculateByFunctionType(value, rule.goodThresholdHigh, rule.criticalThresholdHigh, rule.functionType)
+    }
+  }
+  return null;
+}
+
+function calculateByFunctionType(value: number, thresholdLow: number, thresholdHigh: number, functionType: string): number | null {
+  switch (functionType) {
     case 'linear':
-      return evaluateLinear(value, rule);
+      return calculateLinearScore(value, thresholdLow, thresholdHigh);
     case 'cubic':
-      return evaluateCubic(value, rule);
+      return calculateCubicScore(value, thresholdLow, thresholdHigh);
     case 'quadratic':
-      return evaluateQuadratic(value, rule);
+      return calculateQuadraticScore(value, thresholdLow, thresholdHigh);
     case 'exponential':
-      return evaluateExponential(value, rule);
+      return calculateExponentialScore(value, thresholdLow, thresholdHigh);
     default:
       return null;
   }
 }
-
-function evaluateLinear(value: number, rule: FieldScoreRule): number | null {
-  if (rule.goodThresholdAdditional !== null && rule.criticalThresholdAdditional !== null) {
-    if (value >= rule.goodThreshold && value <= rule.goodThresholdAdditional) {
-      return 1;
-    } else if (value <= rule.criticalThreshold || value >= rule.criticalThresholdAdditional) {
-      return 0;
-    } else {
-      if (value < rule.goodThreshold){
-        const t = (value - rule.goodThreshold) / (rule.criticalThreshold - rule.goodThreshold);
-        return Math.max(0, 1 - t);
-      }else if ( value > rule.goodThresholdAdditional){
-        const t = (value - rule.goodThresholdAdditional) / (rule.criticalThresholdAdditional - rule.goodThresholdAdditional);
-        return Math.max(0, 1 - t);
-      }
-    } 
-  } else {
-    if (value <= rule.goodThreshold) {
-      return 1;
-    } else if (value > rule.goodThreshold && value <= rule.criticalThreshold) {
-      const t = (value - rule.goodThreshold) / (rule.criticalThreshold - rule.goodThreshold);
-      return Math.max(0, 1 - t);
-    } else {
-      return 0;
-    }
-  }
-  return null;
+function calculateLinearScore(value: number, thresholdLow: number, thresholdHigh: number): number {
+  const t = (value - thresholdLow) / (thresholdHigh - thresholdLow);
+  return Math.max(0, 1 - t);
 }
 
-function evaluateCubic(value: number, rule: FieldScoreRule): number | null{
-  if (rule.goodThresholdAdditional !== null && rule.criticalThresholdAdditional !== null) {
-    if (value >= rule.goodThreshold && value <= rule.goodThresholdAdditional) {
-      return 1;
-    } else if (value <= rule.criticalThreshold || value >= rule.criticalThresholdAdditional) {
-      return 0;
-    } else {
-      if (value < rule.goodThreshold){
-        const t = (value - rule.criticalThreshold) / (rule.goodThreshold - rule.criticalThreshold);
-        return 1 - Math.pow(t, 3);
-      }else if ( value > rule.goodThresholdAdditional){
-        const t = (value - rule.goodThresholdAdditional) / (rule.criticalThresholdAdditional - rule.goodThresholdAdditional);
-        return Math.max(0, 1 - Math.pow(t, 3));
-      }
-    }
-  } else {
-    if (value >= rule.goodThreshold) {
-      return 1;
-    } else if (value <= rule.criticalThreshold) {
-      return 0;
-    } else {
-      const t = (value - rule.criticalThreshold) / (rule.goodThreshold - rule.criticalThreshold);
-      return 1 - Math.pow(t, 3);
-    }
-  }
-  return null
+function calculateCubicScore(value: number, thresholdLow: number, thresholdHigh: number): number {
+  const t = (value - thresholdLow) / (thresholdHigh - thresholdLow);
+  return Math.max(0, 1 - Math.pow(t, 3));
 }
 
-function evaluateQuadratic(value: number, rule: FieldScoreRule): number | null {
-  if (rule.goodThresholdAdditional !== null && rule.criticalThresholdAdditional !== null) {
-    if (value >= rule.goodThreshold && value <= rule.goodThresholdAdditional) {
-      return 1;
-    } else if (value <= rule.criticalThreshold || value >= rule.criticalThresholdAdditional) {
-      return 0;
-    } else {
-      if (value < rule.goodThreshold){
-        const t = (value - rule.goodThreshold) / (rule.criticalThreshold - rule.goodThreshold);
-        return Math.max(0, 1 - Math.pow(t, 2));
-      }else if ( value > rule.goodThresholdAdditional){
-        const t = (value - rule.goodThresholdAdditional) / (rule.criticalThresholdAdditional - rule.goodThresholdAdditional);
-        return Math.max(0, 1 - Math.pow(t, 2));
-      }
-    }
-  } else {
-    if (value >= rule.goodThreshold) {
-      return 1;
-    } else if (value <= rule.criticalThreshold) {
-      return 0;
-    } else {
-      const t = (value - rule.goodThreshold) / (rule.criticalThreshold - rule.goodThreshold);
-      return Math.max(0, 1 - Math.pow(t, 2));
-    }
-  }
-  return null;
+function calculateQuadraticScore(value: number, thresholdLow: number, thresholdHigh: number): number {
+  const t = (value - thresholdLow) / (thresholdHigh - thresholdLow);
+  return Math.max(0, 1 - Math.pow(t, 2));
 }
 
-function evaluateExponential(value: number, rule: FieldScoreRule): number | null {
-  if (rule.goodThresholdAdditional !== null && rule.criticalThresholdAdditional !== null) {
-    if (value >= rule.goodThreshold && value <= rule.goodThresholdAdditional) {
-      return 1;
-    } else if (value <= rule.criticalThreshold || value >= rule.criticalThresholdAdditional) {
-      return 0;
-    } else {
-      if (value < rule.goodThreshold) {
-        const t = (value - rule.goodThreshold) / (rule.criticalThreshold - rule.goodThreshold);
-        return Math.max(0, Math.min(1, Math.exp(-10 * t)));
-      } else if (value > rule.goodThresholdAdditional) {
-        const t = (value - rule.goodThresholdAdditional) / (rule.criticalThresholdAdditional - rule.goodThresholdAdditional);
-        return Math.max(0, Math.min(1, Math.exp(-10 * t)));
-      }
-    }
-  } else {
-    if (value >= rule.goodThreshold) {
-      return 1;
-    } else if (value <= rule.criticalThreshold) {
-      return 0;
-    } else {
-      const t = (value - rule.criticalThreshold) / (rule.goodThreshold - rule.criticalThreshold);
-      return Math.max(0, 1 - Math.exp(-0.1 * t));
-    }
-  }
-  return null;
+function calculateExponentialScore(value: number, thresholdLow: number, thresholdHigh: number): number {
+  const t = (value - thresholdLow) / (thresholdHigh - thresholdLow);
+  return Math.max(0, Math.min(1, Math.exp(-10 * t)));
 }
