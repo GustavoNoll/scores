@@ -1,14 +1,15 @@
-import Joi from "joi";
+import Joi, { custom } from "joi";
 import { SCORE_FIELDS } from '../../constants/fieldConstants';
 import { ALLOWED_FUNCTIONS_TYPES } from "../../constants/functionTypeConstants";
 
+
 const create = Joi.object({
   field: Joi.string().valid(...SCORE_FIELDS).required(),
-  goodThresholdLow: Joi.number().optional(),
-  criticalThresholdLow: Joi.number().optional(),
+  goodThresholdLow: Joi.number().allow(null).required(),
+  criticalThresholdLow: Joi.number().allow(null).required(),
   functionType: Joi.string().valid(...ALLOWED_FUNCTIONS_TYPES).required(),
-  goodThresholdHigh: Joi.number().optional(),
-  criticalThresholdHigh: Joi.number().optional(),
+  goodThresholdHigh: Joi.number().allow(null).required(),
+  criticalThresholdHigh: Joi.number().allow(null).required(),
   oltId: Joi.number().allow(null).required(),
   ctoId: Joi.number().allow(null).required(),
 })
@@ -21,14 +22,44 @@ const create = Joi.object({
     } = value;
 
     if (
-      (goodThresholdLow !== undefined && criticalThresholdLow !== undefined && criticalThresholdLow >= goodThresholdLow) ||
-      (goodThresholdHigh !== undefined && goodThresholdLow !== undefined && goodThresholdLow >= goodThresholdHigh) ||
-      (criticalThresholdHigh !== undefined && goodThresholdHigh !== undefined && goodThresholdHigh >= criticalThresholdHigh)
+      (goodThresholdLow !== null && criticalThresholdLow !== null && criticalThresholdLow >= goodThresholdLow) ||
+      (goodThresholdHigh !== null && goodThresholdLow !== null && goodThresholdLow >= goodThresholdHigh) ||
+      (criticalThresholdHigh !== null && goodThresholdHigh !== null && goodThresholdHigh >= criticalThresholdHigh)
     ) {
-      return helpers.error('any.invalid');
+      return helpers.message({custom: 'Wrong threshold order'});
     }
 
     return value;
-  }, 'Threshold Order Validation');
+  }, 'Threshold Order Validation')
+  .custom((value, helpers) => {
+    const {
+      goodThresholdLow,
+      criticalThresholdLow,
+    } = value;
+
+    if (
+      (goodThresholdLow !== null && criticalThresholdLow === null
+        || goodThresholdLow === null && criticalThresholdLow !== null
+      )
+    ) {
+      return helpers.message({custom: 'Missing a threshold'});
+    }
+    return value;
+  }, 'Threshold Missing Validation')
+  .custom((value, helpers) => {
+    const {
+      goodThresholdHigh,
+      criticalThresholdHigh,
+    } = value;
+
+    if (
+      (goodThresholdHigh !== null && criticalThresholdHigh === null
+        || goodThresholdHigh === null && criticalThresholdHigh !== null
+      )
+    ) {
+      return helpers.message({custom: 'Missing a threshold'});
+    }
+    return value;
+  }, 'Threshold Missing Validation');
 
 export = { create };

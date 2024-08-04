@@ -30,6 +30,8 @@ describe('FieldScoreRuleService', () => {
       field: 'cpuUsage',
       goodThresholdLow: 80,
       criticalThresholdLow: 10,
+      goodThresholdHigh: null,
+      criticalThresholdHigh: null,
       functionType: 'linear',
       oltId: olt.id,
       ctoId: cto.id
@@ -48,6 +50,8 @@ describe('FieldScoreRuleService', () => {
       field: 'cpuUsage',
       goodThresholdLow: 80,
       criticalThresholdLow: 10,
+      goodThresholdHigh: null,
+      criticalThresholdHigh: null,
       oltId: null,
       ctoId: null,
       functionType: 'quadratic',
@@ -66,6 +70,8 @@ describe('FieldScoreRuleService', () => {
       field: 'memoryUsage',
       goodThresholdLow: 75,
       criticalThresholdLow: 5,
+      goodThresholdHigh: null,
+      criticalThresholdHigh: null,
       functionType: 'quadratic',
       oltId: olt.id,
       ctoId: cto.id
@@ -84,6 +90,8 @@ describe('FieldScoreRuleService', () => {
       field: 'memoryUsage',
       goodThresholdLow: 80,
       criticalThresholdLow: 10,
+      goodThresholdHigh: null,
+      criticalThresholdHigh: null,
       functionType: 'cubic',
       oltId: olt.id,
       ctoId: cto.id
@@ -112,6 +120,8 @@ describe('FieldScoreRuleService', () => {
       field: 'memoryUsage',
       goodThresholdLow: 80,
       criticalThresholdLow: 10,
+      goodThresholdHigh: null,
+      criticalThresholdHigh: null,
       functionType: 'linear',
       oltId: olt.id,
       ctoId: null
@@ -145,6 +155,63 @@ describe('FieldScoreRuleService', () => {
     expect(response.message).toEqual({
       "message": "\"field\" must be one of [uptime, txPower, cpuUsage, memoryUsage, rxPower, temperature, totalConnectedDevices, connectedDevices5GPer2G, autoChannel, averageWorstRssi]"
   })
+  });
+
+  it('should return a validation error critical > good', async () => {
+    const invalidData = {
+      field: 'temperature',
+      goodThresholdLow: 1,
+      criticalThresholdLow: 5,
+      goodThresholdHigh: null,
+      criticalThresholdHigh: null,
+      functionType: 'linear',
+      oltId: olt.id,
+      ctoId: cto.id
+    };
+
+    const response = await fieldScoreRuleService.create(invalidData as any);
+    expect(response.status).toBe(422);
+    expect(response.message).toEqual({
+      "message": "Wrong threshold order"
+    })
+  });
+
+  it('should return a validation error criticalHigh < goodHigh', async () => {
+    const invalidData = {
+      field: 'temperature',
+      goodThresholdHigh: 5,
+      criticalThresholdHigh: 1,
+      goodThresholdLow: null,
+      criticalThresholdLow: null,
+      functionType: 'linear',
+      oltId: olt.id,
+      ctoId: cto.id
+    };
+
+    const response = await fieldScoreRuleService.create(invalidData as any);
+    expect(response.status).toBe(422);
+    expect(response.message).toEqual({
+      "message": "Wrong threshold order"
+    })
+  });
+
+  it('should return a validation error criticalHigh missing', async () => {
+    const invalidData = {
+      field: 'temperature',
+      goodThresholdHigh: 5,
+      goodThresholdLow: null,
+      criticalThresholdLow: null,
+      criticalThresholdHigh: null,
+      functionType: 'linear',
+      oltId: olt.id,
+      ctoId: cto.id
+    };
+
+    const response = await fieldScoreRuleService.create(invalidData as any);
+    expect(response.status).toBe(422);
+    expect(response.message).toEqual({
+      "message": "Missing a threshold"
+    })
   });
 
   it('should retrieve all field score rules', async () => {
