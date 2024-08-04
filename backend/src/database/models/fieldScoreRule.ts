@@ -2,8 +2,7 @@
 import { Model } from 'sequelize';
 import sequelize from 'sequelize';
 import db from '.';
-import Olt from './olt';
-import Cto from './cto';
+
 import Client from './client';
 import Device from './device';
 
@@ -11,7 +10,9 @@ class FieldScoreRule extends Model {
   declare id: number;
   declare field: string;
   declare goodThreshold: number;
+  declare goodThresholdAdditional: number | null;
   declare criticalThreshold: number;
+  declare criticalThresholdAdditional: number | null;
   declare functionType: string;
   declare oltId: number | null;
   declare ctoId: number | null;
@@ -57,9 +58,17 @@ FieldScoreRule.init({
     type: sequelize.FLOAT,
     allowNull: false,
   },
+  goodThresholdAdditional: {
+    type: sequelize.FLOAT,
+    allowNull: true,
+  },
   criticalThreshold: {
     type: sequelize.FLOAT,
     allowNull: false,
+  },
+  criticalThresholdAdditional: {
+    type: sequelize.FLOAT,
+    allowNull: true,
   },
   functionType: {
     type: sequelize.TEXT,

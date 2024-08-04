@@ -7,6 +7,8 @@ const create = Joi.object({
   goodThreshold: Joi.number().required(),
   criticalThreshold: Joi.number().required(),
   functionType: Joi.string().valid(...ALLOWED_FUNCTIONS_TYPES).required(),
+  goodThresholdAdditional: Joi.number().optional(),
+  criticalThresholdAdditional: Joi.number().optional(),
   oltId: Joi.number().allow(null).required(),
   ctoId: Joi.number().allow(null).required(),
 });

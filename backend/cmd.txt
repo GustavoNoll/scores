@@ -1,3 +1,42 @@
 npx sequelize db:migrate
 
 docker exec -it scores_backend /bin/sh
+
+
+
+FieldScoreRules
+
+1. field: 'uptime'
+   goodThreshold: 7
+   criticalThreshold: 20
+   goodThresholdAdditional: nil,
+   criticalThresholdAdditional: nil
+   functionType: 'cubic'
+
+2. field: 'rxPower'
+   goodThreshold: -25
+   criticalThreshold: -26
+   goodThresholdAdditional: -15,
+   criticalThresholdAdditional: -14,
+   functionType: 'linear'
+
+2. field: 'temperature'
+   goodThreshold: 60
+   criticalThreshold: 80
+   goodThresholdAdditional: null,
+   criticalThresholdAdditional: null,
+   functionType: 'linear'
+
+2. field: 'wifiConnectedDevicesCount'
+   goodThreshold: 5
+   criticalThreshold: 20
+   goodThresholdAdditional: null,
+   criticalThresholdAdditional: null,
+   functionType: 'quadratic'
+
+2. field: 'averageWorstRssi'
+   goodThreshold: -60
+   criticalThreshold: -90
+   goodThresholdAdditional: null,
+   criticalThresholdAdditional: null,
+   functionType: 'exponential'

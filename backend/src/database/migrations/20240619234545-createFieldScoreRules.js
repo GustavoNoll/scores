@@ -18,9 +18,17 @@ module.exports = {
         type: Sequelize.FLOAT,
         allowNull: false,
       },
+      good_threshold_additional: {
+        type: Sequelize.FLOAT,
+        allowNull: true,
+      },
       critical_threshold: {
         type: Sequelize.FLOAT,
         allowNull: false,
+      },
+      critical_threshold_additional: {
+        type: Sequelize.FLOAT,
+        allowNull: true,
       },
       function_type: {
         type: Sequelize.STRING,
