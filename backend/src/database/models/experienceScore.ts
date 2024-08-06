@@ -14,7 +14,7 @@ class ExperienceScore extends Model {
   declare connectedDevices: number;
   declare rssi: number;
   declare autoChannel: number;
-  declare connectedDevices5GPer2G: number;
+  declare highLowBandwidthRatio: number;
   declare oltId: number | null;
   declare ctoId: number | null;
   declare createdAt: Date;
@@ -23,6 +23,12 @@ class ExperienceScore extends Model {
 }
 
 ExperienceScore.init({
+  id: {
+    type: sequelize.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+    allowNull: false,
+  },
   uptime: {
     type: sequelize.FLOAT,
     validate: { min: 0, max: 1 }
@@ -59,7 +65,7 @@ ExperienceScore.init({
     type: sequelize.FLOAT,
     validate: { min: 0, max: 1 }
   },
-  connectedDevices5GPer2G: {
+  highLowBandwidthRatio: {
     type: sequelize.FLOAT,
     validate: { min: 0, max: 1 }
   },
@@ -109,9 +115,9 @@ ExperienceScore.init({
                     instance.connectedDevices +
                     instance.rssi +
                     instance.autoChannel +
-                    instance.connectedDevices5GPer2G;
-
-      if (total !== 1) {
+                    instance.highLowBandwidthRatio;
+      const epsilon = 1e-6;
+      if (Math.abs(total - 1) > epsilon) {
         throw new Error('The sum of all fields must be equal to 1');
       }
     }

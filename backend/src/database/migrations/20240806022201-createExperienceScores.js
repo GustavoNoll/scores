@@ -45,7 +45,7 @@ module.exports = {
         type: Sequelize.FLOAT,
         validate: { min: 0, max: 1 }
       },
-      connected_devices_5G_per_2G: {
+      high_low_bandwidth_ratio: {
         type: Sequelize.FLOAT,
         validate: { min: 0, max: 1 }
       },
