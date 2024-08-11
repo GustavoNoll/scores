@@ -31,5 +31,25 @@ class ClientController {
       next(error);
     }
   }
+
+  async weekScores(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { integrationId } = req.params;
+      const { status, message } = await this.service.weekScores(integrationId, req.query);
+      res.status(status).json(message);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async mapScores(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { status, message } = await this.service.mapLatestScores();
+      res.status(status).json(message);
+    } catch (error) {
+      next(error);
+    }
+  }
+
 }
 export default ClientController

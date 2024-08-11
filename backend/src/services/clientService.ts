@@ -7,6 +7,10 @@ import respM from "../utils/respM";
 import Olt from "../database/models/olt";
 import Cto from "../database/models/cto";
 import { UniqueConstraintError } from 'sequelize';
+import { WeeklyParams, WeeklyScoreResult } from "../interfaces/searchInteface";
+import { startOfWeek, endOfWeek, subMonths, eachWeekOfInterval, format } from 'date-fns';
+import { Op } from 'sequelize';
+import FieldScore from "../database/models/fieldScore";
 
 class ClientService {
   private model: ModelStatic<Client> = Client;
@@ -86,6 +90,77 @@ class ClientService {
             return respM(409, 'A client with the provided integration ID already exists.');
         }
         return resp(500, { message: 'Error updating Client', error });
+    }
+  }
+
+  async weekScores(integrationId: string, params: Partial<WeeklyParams>){
+    try {
+      console.log(params.months)
+      const months = params.months || 1;
+      const endDate = new Date();
+      const startDate = subMonths(endDate, months);
+      const weekIntervals = eachWeekOfInterval({ start: startOfWeek(startDate), end: endOfWeek(endDate) });
+
+      const weekRanges = weekIntervals.map(weekStart => ({
+        start: format(weekStart, 'yyyy-MM-dd'),
+        end: format(endOfWeek(weekStart), 'yyyy-MM-dd'),
+      }));
+      const client = await Client.findOne({ where: { integrationId: integrationId}})
+      if (!client) return resp(500, { message: 'Client not found' });
+
+      const scores = await Promise.all(weekRanges.map(async (week) => {
+        const weeklyScores = await FieldScore.findAll({
+          where: {
+            clientId: client.id,
+            field: 'general',
+            createdAt: {
+              [Op.between]: [week.start, week.end]
+            }
+          },
+          attributes: [[Sequelize.fn('AVG', Sequelize.col('value')), 'averageScore']],
+          raw: true
+        }) as unknown as WeeklyScoreResult[];
+
+        console.log(weeklyScores)
+        return {
+          weekStart: week.start,
+          weekEnd: week.end,
+          averageScore: weeklyScores[0].averageScore
+        };
+      }));
+      return resp(200, scores);
+    } catch (error) {
+      return resp(500, { message: 'Error retrieving weekly scores', error });
+    }
+
+  }
+
+  async mapLatestScores() {
+    try {
+      const results = await this.model.findAll({
+        attributes: [
+          'id',
+          'latitude',
+          'longitude',
+          [
+            Sequelize.literal(`
+              (
+                SELECT "value"
+                FROM "field_scores"
+                WHERE "field_scores"."client_id" = "Client"."id"
+                ORDER BY "field_scores"."created_at" DESC
+                LIMIT 1
+              )
+            `), 
+            'score'
+          ]
+        ],
+        raw: true,
+      });
+
+      return resp(200, results);
+    } catch (error) {
+      return resp(500, { message: 'Error retrieving latest scores', error });
     }
   }
 }

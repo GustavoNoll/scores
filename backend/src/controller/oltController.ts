@@ -31,5 +31,14 @@ class OltController {
       next(error);
     }
   }
+
+  async averageScore(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { status, message } = await this.service.getAverageScores();
+      res.status(status).json(message);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 export default OltController

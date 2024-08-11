@@ -1,23 +1,33 @@
-// models/deviceScore.ts
+// models/FieldScore.ts
 import { Model } from 'sequelize';
 import db from '.';
 import sequelize from 'sequelize';
 
-class DeviceScore extends Model {
+class FieldScore extends Model {
   declare id: number;
   declare deviceId: number;
+  declare clientId: number;
   declare field: string;
   declare value: number;
   declare createdAt: Date;
   declare updatedAt: Date;
 }
 
-DeviceScore.init({
+FieldScore.init({
   id: {
     type: sequelize.INTEGER,
     primaryKey: true,
     autoIncrement: true,
     allowNull: false,
+  },
+  clientId: {
+    type: sequelize.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'clients',
+      key: 'id',
+    },
+    onDelete: 'CASCADE',
   },
   deviceId: {
     type: sequelize.INTEGER,
@@ -48,10 +58,10 @@ DeviceScore.init({
   },
 }, {
   sequelize: db,
-  tableName: 'device_scores',
+  tableName: 'field_scores',
   timestamps: true,
   underscored: true,
 });
 
 
-export default DeviceScore;
+export default FieldScore;

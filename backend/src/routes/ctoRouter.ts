@@ -5,6 +5,7 @@ import CtoController from "../controller/ctoController";
 const ctoRouter = Router()
 const control = new CtoController()
 
+ctoRouter.get('/ctos/averageScore', control.averageScore.bind(control))
 ctoRouter.get('/ctos', control.get.bind(control))
 ctoRouter.get('/ctos/:integrationId', control.get.bind(control))
 

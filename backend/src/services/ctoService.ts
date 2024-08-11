@@ -1,4 +1,4 @@
-import { ModelStatic, UniqueConstraintError } from "sequelize";
+import { ModelStatic, Sequelize, UniqueConstraintError } from "sequelize";
 import resp from "../utils/resp";
 import schema from "./validations/ctoSchema";
 import respM from "../utils/respM";
@@ -48,6 +48,42 @@ class CtoService {
         return respM(409, 'A CTO with the provided integration ID already exists.');
       }
       return resp(500, { message: 'Error updating CTO', error });
+    }
+  }
+
+  async getAverageScores() {
+    try {
+      const results = await this.model.findAll({
+        attributes: [
+          'id',
+          'description',
+          'latitude',
+          'longitude',
+          [
+            Sequelize.literal(`
+              (
+                SELECT AVG(subquery."average_score")
+                FROM (
+                  SELECT AVG("value") AS "average_score"
+                  FROM "field_scores"
+                  WHERE "field_scores"."client_id" IN (
+                    SELECT "id"
+                    FROM "clients"
+                    WHERE "clients"."cto_id" = "Cto"."id"
+                  )
+                  GROUP BY "field_scores"."client_id"
+                ) AS subquery
+              )
+            `),
+            'average_score'
+          ]
+        ],
+        raw: true
+      });
+
+      return resp(200, results);
+    } catch (error) {
+      return resp(500, { message: 'Error retrieving average scores by CTO', error });
     }
   }
 }

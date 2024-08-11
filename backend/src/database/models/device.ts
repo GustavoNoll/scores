@@ -2,7 +2,7 @@
 import { Model } from 'sequelize';
 import sequelize from 'sequelize';
 import db from '.';
-import DeviceScore from './deviceScore';
+import FieldScore from './fieldScore';
 import FieldMeasure from './fieldMeasure';
 import AcsInform from './acsInform';
 
@@ -105,11 +105,11 @@ Device.init({
   underscored: true,
 });
 
-Device.hasMany(DeviceScore, {
+Device.hasMany(FieldScore, {
   as: 'device_scores',
   foreignKey: 'deviceId'
 });
-DeviceScore.belongsTo(Device);
+FieldScore.belongsTo(Device);
 
 Device.hasMany(FieldMeasure, {
   as: 'field_measures',

@@ -1,4 +1,4 @@
-import { ModelStatic, UniqueConstraintError } from "sequelize";
+import { ModelStatic, Sequelize, UniqueConstraintError } from "sequelize";
 import resp from "../utils/resp";
 import schema from "./validations/oltSchema";
 import respM from "../utils/respM";
@@ -49,6 +49,41 @@ class OltService {
         return respM(409, 'An OLT with the provided integration ID already exists.');
       }
       return resp(500, { message: 'Error updating OLT', error });
+    }
+  }
+  async getAverageScores() {
+    try {
+      const results = await this.model.findAll({
+        attributes: [
+          'id',
+          'description',
+          'latitude',
+          'longitude',
+          [
+            Sequelize.literal(`
+              (
+                SELECT AVG(subquery."average_score")
+                FROM (
+                  SELECT AVG("value") AS "average_score"
+                  FROM "field_scores"
+                  WHERE "field_scores"."client_id" IN (
+                    SELECT "id"
+                    FROM "clients"
+                    WHERE "clients"."olt_id" = "Olt"."id"
+                  )
+                  GROUP BY "field_scores"."client_id"
+                ) AS subquery
+              )
+            `),
+            'average_score'
+          ]
+        ],
+        raw: true
+      });
+
+      return resp(200, results);
+    } catch (error) {
+      return resp(500, { message: 'Error retrieving average scores by OLT', error });
     }
   }
 }

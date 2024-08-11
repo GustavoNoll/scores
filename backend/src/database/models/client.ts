@@ -2,11 +2,6 @@
 import { Model } from 'sequelize';
 import sequelize from 'sequelize';
 import db from '.';
-import FieldMeasure from './fieldMeasure';
-import DeviceScore from './deviceScore';
-import Device from './device';
-import Cto from './cto';
-import Olt from './olt';
 
 
 
@@ -27,7 +22,7 @@ class Client extends Model {
   declare updatedAt: Date;
 
   static associate(models: any) {
-    Client.hasMany(models.DeviceScore, { as: 'device_scores', foreignKey: 'clientId' });
+    Client.hasMany(models.FieldScore, { as: 'device_scores', foreignKey: 'clientId' });
     Client.hasMany(models.FieldMeasure, { as: 'field_measures', foreignKey: 'clientId' });
     Client.hasOne(models.Device, { as: 'device', foreignKey: 'clientId' });
     Client.belongsTo(models.Cto, { as: 'cto', foreignKey: 'ctoId' });
