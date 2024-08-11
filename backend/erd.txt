@@ -41,7 +41,7 @@ device_tag: Tag do dispositivo.
 json_data: Dados JSON recebidos do ACS.
 created_at: Data de criação.
 updated_at: Data de atualização.
-6. DeviceScores
+6. FieldScores
 id: Identificador único.
 client_id: Chave estrangeira para a tabela Client.
 device_id: Chave estrangeira para a tabela Device.
