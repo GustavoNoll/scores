@@ -2,9 +2,7 @@
 import { Model } from 'sequelize';
 import sequelize from 'sequelize';
 import db from '.';
-import FieldScore from './fieldScore';
-import FieldMeasure from './fieldMeasure';
-import AcsInform from './acsInform';
+import Client from './client';
 
 
 class Device extends Model {
@@ -22,6 +20,8 @@ class Device extends Model {
   declare clientId: number;
   declare createdAt: Date;
   declare updatedAt: Date;
+
+
 }
 
 Device.init({
@@ -101,28 +101,12 @@ Device.init({
 }, {
   sequelize: db,
   tableName: 'devices',
+  modelName: 'Device',
   timestamps: true,
   underscored: true,
 });
 
-Device.hasMany(FieldScore, {
-  as: 'device_scores',
-  foreignKey: 'deviceId'
-});
-FieldScore.belongsTo(Device);
-
-Device.hasMany(FieldMeasure, {
-  as: 'field_measures',
-  foreignKey: 'deviceId'
-});
-FieldMeasure.belongsTo(Device);
-
-Device.hasMany(AcsInform, {
-  as: 'acs_informs',
-  foreignKey: 'deviceTag'
-});
-AcsInform.belongsTo(Device, {
-  foreignKey: 'deviceTag',
-});
-
+setTimeout(() => {
+  Device.belongsTo(Client, {as: 'client'});;
+}, 0);
 export default Device;
