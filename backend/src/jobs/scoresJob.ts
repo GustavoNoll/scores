@@ -23,9 +23,9 @@ export async function processScores() {
     const twelveHoursAgo = new Date(now.getTime() - 12 * 60 * 60 * 1000);
 
     for (const client of clients) {
-      console.log(client)
+      //console.log(client.integrationId)
       const device = (client as any).device;
-      console.log(device)
+      //console.log(device.deviceTag)
 
       if (!device) continue;
 
@@ -33,6 +33,7 @@ export async function processScores() {
       const recentScore = await FieldScore.findOne({
         where: {
           deviceId: device.id,
+          field: 'general',
           createdAt: {
             [Op.gt]: twelveHoursAgo
           }
@@ -42,11 +43,13 @@ export async function processScores() {
       if (!recentScore) {
         // Se não tiver um score recente, calcular e salvar
         const score = await calculateScore(device); // Implementar essa função
-        await FieldScore.create({
-          deviceId: device.id,
-          score,  // Valor calculado
-          createdAt: now
-        });
+        if (score){
+          console.log(`generated score for client ${client.integrationId}`)
+        }else{
+          console.log('error generating score')
+        }
+      }else{
+        console.log(`client ${client.integrationId} had a score in the last 12 hours`)
       }
     }
 

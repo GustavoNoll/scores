@@ -106,7 +106,9 @@ Device.init({
   underscored: true,
 });
 
-setTimeout(() => {
-  Device.belongsTo(Client, {as: 'client'});;
-}, 0);
+if (process.env.NODE_ENV !== 'test'){
+  setTimeout(() => {
+    Device.belongsTo(Client, {as: 'client'});
+  }, 0);
+}
 export default Device;

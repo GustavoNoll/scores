@@ -7,7 +7,7 @@
     "start": "NODE_PATH=./build node build/index.js",
     "build": "tsc -p .",
     "dev": "ts-node-dev .",
-    "pretest": "NODE_ENV=test npx sequelize db:migrate:undo:all; NODE_ENV=test npx sequelize db:migrate",
+    "pretest": "NODE_ENV=test npx sequelize db:create; NODE_ENV=test npx sequelize db:migrate:undo:all; NODE_ENV=test npx sequelize db:migrate",
     "test": "NODE_ENV=test jest --detectOpenHandles",
     "posttest": "NODE_ENV=test npx sequelize db:migrate:undo:all"
   },
