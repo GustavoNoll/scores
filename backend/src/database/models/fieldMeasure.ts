@@ -11,6 +11,23 @@ class FieldMeasure extends Model {
   declare value: number;
   declare createdAt: Date;
   declare updatedAt: Date;
+
+  static groupMeasuresByDay(measures: Array<{ value: number, createdAt: Date }>): Map<string, number[]> {
+    const measuresByDay = new Map<string, number[]>();
+
+    measures.forEach(measure => {
+      const measureDate = new Date(measure.createdAt).toISOString().split('T')[0];  // Group by date (YYYY-MM-DD)
+
+      if (measure.value !== null) {
+        if (!measuresByDay.has(measureDate)) {
+          measuresByDay.set(measureDate, []);
+        }
+        measuresByDay.get(measureDate)?.push(measure.value);
+      }
+    });
+
+    return measuresByDay;
+  }
 }
 
 FieldMeasure.init({

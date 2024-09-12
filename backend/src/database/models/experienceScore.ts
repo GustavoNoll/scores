@@ -2,6 +2,7 @@
 import { Model } from 'sequelize';
 import sequelize from 'sequelize';
 import db from '.';
+import Client from './client';
 
 class ExperienceScore extends Model {
   declare id: number;
@@ -20,6 +21,14 @@ class ExperienceScore extends Model {
   declare createdAt: Date;
   declare updatedAt: Date;
 
+  static async getByClient(client: Client): Promise<ExperienceScore | null> {
+    return ExperienceScore.findOne({
+      where: {
+        oltId: client.oltId,
+        ctoId: client.ctoId
+      }
+    });
+  }
 }
 
 ExperienceScore.init({

@@ -1,10 +1,11 @@
-import { ModelStatic } from "sequelize";
+import { ModelStatic, Op } from "sequelize";
 import FieldMeasure from "../database/models/fieldMeasure";
 import { ConnectedDevices, TranslateFields, WifiNetworks } from "../utils/dataModelTypes";
 import Device from "../database/models/device";
 import AcsInform from "../database/models/acsInform";
 import translateModel from "../utils/translateModel";
 import { FIELD_AUTO_CHANNEL_2G, FIELD_AUTO_CHANNEL_5G, FIELD_AVERAGE_WORST_RSSI, FIELD_CONNECTED_DEVICES_2G, FIELD_CONNECTED_DEVICES_5G, FIELD_CPU_USAGE, FIELD_MEMORY_USAGE, FIELD_TOTAL_CONNECTED_DEVICES } from "../constants/fieldConstants";
+import { FieldMeasuresGrouped } from "../interfaces/fieldMeasureInterface";
 
 const NUM_WORST_RSSI_VALUES = 3;
 
@@ -137,6 +138,44 @@ class FieldMeasureService {
 
     return await this.model.bulkCreate(fieldMeasures);
   }
+
+  async getFieldMeasuresLast7Days(device: Device): Promise<FieldMeasuresGrouped> {
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+    const fieldMeasures = await FieldMeasure.findAll({
+      where: {
+        deviceId: device.id,
+        clientId: device.clientId,
+        field: {
+          [Op.ne]: 'general'
+        },
+        createdAt: {
+          [Op.gte]: sevenDaysAgo
+        }
+      },
+      attributes: ['field', 'value', 'createdAt'],
+      order: [['field', 'ASC'], ['createdAt', 'DESC']]
+    });
+
+    const groupedMeasures: { [key: string]: { value: number; createdAt: Date }[] } = {};
+
+    fieldMeasures.forEach(measure => {
+      const field = measure.field;
+
+      if (!groupedMeasures[field]) {
+        groupedMeasures[field] = [];
+      }
+
+      groupedMeasures[field].push({
+        value: measure.value,
+        createdAt: measure.createdAt,
+      });
+    });
+
+    return groupedMeasures;
+  }
+
 }
 
 export default FieldMeasureService;

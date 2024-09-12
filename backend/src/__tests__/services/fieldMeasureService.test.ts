@@ -138,15 +138,15 @@ describe('FieldMeasureService', () => {
     const fieldMeasures = await FieldMeasure.findAll({ where: { deviceId: device.id } });
     expect(fieldMeasures.length).toBe(26);
 
-    const totalConnectedDevices = await FieldMeasure.findOne({ 
+    const totalConnectedDevices = await FieldMeasure.findOne({
       where: { deviceId: device.id, field: 'totalConnectedDevices' }, order: [['createdAt', 'DESC']], });
     expect(totalConnectedDevices?.value).toBe(3);
 
-    const connectedDevices2G = await FieldMeasure.findOne({ 
+    const connectedDevices2G = await FieldMeasure.findOne({
       where: { deviceId: device.id, field: 'connectedDevices2G' }, order: [['createdAt', 'DESC']], });
     expect(connectedDevices2G?.value).toBe(2);
 
-    const connectedDevices5G = await FieldMeasure.findOne({ 
+    const connectedDevices5G = await FieldMeasure.findOne({
       where: { deviceId: device.id, field: 'connectedDevices5G' }, order: [['createdAt', 'DESC']],});
     expect(connectedDevices5G?.value).toBe(1);
 
@@ -158,5 +158,45 @@ describe('FieldMeasureService', () => {
 
     const averageWorstRssi = await FieldMeasure.findOne({ where: { deviceId: device.id, field: 'averageWorstRssi' }, order: [['createdAt', 'DESC']], });
     expect(averageWorstRssi?.value).toBeCloseTo(-50);
+  });
+
+  it('should handle a device with field measures from different fields', async () => {
+
+    device = await Device.create({
+      clientId: 1,
+      deviceTag: 'device1245',
+      manufacturer: 'ZTE',
+      oui: '123',
+      productClass: 'aa',
+      modelName: 'aaa',
+      hardwareVersion: '123',
+      softwareVersion: '123'
+    });
+    const fieldMeasureService = new FieldMeasureService();
+
+    const fieldMeasures = [
+      { deviceId: device.id, clientId: device.clientId, field: 'cpuUsage', value: 0.5, createdAt: new Date(), updatedAt: new Date() },
+      { deviceId: device.id, clientId: device.clientId, field: 'cpuUsage', value: 0.1, createdAt: new Date(), updatedAt: new Date() },
+      { deviceId: device.id, clientId: device.clientId, field: 'memoryUsage', value: 0.7, createdAt: new Date(), updatedAt: new Date() },
+      { deviceId: device.id, clientId: device.clientId, field: 'rxPower', value: -20, createdAt: new Date(), updatedAt: new Date() },
+      { deviceId: device.id, clientId: device.clientId, field: 'temperature', value: 50, createdAt: new Date(), updatedAt: new Date() },
+      { deviceId: device.id, clientId: device.clientId, field: 'txPower', value: 3, createdAt: new Date(), updatedAt: new Date() },
+      { deviceId: device.id, clientId: device.clientId, field: 'uptime', value: 30000, createdAt: new Date(), updatedAt: new Date() },
+      { deviceId: device.id, clientId: device.clientId, field: 'voltage', value: 3200, createdAt: new Date(), updatedAt: new Date() },
+    ];
+
+    await FieldMeasure.bulkCreate(fieldMeasures);
+
+    const result = await fieldMeasureService.getFieldMeasuresLast7Days(device);
+
+    expect(Object.keys(result)).toEqual(['cpuUsage', 'memoryUsage', 'rxPower', 'temperature', 'txPower', 'uptime', 'voltage']);
+
+    expect(result.cpuUsage[0].value).toBe(0.5);
+    expect(result.memoryUsage[0].value).toBe(0.7);
+    expect(result.rxPower[0].value).toBe(-20);
+    expect(result.temperature[0].value).toBe(50);
+    expect(result.txPower[0].value).toBe(3);
+    expect(result.uptime[0].value).toBe(30000);
+    expect(result.voltage[0].value).toBe(3200);
   });
 });

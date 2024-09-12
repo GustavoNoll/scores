@@ -3,6 +3,9 @@ import Device from "../database/models/device";
 import Client from "../database/models/client";
 import FieldScore from "../database/models/fieldScore";
 import { Op } from "sequelize";
+import FieldMeasureService from "../services/fieldMeasureService";
+import ExperienceScore from "../database/models/experienceScore";
+import FieldMeasure from "../database/models/fieldMeasure";
 
 export async function processScores() {
   try {
@@ -42,7 +45,7 @@ export async function processScores() {
 
       if (!recentScore) {
         // Se não tiver um score recente, calcular e salvar
-        const score = await calculateScore(device); // Implementar essa função
+        const score = await calculateScore(device, client);
         if (score){
           console.log(`generated score for client ${client.integrationId}`)
         }else{
@@ -60,11 +63,46 @@ export async function processScores() {
 }
 
 // Função que calcula o score (implementação depende da lógica do negócio)
-async function calculateScore(device: Device): Promise<number> {
-  // Aqui você pode aplicar a lógica de cálculo de score para o dispositivo
-  // Exemplo: somar alguns campos, analisar histórico, etc.
-  const score = Math.random() * 100; // Exemplo de score aleatório
-  return score;
+async function calculateScore(device: Device, client: Client): Promise<number> {
+  const fieldMeasureService = new FieldMeasureService()
+  const fieldMeasures = await fieldMeasureService.getFieldMeasuresLast7Days(device)
+  const experienceScore = await ExperienceScore.getByClient(client)
+
+  const scores: Record<string, number | null> = {};
+
+  // Step 3: Iterate over each field (e.g., cpuUsage, memoryUsage, etc.)
+  for (const [field, measures] of Object.entries(fieldMeasures)) {
+    const validMeasuresByDay = FieldMeasure.groupMeasuresByDay(measures);
+
+    // Step 4: Check if there are measures for at least 4 different days
+    if (hasEnoughDays(validMeasuresByDay)) {
+      // Step 5: Calculate the average score for this field
+      scores[field] = calculateAverageScore(validMeasuresByDay);
+    } else {
+      // Not enough data, assign null
+      scores[field] = null;
+    }
+  }
+
+  return 1;
+}
+function hasEnoughDays(measuresByDay: Map<string, number[]>): boolean {
+  const MIN_REQUIRED_DAYS = 4;
+  return measuresByDay.size >= MIN_REQUIRED_DAYS;
+}
+
+function calculateAverageScore(measuresByDay: Map<string, number[]>): number {
+  let totalScore = 0;
+  let count = 0;
+
+  measuresByDay.forEach(values => {
+    values.forEach(value => {
+      totalScore += value;
+      count += 1;
+    });
+  });
+
+  return totalScore / count;
 }
 
 const job = new CronJob('* * * * *', processScores);
