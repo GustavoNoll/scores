@@ -33,19 +33,15 @@ module.exports = {
         type: Sequelize.FLOAT,
         validate: { min: 0, max: 1 }
       },
-      connected_devices: {
+      total_connected_devices: {
         type: Sequelize.FLOAT,
         validate: { min: 0, max: 1 }
       },
-      rssi: {
+      average_worst_rssi: {
         type: Sequelize.FLOAT,
         validate: { min: 0, max: 1 }
       },
-      auto_channel: {
-        type: Sequelize.FLOAT,
-        validate: { min: 0, max: 1 }
-      },
-      high_low_bandwidth_ratio: {
+      connected_devices5g_ratio: {
         type: Sequelize.FLOAT,
         validate: { min: 0, max: 1 }
       },

@@ -4,7 +4,7 @@ import { ConnectedDevices, TranslateFields, WifiNetworks } from "../utils/dataMo
 import Device from "../database/models/device";
 import AcsInform from "../database/models/acsInform";
 import translateModel from "../utils/translateModel";
-import { FIELD_AUTO_CHANNEL_2G, FIELD_AUTO_CHANNEL_5G, FIELD_AVERAGE_WORST_RSSI, FIELD_CONNECTED_DEVICES_2G, FIELD_CONNECTED_DEVICES_5G, FIELD_CPU_USAGE, FIELD_MEMORY_USAGE, FIELD_TOTAL_CONNECTED_DEVICES } from "../constants/fieldConstants";
+import { FIELD_CONNECTED_DEVICES_5G_RATIO, FIELD_AVERAGE_WORST_RSSI, FIELD_CPU_USAGE, FIELD_MEMORY_USAGE, FIELD_TOTAL_CONNECTED_DEVICES } from "../constants/fieldConstants";
 import { FieldMeasuresGrouped } from "../interfaces/fieldMeasureInterface";
 
 const NUM_WORST_RSSI_VALUES = 3;
@@ -51,20 +51,16 @@ class FieldMeasureService {
     let totalConnectedDevices = connectedDevices.length;
     let connectedDevices2G = 0;
     let connectedDevices5G = 0;
-    let autoChannel2G: number | null = null;
-    let autoChannel5G: number | null = null;
     let rssiValues: number[] = [];
 
     wifiNetworks.forEach(network => {
-      const { wifi_type, autoChannelEnabled, rssiDevices } = network;
+      const { wifi_type, rssiDevices } = network;
 
 
       if (wifi_type === '2.4G') {
         connectedDevices2G += rssiDevices.length;
-        autoChannel2G = autoChannelEnabled ? 1 : 0;
       } else if (wifi_type === '5G') {
         connectedDevices5G += rssiDevices.length;
-        autoChannel5G = autoChannelEnabled ? 1 : 0;
       }
 
       rssiDevices.forEach(device => {
@@ -73,6 +69,12 @@ class FieldMeasureService {
         }
       });
     });
+
+    let connectedDevices5GRatio: number | null = null;
+
+    if (connectedDevices5G > 0 || connectedDevices2G > 0) {
+      connectedDevices5GRatio = connectedDevices5G / (connectedDevices2G + connectedDevices5G);
+    }
 
     rssiValues.sort((a, b) => a - b);
     const worstRssiValues = rssiValues.length >= NUM_WORST_RSSI_VALUES ? rssiValues.slice(0, NUM_WORST_RSSI_VALUES) : rssiValues;
@@ -90,32 +92,8 @@ class FieldMeasureService {
       {
         clientId: device.clientId,
         deviceId: device.id,
-        field: FIELD_CONNECTED_DEVICES_2G,
-        value: connectedDevices2G,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      {
-        clientId: device.clientId,
-        deviceId: device.id,
-        field: FIELD_CONNECTED_DEVICES_5G,
-        value: connectedDevices5G,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      {
-        clientId: device.clientId,
-        deviceId: device.id,
-        field: FIELD_AUTO_CHANNEL_2G,
-        value: autoChannel2G,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      {
-        clientId: device.clientId,
-        deviceId: device.id,
-        field: FIELD_AUTO_CHANNEL_5G,
-        value: autoChannel5G,
+        field: FIELD_CONNECTED_DEVICES_5G_RATIO,
+        value: connectedDevices5GRatio,
         createdAt: new Date(),
         updatedAt: new Date(),
       },

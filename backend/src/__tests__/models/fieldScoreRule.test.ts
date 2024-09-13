@@ -64,6 +64,15 @@ describe('FieldScoreRule Model', () => {
       ctoId: cto.id
     });
 
+    const fieldScoreRuleOlt = await FieldScoreRule.create({
+      field: 'uptime',
+      goodThresholdLow: 95,
+      criticalThresholdLow: 70,
+      functionType: 'linear',
+      oltId: olt.id,
+      ctoId: null
+    });
+
     const result = await FieldScoreRule.getFieldScoreRuleForDevice(
       { clientId: client.id } as any,
       'uptime'
@@ -73,6 +82,30 @@ describe('FieldScoreRule Model', () => {
     expect(result?.field).toBe('uptime');
     expect(result?.goodThresholdLow).toBe(90);
     expect(result?.criticalThresholdLow).toBe(80);
+
+    await fieldScoreRule.destroy();
+
+    const result2 = await FieldScoreRule.getFieldScoreRuleForDevice(
+      { clientId: client.id } as any,
+      'uptime'
+    );
+    expect(result2).not.toBeNull();
+    expect(result2?.id).toBe(fieldScoreRuleOlt.id);
+    await fieldScoreRuleOlt.destroy();
+    const fieldScoreRuleGeneral = await FieldScoreRule.create({
+      field: 'uptime',
+      goodThresholdLow: 95,
+      criticalThresholdLow: 70,
+      functionType: 'linear',
+      oltId: null,
+      ctoId: null
+    });
+    const result3 = await FieldScoreRule.getFieldScoreRuleForDevice(
+      { clientId: client.id } as any,
+      'uptime'
+    );
+    expect(result3).not.toBeNull();
+    expect(result3?.id).toBe(fieldScoreRuleGeneral.id);
   });
 
   it('should return null when client is not found', async () => {

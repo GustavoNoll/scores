@@ -35,10 +35,9 @@ describe('ExperienceScoreService', () => {
       memoryUsage: 0.1,
       rxPower: 0.1,
       temperature: 0.1,
-      connectedDevices: 0.1,
-      rssi: 0.1,
-      autoChannel: 0.1,
-      highLowBandwidthRatio: 0.1,
+      totalConnectedDevices: 0.2  ,
+      averageWorstRssi: 0.1,
+      connectedDevices5gRatio: 0.1,
       oltId: null,
       ctoId: null
     };
@@ -57,10 +56,9 @@ describe('ExperienceScoreService', () => {
       memoryUsage: 0.05,
       rxPower: 0.2,
       temperature: 0.05,
-      connectedDevices: 0.1,
-      rssi: 0.3,
-      autoChannel: 0.05,
-      highLowBandwidthRatio: 0.1,
+      totalConnectedDevices: 0.1,
+      averageWorstRssi: 0.3,
+      connectedDevices5gRatio: 0.15,
       oltId: olt.id,
       ctoId: null
     };
@@ -76,10 +74,9 @@ describe('ExperienceScoreService', () => {
       memoryUsage: 0.15,
       rxPower: 0.1,
       temperature: 0.1,
-      connectedDevices: 0.1,
-      rssi: 0.2,
-      autoChannel: 0.1,
-      highLowBandwidthRatio: 0.1,
+      totalConnectedDevices: 0.1,
+      averageWorstRssi: 0.3,
+      connectedDevices5gRatio: 0.1,
       oltId: olt.id,
       ctoId: null
     };
@@ -95,10 +92,9 @@ describe('ExperienceScoreService', () => {
       memoryUsage: 0.05,
       rxPower: 0.2,
       temperature: 0.05,
-      connectedDevices: 0.1,
-      rssi: 0.3,
-      autoChannel: 0.05,
-      highLowBandwidthRatio: 0.1,
+      totalConnectedDevices: 0.1,
+      averageWorstRssi: 0.35,
+      connectedDevices5gRatio: 0.1,
       oltId: olt.id,
       ctoId: cto.id
     };
@@ -114,10 +110,9 @@ describe('ExperienceScoreService', () => {
       memoryUsage: 0.05,
       rxPower: 0.2,
       temperature: 0.05,
-      connectedDevices: 0.1,
-      rssi: 0.3,
-      autoChannel: 0.05,
-      highLowBandwidthRatio: 0.1,
+      totalConnectedDevices: 0.1,
+      averageWorstRssi: 0.35,
+      connectedDevices5gRatio: 0.1,
       oltId: null,
       ctoId: cto.id
     };
@@ -136,10 +131,9 @@ describe('ExperienceScoreService', () => {
       memoryUsage: 0,
       rxPower: 0,
       temperature: 0,
-      connectedDevices: 0,
-      rssi: 0,
-      autoChannel: 0,
-      highLowBandwidthRatio: 0,
+      totalConnectedDevices: 0,
+      averageWorstRssi: 0,
+      connectedDevices5gRatio: 0,
       oltId: olt.id,
       ctoId: cto.id
     };
@@ -158,12 +152,11 @@ describe('ExperienceScoreService', () => {
       txPower: 0.1,
       cpuUsage: 0.1,
       memoryUsage: 0.1,
-      rxPower: 0.1,
+      rxPower: 0.2,
       temperature: 0.1,
-      connectedDevices: 0.1,
-      rssi: 0.1,
-      autoChannel: 0.1,
-      highLowBandwidthRatio: 0.1,
+      totalConnectedDevices: 0.1,
+      averageWorstRssi: 0.1,
+      connectedDevices5gRatio: 0.1,
       oltId: olt.id,
       ctoId: cto.id
     };

@@ -52,7 +52,7 @@ describe('FieldMeasureService', () => {
     await fieldMeasureService.generateFieldMeasures(device, translatedFields);
 
     const fieldMeasures = await FieldMeasure.findAll({ where: { deviceId: device.id } });
-    expect(fieldMeasures.length).toBe(13);
+    expect(fieldMeasures.length).toBe(10);
 
     const uptime = await FieldMeasure.findOne({ where: { deviceId: device.id, field: 'uptime' } });
     expect(uptime?.value).toBe(28792);
@@ -110,19 +110,21 @@ describe('FieldMeasureService', () => {
       ],
       wifiNetworks: [
         {
-          wifi_type: '2.4G', autoChannelEnabled: true, rssiDevices: [{
-            rssi: -40,
-            mac: ''
-          }, {
-            rssi: -50,
-            mac: ''
-          }],
+          wifi_type: '2.4G', autoChannelEnabled: true,
+            rssiDevices: [{
+                rssi: -40,
+                mac: ''
+              }, {
+                rssi: -50,
+                mac: ''
+              }],
           index: 0,
           ssid: '',
           channel: 0
         },
         {
-          wifi_type: '5G', autoChannelEnabled: false, rssiDevices: [{
+          wifi_type: '5G', autoChannelEnabled: false,
+          rssiDevices: [{
             rssi: -60,
             mac: ''
           }],
@@ -136,25 +138,15 @@ describe('FieldMeasureService', () => {
     await fieldMeasureService.generateFieldMeasures(device, translatedFields);
 
     const fieldMeasures = await FieldMeasure.findAll({ where: { deviceId: device.id } });
-    expect(fieldMeasures.length).toBe(26);
+    expect(fieldMeasures.length).toBe(20);
 
     const totalConnectedDevices = await FieldMeasure.findOne({
       where: { deviceId: device.id, field: 'totalConnectedDevices' }, order: [['createdAt', 'DESC']], });
     expect(totalConnectedDevices?.value).toBe(3);
 
-    const connectedDevices2G = await FieldMeasure.findOne({
-      where: { deviceId: device.id, field: 'connectedDevices2G' }, order: [['createdAt', 'DESC']], });
-    expect(connectedDevices2G?.value).toBe(2);
-
-    const connectedDevices5G = await FieldMeasure.findOne({
-      where: { deviceId: device.id, field: 'connectedDevices5G' }, order: [['createdAt', 'DESC']],});
-    expect(connectedDevices5G?.value).toBe(1);
-
-    const autoChannel2G = await FieldMeasure.findOne({ where: { deviceId: device.id, field: 'autoChannel2G' }, order: [['createdAt', 'DESC']], });
-    expect(autoChannel2G?.value).toBe(1);
-
-    const autoChannel5G = await FieldMeasure.findOne({ where: { deviceId: device.id, field: 'autoChannel5G' }, order: [['createdAt', 'DESC']], });
-    expect(autoChannel5G?.value).toBe(0);
+    const connectedDevices5GRatio = await FieldMeasure.findOne({
+      where: { deviceId: device.id, field: 'connectedDevices5GRatio' }, order: [['createdAt', 'DESC']], });
+    expect(connectedDevices5GRatio?.value).toBeCloseTo(0.3, 1);
 
     const averageWorstRssi = await FieldMeasure.findOne({ where: { deviceId: device.id, field: 'averageWorstRssi' }, order: [['createdAt', 'DESC']], });
     expect(averageWorstRssi?.value).toBeCloseTo(-50);

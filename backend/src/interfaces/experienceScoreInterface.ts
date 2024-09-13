@@ -5,10 +5,9 @@ interface ExperienceScoreCreateInterface {
   memoryUsage: number;
   rxPower: number;
   temperature: number;
-  connectedDevices: number;
-  rssi: number;
-  autoChannel: number;
-  highLowBandwidthRatio: number;
+  totalConnectedDevices: number;
+  averageWorstRssi: number;
+  connectedDevices5gRatio: number;
   oltId: number | null;
   ctoId: number | null;
 }

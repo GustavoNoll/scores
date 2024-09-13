@@ -3,6 +3,7 @@ import { Model } from 'sequelize';
 import sequelize from 'sequelize';
 import db from '.';
 import Client from './client';
+import { findWithFallback } from '../../helpers/fallback_search';
 
 class ExperienceScore extends Model {
   declare id: number;
@@ -12,22 +13,17 @@ class ExperienceScore extends Model {
   declare memoryUsage: number;
   declare rxPower: number;
   declare temperature: number;
-  declare connectedDevices: number;
-  declare rssi: number;
-  declare autoChannel: number;
-  declare highLowBandwidthRatio: number;
+  declare totalConnectedDevices: number;
+  declare averageWorstRssi: number;
+  declare connectedDevices5gRatio: number;
   declare oltId: number | null;
   declare ctoId: number | null;
   declare createdAt: Date;
   declare updatedAt: Date;
 
   static async getByClient(client: Client): Promise<ExperienceScore | null> {
-    return ExperienceScore.findOne({
-      where: {
-        oltId: client.oltId,
-        ctoId: client.ctoId
-      }
-    });
+    if (!client) return null;
+    return await findWithFallback(ExperienceScore, '', client);
   }
 }
 
@@ -62,19 +58,15 @@ ExperienceScore.init({
     type: sequelize.FLOAT,
     validate: { min: 0, max: 1 }
   },
-  connectedDevices: {
+  totalConnectedDevices: {
     type: sequelize.FLOAT,
     validate: { min: 0, max: 1 }
   },
-  rssi: {
+  averageWorstRssi: {
     type: sequelize.FLOAT,
     validate: { min: 0, max: 1 }
   },
-  autoChannel: {
-    type: sequelize.FLOAT,
-    validate: { min: 0, max: 1 }
-  },
-  highLowBandwidthRatio: {
+  connectedDevices5gRatio: {
     type: sequelize.FLOAT,
     validate: { min: 0, max: 1 }
   },
@@ -121,10 +113,9 @@ ExperienceScore.init({
                     instance.memoryUsage +
                     instance.rxPower +
                     instance.temperature +
-                    instance.connectedDevices +
-                    instance.rssi +
-                    instance.autoChannel +
-                    instance.highLowBandwidthRatio;
+                    instance.totalConnectedDevices +
+                    instance.averageWorstRssi +
+                    instance.connectedDevices5gRatio;
       const epsilon = 1e-6;
       if (Math.abs(total - 1) > epsilon) {
         throw new Error('The sum of all fields must be equal to 1');

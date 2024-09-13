@@ -153,7 +153,7 @@ describe('FieldScoreRuleService', () => {
     const response = await fieldScoreRuleService.create(invalidData as any);
     expect(response.status).toBe(422);
     expect(response.message).toEqual({
-      "message": "\"field\" must be one of [uptime, txPower, cpuUsage, memoryUsage, rxPower, temperature, totalConnectedDevices, connectedDevices5GPer2G, autoChannel, averageWorstRssi]"
+      "message": "\"field\" must be one of [uptime, txPower, cpuUsage, memoryUsage, rxPower, temperature, totalConnectedDevices, connectedDevices5GRatio, averageWorstRssi]"
   })
   });
 

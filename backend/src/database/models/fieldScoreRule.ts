@@ -5,6 +5,7 @@ import db from '.';
 
 import Client from './client';
 import Device from './device';
+import { findWithFallback } from '../../helpers/fallback_search';
 
 class FieldScoreRule extends Model {
   declare id: number;
@@ -20,26 +21,9 @@ class FieldScoreRule extends Model {
   declare updatedAt: Date;
 
   static async getFieldScoreRuleForDevice(device: Device, field: string): Promise<FieldScoreRule | null> {
-    try {
-      const client = await Client.findByPk(device.clientId);
-
-      if (!client) {
-        return null; // Cliente não encontrado
-      }
-
-      // Obter a FieldScoreRule
-      const fieldScoreRule = await FieldScoreRule.findOne({
-        where: {
-          field: field,
-          oltId: client.oltId,
-          ctoId: client.ctoId
-        }
-      });
-      return fieldScoreRule;
-    } catch (error) {
-      console.error('Error retrieving FieldScoreRule:', error);
-      return null;
-    }
+    const client = await Client.findByPk(device.clientId);
+    if (!client) return null;
+    return await findWithFallback(FieldScoreRule, field, client);
   }
 }
 

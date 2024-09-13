@@ -7,10 +7,9 @@ const create = Joi.object({
   memoryUsage: Joi.number().required(),
   rxPower: Joi.number().required(),
   temperature: Joi.number().required(),
-  connectedDevices: Joi.number().required(),
-  rssi: Joi.number().required(),
-  autoChannel: Joi.number().required(),
-  highLowBandwidthRatio: Joi.number().required(),
+  totalConnectedDevices: Joi.number().required(),
+  averageWorstRssi: Joi.number().required(),
+  connectedDevices5gRatio: Joi.number().required(),
   oltId: Joi.number().allow(null).required(),
   ctoId: Joi.number().allow(null).required(),
 })
@@ -22,14 +21,13 @@ const create = Joi.object({
       memoryUsage,
       rxPower,
       temperature,
-      connectedDevices,
-      rssi,
-      autoChannel,
-      highLowBandwidthRatio
+      totalConnectedDevices,
+      averageWorstRssi,
+      connectedDevices5gRatio
     } = value;
 
     const sum = uptime + txPower + cpuUsage + memoryUsage + rxPower +
-      temperature + connectedDevices + rssi + autoChannel + highLowBandwidthRatio;
+      temperature + totalConnectedDevices + averageWorstRssi + connectedDevices5gRatio;
 
     const epsilon = 1e-6;
     if (Math.abs(sum - 1) > epsilon) {

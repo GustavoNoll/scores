@@ -26,7 +26,7 @@ describe("AcsInformService", () => {
   beforeAll(() => {
     acsInformService = new AcsInformService();
   });
-  
+
   beforeEach(async () => {
     await sequelize.sync({ force: true });
   });
@@ -69,40 +69,31 @@ describe("AcsInformService", () => {
       const fieldMeasures = await FieldMeasure.findAll({ where: { deviceId: device?.id } });
 
       expect(fieldMeasures.length).toBeGreaterThan(0);
-  
+
       // Verificar valores específicos dos field measures
       const uptime = await FieldMeasure.findOne({ where: { deviceId: device?.id, field: 'uptime' } });
       expect(uptime?.value).toBe(28792);
-  
+
       const txPower = await FieldMeasure.findOne({ where: { deviceId: device?.id, field: 'txPower' } });
       expect(txPower?.value).toBe(2.35);
-  
+
       const cpuUsage = await FieldMeasure.findOne({ where: { deviceId: device?.id, field: 'cpuUsage' } });
       expect(cpuUsage?.value).toBe(0.07);
-  
+
       const memoryUsage = await FieldMeasure.findOne({ where: { deviceId: device?.id, field: 'memoryUsage' } });
       expect(memoryUsage?.value).toBe(0.63);
-  
+
       const rxPower = await FieldMeasure.findOne({ where: { deviceId: device?.id, field: 'rxPower' } });
       expect(rxPower?.value).toBe(-18.12);
-  
+
       const temperature = await FieldMeasure.findOne({ where: { deviceId: device?.id, field: 'temperature' } });
       expect(temperature?.value).toBe(49.71);
 
       const totalConnectedDevices = await FieldMeasure.findOne({ where: { deviceId: device?.id, field: 'totalConnectedDevices' } });
       expect(totalConnectedDevices?.value).toBe(8);
 
-      const connectedDevices2G = await FieldMeasure.findOne({ where: { deviceId: device?.id, field: 'connectedDevices2G' } });
-      expect(connectedDevices2G?.value).toBe(2);
-
-      const connectedDevices5G = await FieldMeasure.findOne({ where: { deviceId: device?.id, field: 'connectedDevices5G' } });
-      expect(connectedDevices5G?.value).toBe(5);
-
-      const autoChannel2G = await FieldMeasure.findOne({ where: { deviceId: device?.id, field: 'autoChannel2G' } });
-      expect(autoChannel2G?.value).toBe(0);
-
-      const autoChannel5G = await FieldMeasure.findOne({ where: { deviceId: device?.id, field: 'autoChannel5G' } });
-      expect(autoChannel5G?.value).toBe(1);
+      const connectedDevices5GRatio = await FieldMeasure.findOne({ where: { deviceId: device?.id, field: 'connectedDevices5GRatio' } });
+      expect(connectedDevices5GRatio?.value).toBeCloseTo(0.7, 1);
 
       const averageWorstRssi = await FieldMeasure.findOne({ where: { deviceId: device?.id, field: 'averageWorstRssi' } });
       expect(averageWorstRssi?.value).toBe(-52.333333333333336);
@@ -133,36 +124,27 @@ describe("AcsInformService", () => {
 
       const uptime = await FieldMeasure.findOne({ where: { deviceId: device?.id, field: 'uptime' } });
       expect(uptime?.value).toBe(28792);
-  
+
       const txPower = await FieldMeasure.findOne({ where: { deviceId: device?.id, field: 'txPower' } });
       expect(txPower?.value).toBe(2.35);
-  
+
       const cpuUsage = await FieldMeasure.findOne({ where: { deviceId: device?.id, field: 'cpuUsage' } });
       expect(cpuUsage?.value).toBe(0.07);
-  
+
       const memoryUsage = await FieldMeasure.findOne({ where: { deviceId: device?.id, field: 'memoryUsage' } });
       expect(memoryUsage?.value).toBe(0.63);
-  
+
       const rxPower = await FieldMeasure.findOne({ where: { deviceId: device?.id, field: 'rxPower' } });
       expect(rxPower?.value).toBe(-18.12);
-  
+
       const temperature = await FieldMeasure.findOne({ where: { deviceId: device?.id, field: 'temperature' } });
       expect(temperature?.value).toBe(49.71);
 
       const totalConnectedDevices = await FieldMeasure.findOne({ where: { deviceId: device?.id, field: 'totalConnectedDevices' } });
       expect(totalConnectedDevices?.value).toBe(8);
 
-      const connectedDevices2G = await FieldMeasure.findOne({ where: { deviceId: device?.id, field: 'connectedDevices2G' } });
-      expect(connectedDevices2G?.value).toBe(2);
-
-      const connectedDevices5G = await FieldMeasure.findOne({ where: { deviceId: device?.id, field: 'connectedDevices5G' } });
-      expect(connectedDevices5G?.value).toBe(5);
-
-      const autoChannel2G = await FieldMeasure.findOne({ where: { deviceId: device?.id, field: 'autoChannel2G' } });
-      expect(autoChannel2G?.value).toBe(0);
-
-      const autoChannel5G = await FieldMeasure.findOne({ where: { deviceId: device?.id, field: 'autoChannel5G' } });
-      expect(autoChannel5G?.value).toBe(1);
+      const connectedDevices5GRatio = await FieldMeasure.findOne({ where: { deviceId: device?.id, field: 'connectedDevices5GRatio' } });
+      expect(connectedDevices5GRatio?.value).toBeCloseTo(0.7, 1);
 
       const averageWorstRssi = await FieldMeasure.findOne({ where: { deviceId: device?.id, field: 'averageWorstRssi' } });
       expect(averageWorstRssi?.value).toBe(-52.333333333333336);
