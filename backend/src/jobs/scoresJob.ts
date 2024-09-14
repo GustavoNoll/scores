@@ -1,12 +1,9 @@
 import { CronJob } from "cron";
 import Device from "../database/models/device";
 import Client from "../database/models/client";
-import FieldScore from "../database/models/fieldScore";
 import { Op } from "sequelize";
-import FieldMeasureService from "../services/fieldMeasureService";
-import ExperienceScore from "../database/models/experienceScore";
-import FieldMeasure from "../database/models/fieldMeasure";
 import FieldScoreService from "../services/fieldScoreService";
+import ClientScore from "../database/models/clientScore";
 
 export async function processScores() {
   try {
@@ -27,14 +24,12 @@ export async function processScores() {
     const twelveHoursAgo = new Date(now.getTime() - 12 * 60 * 60 * 1000);
 
     for (const client of clients) {
-      //console.log(client.integrationId)
       const device = (client as any).device;
-      //console.log(device.deviceTag)
 
       if (!device) continue;
 
       // Verifica se o dispositivo tem um score geral nas últimas 12 horas
-      const recentScore = await FieldScore.findOne({
+      const recentScore = await ClientScore.findOne({
         where: {
           deviceId: device.id,
           field: 'general',
