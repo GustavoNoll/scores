@@ -12,7 +12,7 @@ class FieldMeasure extends Model {
   declare createdAt: Date;
   declare updatedAt: Date;
 
-  static groupMeasuresByDay(measures: Array<{ value: number, createdAt: Date }>): Map<string, number[]> {
+  static getFieldMeasureGroupedByDay(measures: Array<{ value: number, createdAt: Date }>): Map<string, number[]> {
     const measuresByDay = new Map<string, number[]>();
 
     measures.forEach(measure => {

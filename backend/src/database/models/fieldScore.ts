@@ -11,6 +11,22 @@ class FieldScore extends Model {
   declare value: number;
   declare createdAt: Date;
   declare updatedAt: Date;
+
+  static async bulkCreateFieldScores(scores: { [key: string]: number | null }, deviceId: number, clientId: number): Promise<FieldScore[]> {
+    const fieldScores = Object.entries(scores).map(([field, value]) => ({
+      field,
+      value,
+      clientId,
+      deviceId
+    }));
+
+    // Cria e salva os FieldScores no banco de dados
+    const createdFieldScores = await Promise.all(
+      fieldScores.map(score => FieldScore.create(score))
+    );
+
+    return createdFieldScores;
+  }
 }
 
 FieldScore.init({

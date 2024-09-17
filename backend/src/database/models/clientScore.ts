@@ -2,6 +2,7 @@
 import { Model } from 'sequelize';
 import db from '.';
 import sequelize from 'sequelize';
+import { SCORE_FIELDS } from '../../constants/fieldConstants';
 
 class ClientScore extends Model {
   declare id: number;
@@ -12,6 +13,36 @@ class ClientScore extends Model {
   declare experienceScoreSnapshot: object;
   declare createdAt: Date;
   declare updatedAt: Date;
+
+
+  /**
+   * Cria e salva um ClientScore.
+   * @param clientId - ID do cliente.
+   * @param score - Valor do score calculado.
+   * @param fieldScores - Objeto JSON contendo os fieldScores.
+   * @param experienceScore - Objeto JSON contendo os experienceScores e pesos.
+   * @returns ClientScore criado.
+   */
+  static async createScore(
+    clientId: number,
+    score: number,
+    fieldScores: { [key: string]: number },
+    experienceScore: { [key: string]: number },
+  ): Promise<ClientScore> {
+    const fieldCount = Object.keys(fieldScores).length;
+
+    const partial = fieldCount < SCORE_FIELDS.length;
+
+    const clientScore = await ClientScore.create({
+      clientId,
+      score,
+      partial,
+      fieldScoreSnapshot: fieldScores,
+      experienceScoreSnapshot: experienceScore
+    });
+
+    return clientScore;
+  }
 }
 
 ClientScore.init({

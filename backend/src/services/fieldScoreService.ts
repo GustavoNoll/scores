@@ -5,19 +5,22 @@ import FieldMeasureService from "./fieldMeasureService";
 import Client from "../database/models/client";
 import Device from "../database/models/device";
 import FieldScoreRule from "../database/models/fieldScoreRule";
+import { evaluateFieldScore } from "../utils/fieldScore/fieldScoreEvaluator";
+import ClientScoreService from "./clientScoreService";
+import { MIN_REQUIRED_DIFFERENT_DAYS_OF_A_FIELD_TO_CALCULATE_SCORE, MIN_REQUIRED_DIFFERENT_VALID_FIELDS_TO_CALCULATE_SCORE } from "../constants/processConstants";
 
 
 class FieldScoreService {
   private model: ModelStatic<FieldScore> = FieldScore;
 
-  async generateScores(device: Device, client: Client): Promise<boolean>{
+  async processScores(device: Device, client: Client): Promise<boolean>{
     const fieldMeasureService = new FieldMeasureService()
+    const clientScoreService = new ClientScoreService()
     const fieldMeasures = await fieldMeasureService.getFieldMeasuresLast7Days(device)
     const scores: Record<string, number | null> = {};
-
     // Step 3: Iterate over each field (e.g., cpuUsage, memoryUsage, etc.)
     for (const [field, measures] of Object.entries(fieldMeasures)) {
-      const validMeasuresByDay = FieldMeasure.groupMeasuresByDay(measures);
+      const validMeasuresByDay = FieldMeasure.getFieldMeasureGroupedByDay(measures);
 
       // Step 4: Check if there are measures for at least 4 different days
       if (hasEnoughDays(validMeasuresByDay)) {
@@ -28,19 +31,48 @@ class FieldScoreService {
         scores[field] = null;
       }
     }
+    console.log(scores)
+    const nonNullValues = Object.values(scores).filter(value => value !== null);
+    if (nonNullValues.length >= MIN_REQUIRED_DIFFERENT_VALID_FIELDS_TO_CALCULATE_SCORE) {
+      // Step 6: Save the scores to the database and create clientScore
+      const fieldScores = await FieldScore.bulkCreateFieldScores(scores, device.id, client.id)
+      await clientScoreService.generateClientScore(client.id, fieldScores)
+    }else {
+      throw new Error('Not enough data to calculate scores for client')
+    }
     return true
   }
 
    async calculateScoreForField(field: string, measuresByDay: Map<string, number[]>, device: Device): Promise<number> {
     const rule = await FieldScoreRule.getFieldScoreRuleForDevice(device, field)
+
     if (!rule) {
       throw new Error(`No FieldScoreRule found for device ${device.id} and field ${field}`);
     }
-    return 1;
+    let totalSum = 0;
+    let totalCount = 0;
+
+    // Iterar sobre o objeto e calcular a soma e o número de elementos
+    measuresByDay.forEach((values, key) => {
+      values.forEach(value => {
+        totalSum += value;
+        totalCount += 1;
+      });
+    });
+
+    // Calcular a média
+    const avgFieldMeasure = totalSum / totalCount;
+    const score = evaluateFieldScore(avgFieldMeasure, rule)
+    if (score === null) {
+      throw new Error(`Invalid score for field ${field} (avgFieldMeasure: ${avgFieldMeasure}, rule: ${JSON.stringify(rule)})`);
+    }
+    if (score > 1 || score < 0) {
+      throw new Error(`Invalid score range for field ${field} (score: ${score})`);
+    }
+    return score;
   }
 }
 function hasEnoughDays(measuresByDay: Map<string, number[]>): boolean {
-  const MIN_REQUIRED_DAYS = 4;
-  return measuresByDay.size >= MIN_REQUIRED_DAYS;
+  return measuresByDay.size >= MIN_REQUIRED_DIFFERENT_DAYS_OF_A_FIELD_TO_CALCULATE_SCORE;
 }
 export default FieldScoreService

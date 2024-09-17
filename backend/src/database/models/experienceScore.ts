@@ -20,7 +20,6 @@ class ExperienceScore extends Model {
   declare ctoId: number | null;
   declare createdAt: Date;
   declare updatedAt: Date;
-
   static async getByClient(client: Client): Promise<ExperienceScore | null> {
     if (!client) return null;
     return await findWithFallback(ExperienceScore, '', client);
