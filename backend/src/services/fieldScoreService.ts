@@ -55,21 +55,22 @@ class FieldScoreService {
     // Iterar sobre o objeto e calcular a soma e o número de elementos
     measuresByDay.forEach((values, key) => {
       values.forEach(value => {
-        totalSum += value;
+        const score = evaluateFieldScore(value, rule) ;
+        if (score === null){
+          throw new Error(`Invalid score for field ${field} (value: ${value}, rule: ${JSON.stringify(rule)})`);
+        }
+        totalSum += score;
         totalCount += 1;
       });
     });
 
     // Calcular a média
-    const avgFieldMeasure = totalSum / totalCount;
-    const score = evaluateFieldScore(avgFieldMeasure, rule)
-    if (score === null) {
-      throw new Error(`Invalid score for field ${field} (avgFieldMeasure: ${avgFieldMeasure}, rule: ${JSON.stringify(rule)})`);
+    const avgScore = totalSum / totalCount;
+
+    if (avgScore > 1 || avgScore < 0) {
+      throw new Error(`Invalid score range for field ${field} (score: ${avgScore})`);
     }
-    if (score > 1 || score < 0) {
-      throw new Error(`Invalid score range for field ${field} (score: ${score})`);
-    }
-    return score;
+    return avgScore;
   }
 }
 function hasEnoughDays(measuresByDay: Map<string, number[]>): boolean {

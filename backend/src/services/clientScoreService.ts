@@ -3,9 +3,10 @@ import ClientScore from "../database/models/clientScore";
 import Client from "../database/models/client";
 import ExperienceScore from "../database/models/experienceScore";
 import FieldScore from "../database/models/fieldScore";
+import { MIN_REQUIRED_DIFFERENT_VALID_FIELDS_TO_CALCULATE_SCORE } from "../constants/processConstants";
 
 class ClientScoreService {
-  async generateClientScore(clientId: number, fieldScores: FieldScore[]): Promise<boolean> {
+  async generateClientScore(clientId: number, fieldScores: FieldScore[]): Promise<number> {
     const client = await Client.findByPk(clientId);
     if (!client) {
       throw new Error('Client not found');
@@ -17,11 +18,17 @@ class ClientScoreService {
       throw new Error('ExperienceScore not found for client');
     }
 
+    const validFieldScores = fieldScores.filter(fieldScore => fieldScore.value !== null);
+
+    if (validFieldScores.length < MIN_REQUIRED_DIFFERENT_VALID_FIELDS_TO_CALCULATE_SCORE) {
+      throw new Error(`Não foi possível calcular o score do cliente: número insuficiente de campos válidos. Necessário: ${MIN_REQUIRED_DIFFERENT_VALID_FIELDS_TO_CALCULATE_SCORE}, Encontrado: ${validFieldScores.length}`);
+    }
+
     // Inicializar as variáveis para o cálculo do clientScore
     let totalScore = 0;
     let totalWeight = 0;
-
-    // JSON para armazenar os snapshots dos FieldScores
+    let totalExperienceScore = 1;
+    let calculatedExperienceScore = 0;
     const fieldScoreSnapshot: { [key: string]: number } = {};
 
     // Para cada FieldScore, bater com o ExperienceScore e gerar uma pontuação final
@@ -30,25 +37,28 @@ class ClientScoreService {
       const expScoreValue = experienceScore[fieldScore.field as keyof ExperienceScore];
 
       if (expScoreValue !== undefined) {
-        // Calcular a pontuação com base na diferença ou outro critério (ajustável)
-        const scoreDiff = Math.abs(fieldScore.value - expScoreValue);
 
-        // Somar ao total, com peso se necessário
-        totalScore += scoreDiff;
-        totalWeight += 1; // Ou use pesos diferentes para cada campo, se aplicável
+        if (fieldScore.value !== null) {
+          const expScore = fieldScore.value * expScoreValue;
+          totalScore += expScore;
+          totalWeight += 1;
+          calculatedExperienceScore += expScoreValue;
 
-        // Salvar o FieldScore no snapshot
-        fieldScoreSnapshot[fieldScore.field] = fieldScore.value;
+          fieldScoreSnapshot[fieldScore.field] = fieldScore.value;
+        }
+
       }
     });
 
-    // Calcular a pontuação geral (clientScore)
-    const clientScore = totalWeight > 0 ? totalScore / totalWeight : 0;
+  
+    // Calcular a porcentagem de ExperienceScore não calculado
+    // Ajustar o totalScore com base na porcentagem não calculada
+    const clientScore = totalScore / calculatedExperienceScore;
 
     // Salvar o clientScore no banco de dados com snapshots dos FieldScores e ExperienceScore
     await ClientScore.createScore(clientId, clientScore, fieldScoreSnapshot, experienceScore.toJSON());
 
-    return true;
+    return clientScore;
   }
 }
 export default ClientScoreService

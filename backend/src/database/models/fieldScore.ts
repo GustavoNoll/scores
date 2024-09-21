@@ -8,7 +8,7 @@ class FieldScore extends Model {
   declare deviceId: number;
   declare clientId: number;
   declare field: string;
-  declare value: number;
+  declare value: number | null;
   declare createdAt: Date;
   declare updatedAt: Date;
 
@@ -60,7 +60,7 @@ FieldScore.init({
   },
   value: {
     type: sequelize.FLOAT,
-    allowNull: false,
+    allowNull: true,
   },
   createdAt: {
     allowNull: false,
