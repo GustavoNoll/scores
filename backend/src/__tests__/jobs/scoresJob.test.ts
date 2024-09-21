@@ -72,6 +72,36 @@ describe('processScores', () => {
 
     await processScores();
 
-    expect(console.error).toHaveBeenCalledWith('Error processing scores:', expect.any(Error));
+    expect(console.error).toHaveBeenCalledWith('Error processing scores for client 1:', expect.any(Error));
+  });
+
+  it('continues processing other clients when one client throws an error', async () => {
+    const mockClients = [
+      { id: 1, device: { id: 101 }, integrationId: 'INT1' },
+      { id: 2, device: { id: 102 }, integrationId: 'INT2' },
+      { id: 3, device: { id: 103 }, integrationId: 'INT3' },
+    ];
+
+    (Client.findAll as jest.Mock).mockResolvedValue(mockClients);
+    (ClientScore.findOne as jest.Mock).mockResolvedValue(null);
+
+    const processScoresMock = jest.fn()
+      .mockRejectedValueOnce(new Error('Test error for client 1'))
+      .mockResolvedValueOnce(undefined)
+      .mockResolvedValueOnce(undefined);
+
+    (FieldScoreService.prototype.processScores as jest.Mock) = processScoresMock;
+
+    console.error = jest.fn();
+    console.log = jest.fn();
+
+    await processScores();
+
+    expect(console.error).toHaveBeenCalledWith(
+      'Error processing scores for client 1:',
+      expect.any(Error)
+    );
+    expect(processScoresMock).toHaveBeenCalledTimes(3);
+    expect(console.log).toHaveBeenCalledWith('Scores processados com sucesso!');
   });
 });

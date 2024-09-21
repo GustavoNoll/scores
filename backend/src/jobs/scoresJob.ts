@@ -9,7 +9,6 @@ import { MIN_HOURS_TO_RECALCULATE_CLIENT_SCORE } from "../constants/processConst
 export async function processScores() {
   try {
     console.log('Executando processamento de scores...');
-    // Obtenha todos os clientes que possuem dispositivos associados
     const clients = await Client.findAll({
       include: [
         {
@@ -25,24 +24,27 @@ export async function processScores() {
     const minHoursAgo = new Date(now.getTime() - MIN_HOURS_TO_RECALCULATE_CLIENT_SCORE * 60 * 60 * 1000);
 
     for (const client of clients) {
-      const device = (client as any).device;
-      if (!device) continue;
+      try {
+        const device = (client as any).device;
+        if (!device) continue;
 
-      // Verifica se o dispositivo tem um score geral nas últimas 12 horas
-      const recentScore = await ClientScore.findOne({
-        where: {
-          clientId: client.id,
-          createdAt: {
-            [Op.gt]: minHoursAgo
+        const recentScore = await ClientScore.findOne({
+          where: {
+            clientId: client.id,
+            createdAt: {
+              [Op.gt]: minHoursAgo
+            }
           }
-        }
-      });
+        });
 
-      if (!recentScore) {
-        const fieldScoreService = new FieldScoreService()
-        await fieldScoreService.processScores(device, client)
-      }else{
-        console.log(`client ${client.integrationId} had a score in the last 12 hours`)
+        if (!recentScore) {
+          const fieldScoreService = new FieldScoreService()
+          await fieldScoreService.processScores(device, client)
+        } else {
+          console.log(`client ${client.integrationId} had a score in the last 12 hours`)
+        }
+      } catch (clientError) {
+        console.error(`Error processing scores for client ${client.id}:`, clientError);
       }
     }
 
