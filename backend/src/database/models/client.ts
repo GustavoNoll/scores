@@ -119,8 +119,10 @@ Client.init({
   }
 });
 
-setTimeout(() => {
-  Client.hasOne(Device, { as: 'device', foreignKey: 'clientId' });
-}, 0);
+if (process.env.NODE_ENV !== 'test'){
+  setTimeout(() => {
+    Client.hasOne(Device, { as: 'device', foreignKey: 'clientId' });
+  }, 0);
+}
 
 export default Client;

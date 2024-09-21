@@ -48,16 +48,15 @@ export async function processScores() {
 
     console.log('Scores processados com sucesso!');
   } catch (error) {
-    console.error('Erro ao processar scores:', error);
+    console.error('Error processing scores:', error);
   }
 }
 
-const job = new CronJob('* * * * *', processScores);
+let job: CronJob;
+if (process.env.NODE_ENV !== 'test') {
+  job = new CronJob('* * * * *', processScores);
+  job.start();
+  console.log('Score processing schedule configured to run every 1 minute.');
+}
 
-job.start();
-
-// Log de confirmação do agendamento
-console.log('Agendamento de processamento de score configurado para rodar a cada 1 minuto.');
-
-// Exporte o job se necessário
-export default job;
+export { job };
