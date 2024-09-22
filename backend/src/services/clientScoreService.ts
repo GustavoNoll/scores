@@ -27,7 +27,6 @@ class ClientScoreService {
     // Inicializar as variáveis para o cálculo do clientScore
     let totalScore = 0;
     let totalWeight = 0;
-    let totalExperienceScore = 1;
     let calculatedExperienceScore = 0;
     const fieldScoreSnapshot: { [key: string]: number } = {};
 
@@ -50,9 +49,11 @@ class ClientScoreService {
       }
     });
 
-  
+
     // Calcular a porcentagem de ExperienceScore não calculado
     // Ajustar o totalScore com base na porcentagem não calculada
+    console.log('totalScore', totalScore)
+    console.log('calculatedExperienceScore', calculatedExperienceScore)
     const clientScore = totalScore / calculatedExperienceScore;
 
     // Salvar o clientScore no banco de dados com snapshots dos FieldScores e ExperienceScore

@@ -135,7 +135,6 @@ class FieldMeasureService {
       attributes: ['field', 'value', 'createdAt'],
       order: [['field', 'ASC'], ['createdAt', 'DESC']]
     });
-
     const groupedMeasures: { [key: string]: { value: number; createdAt: Date }[] } = {};
 
     fieldMeasures.forEach(measure => {

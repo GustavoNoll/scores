@@ -31,7 +31,6 @@ class FieldScoreService {
         scores[field] = null;
       }
     }
-    console.log(scores)
     const nonNullValues = Object.values(scores).filter(value => value !== null);
     if (nonNullValues.length >= MIN_REQUIRED_DIFFERENT_VALID_FIELDS_TO_CALCULATE_SCORE) {
       // Step 6: Save the scores to the database and create clientScore
@@ -45,7 +44,6 @@ class FieldScoreService {
 
    async calculateScoreForField(field: string, measuresByDay: Map<string, number[]>, device: Device): Promise<number> {
     const rule = await FieldScoreRule.getFieldScoreRuleForDevice(device, field)
-
     if (!rule) {
       throw new Error(`No FieldScoreRule found for device ${device.id} and field ${field}`);
     }
