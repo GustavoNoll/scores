@@ -9,7 +9,6 @@ import { evaluateFieldScore } from "../utils/fieldScore/fieldScoreEvaluator";
 import ClientScoreService from "./clientScoreService";
 import { MIN_REQUIRED_DIFFERENT_DAYS_OF_A_FIELD_TO_CALCULATE_SCORE, MIN_REQUIRED_DIFFERENT_VALID_FIELDS_TO_CALCULATE_SCORE } from "../constants/processConstants";
 
-
 class FieldScoreService {
   private model: ModelStatic<FieldScore> = FieldScore;
 
@@ -42,35 +41,67 @@ class FieldScoreService {
     return true
   }
 
-   async calculateScoreForField(field: string, measuresByDay: Map<string, number[]>, device: Device): Promise<number> {
-    const rule = await FieldScoreRule.getFieldScoreRuleForDevice(device, field)
+  async calculateScoreForField(field: string, measuresByDay: Map<string, number[]>, device: Device): Promise<number> {
+    const rule = await FieldScoreRule.getFieldScoreRuleForDevice(device, field);
     if (!rule) {
       throw new Error(`No FieldScoreRule found for device ${device.id} and field ${field}`);
     }
-    let totalSum = 0;
-    let totalCount = 0;
 
-    // Iterar sobre o objeto e calcular a soma e o número de elementos
-    measuresByDay.forEach((values, key) => {
-      values.forEach(value => {
-        const score = evaluateFieldScore(value, rule) ;
-        if (score === null){
-          throw new Error(`Invalid score for field ${field} (value: ${value}, rule: ${JSON.stringify(rule)})`);
-        }
-        totalSum += score;
-        totalCount += 1;
-      });
-    });
+    const calculationMethod = fieldCalculationMethods[field] || 'averageScores';
+    let avgScore: number;
 
-    // Calcular a média
-    const avgScore = totalSum / totalCount;
+    if (calculationMethod === 'averageScores') {
+      avgScore = this.calculateAverageScores(measuresByDay, rule);
+    } else if (calculationMethod === 'sumThenScore') {
+      avgScore = this.calculateSumThenScore(measuresByDay, rule);
+    } else {
+      throw new Error(`Invalid calculation method for field ${field}`);
+    }
 
     if (avgScore > 1 || avgScore < 0) {
       throw new Error(`Invalid score range for field ${field} (score: ${avgScore})`);
     }
     return avgScore;
   }
+
+  private calculateAverageScores(measuresByDay: Map<string, number[]>, rule: FieldScoreRule): number {
+    let totalSum = 0;
+    let totalCount = 0;
+
+    measuresByDay.forEach((values) => {
+      values.forEach(value => {
+        const score = evaluateFieldScore(value, rule);
+        if (score === null) {
+          throw new Error(`Invalid score for value: ${value}, rule: ${JSON.stringify(rule)}`);
+        }
+        totalSum += score;
+        totalCount += 1;
+      });
+    });
+
+    return totalSum / totalCount;
+  }
+
+  private calculateSumThenScore(measuresByDay: Map<string, number[]>, rule: FieldScoreRule): number {
+    let totalSum = 0;
+
+    measuresByDay.forEach((values) => {
+      values.forEach(value => {
+        totalSum += value;
+      });
+    });
+    const score = evaluateFieldScore(totalSum, rule);
+    if (score === null) {
+      throw new Error(`Invalid score for average value: ${totalSum}, rule: ${JSON.stringify(rule)}`);
+    }
+    return score;
+  }
 }
+
+const fieldCalculationMethods: Record<string, 'averageScores' | 'sumThenScore'> = {
+  rebootCount: 'sumThenScore',
+};
+
 function hasEnoughDays(measuresByDay: Map<string, number[]>): boolean {
   return measuresByDay.size >= MIN_REQUIRED_DIFFERENT_DAYS_OF_A_FIELD_TO_CALCULATE_SCORE;
 }

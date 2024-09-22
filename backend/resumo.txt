@@ -1,0 +1,51 @@
+Visão Geral do Sistema
+O Client Score System é uma solução abrangente para monitoramento e avaliação de desempenho de redes de ISP. Sua arquitetura é composta por vários componentes interconectados que trabalham em conjunto para coletar, processar e analisar dados de dispositivos de rede.
+Principais componentes:
+API de Gerenciamento: Permite o cadastro e atualização de clientes, OLTs, CTOs, regras de pontuação e configurações de experiência.
+Serviço de Processamento ACS Inform: Recebe e processa dados periódicos dos dispositivos de rede.
+Serviço de Vinculação de Dispositivos: Associa dispositivos aos clientes corretos.
+Gerador de Field Measures: Extrai e armazena medidas brutas dos dados ACS Inform.
+Calculador de Scores: Aplica regras de pontuação às medidas para gerar Field Scores e Client Scores.
+Banco de Dados: Armazena todos os dados do sistema, incluindo configurações, medidas e scores.
+O fluxo de dados no sistema segue estas etapas:
+Recebimento de dados ACS Inform via API.
+Processamento dos dados para criar ou atualizar registros de dispositivos.
+Vinculação de dispositivos aos clientes correspondentes.
+Geração de Field Measures a partir dos dados processados.
+Aplicação periódica de regras de pontuação para calcular Field Scores.
+Cálculo do Client Score geral com base nos Field Scores e nas configurações de experiência.
+Principais Escolhas de Design
+3.1. Arquitetura de Microserviços
+O sistema adota uma arquitetura de microserviços, permitindo maior flexibilidade, escalabilidade e manutenibilidade. Cada componente principal (processamento ACS, cálculo de scores, etc.) é implementado como um serviço independente.
+3.2. Uso de API RESTful
+Uma API RESTful é utilizada para todas as interações externas e entre serviços, proporcionando uma interface padronizada e fácil de usar para integração e gerenciamento do sistema.
+3.3. Processamento em Lotes (Batch Processing)
+O sistema utiliza processamento em lotes para lidar eficientemente com grandes volumes de dados ACS Inform e cálculos de score, otimizando o uso de recursos e melhorando a performance.
+3.4. Modelo de Dados Flexível
+Um modelo de dados flexível é implementado para acomodar diferentes tipos de dispositivos e métricas, permitindo fácil extensão do sistema para novos parâmetros de rede.
+3.5. Cálculo de Scores Parametrizável
+O sistema permite a definição de regras de pontuação personalizadas para diferentes campos e tipos de dispositivos, oferecendo flexibilidade na avaliação de desempenho.
+Detalhes de Implementação
+4.1. Coleta e Processamento de Dados ACS Inform
+O sistema recebe dados ACS Inform via API e os processa em lotes. Cada lote é analisado para extrair informações relevantes sobre o estado e desempenho dos dispositivos.
+4.2. Geração e Atualização de Dispositivos
+Com base nos dados ACS Inform, o sistema cria novos registros de dispositivos ou atualiza os existentes, mantendo um inventário atualizado da rede.
+4.3. Vinculação de Dispositivos a Clientes
+O sistema utiliza algoritmos de correspondência para vincular dispositivos aos clientes corretos, baseando-se em identificadores como MAC address, número de série ou nome de usuário PPPoE.
+4.4. Cálculo de Field Measures
+As medidas brutas extraídas dos dados ACS Inform são processadas e armazenadas como Field Measures, representando valores reais para diferentes parâmetros de rede.
+4.5. Aplicação de Field Score Rules
+Regras de pontuação predefinidas são aplicadas às Field Measures para calcular os Field Scores, que representam o desempenho de parâmetros específicos da rede.
+4.6. Cálculo de Client Scores
+O Client Score é calculado como uma média ponderada dos Field Scores, utilizando pesos definidos nas configurações de Experience Score.
+4.7. Armazenamento e Recuperação de Dados
+O sistema utiliza um banco de dados relacional para armazenar todos os dados, incluindo configurações, medidas e scores. Índices e otimizações são implementados para garantir rápida recuperação e análise dos dados.
+Componentes Principais
+5.1. API de Gerenciamento de Dados
+A API RESTful fornece endpoints para criar, ler, atualizar e excluir registros de clientes, OLTs, CTOs, regras de pontuação e configurações de experiência. Implementada usando Express.js, a API segue princípios RESTful e inclui validação de entrada e tratamento de erros.
+5.2. Serviço de Processamento ACS Inform
+Este serviço é responsável por receber e processar dados ACS Inform. Implementado como um job agendado, ele processa os dados em lotes, extraindo informações relevantes e atualizando o banco de dados.
+5.3. Serviço de Cálculo de Scores
+Outro job agendado, este serviço calcula periodicamente os Field Scores e Client Scores. Ele aplica as regras de pontuação às Field Measures mais recentes e calcula os scores finais para cada cliente.
+5.4. Banco de Dados
+O sistema utiliza um banco de dados PostgreSQL para armazenamento persistente. O esquema do banco de dados é projetado para suportar relações complexas entre clientes, dispositivos, medidas e scores, enquanto mantém a flexibilidade para futuras extensões.

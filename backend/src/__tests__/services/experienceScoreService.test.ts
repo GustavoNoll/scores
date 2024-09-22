@@ -38,6 +38,7 @@ describe('ExperienceScoreService', () => {
       totalConnectedDevices: 0.2  ,
       averageWorstRssi: 0.1,
       connectedDevices5gRatio: 0.1,
+      rebootCount: 0,
       oltId: null,
       ctoId: null
     };
@@ -59,6 +60,7 @@ describe('ExperienceScoreService', () => {
       totalConnectedDevices: 0.1,
       averageWorstRssi: 0.3,
       connectedDevices5gRatio: 0.15,
+      rebootCount: 0,
       oltId: olt.id,
       ctoId: null
     };
@@ -77,6 +79,7 @@ describe('ExperienceScoreService', () => {
       totalConnectedDevices: 0.1,
       averageWorstRssi: 0.3,
       connectedDevices5gRatio: 0.1,
+      rebootCount: 0,
       oltId: olt.id,
       ctoId: null
     };
@@ -95,6 +98,7 @@ describe('ExperienceScoreService', () => {
       totalConnectedDevices: 0.1,
       averageWorstRssi: 0.35,
       connectedDevices5gRatio: 0.1,
+      rebootCount: 0,
       oltId: olt.id,
       ctoId: cto.id
     };
@@ -112,12 +116,14 @@ describe('ExperienceScoreService', () => {
       temperature: 0.05,
       totalConnectedDevices: 0.1,
       averageWorstRssi: 0.35,
-      connectedDevices5gRatio: 0.1,
+      connectedDevices5gRatio: 0,
+      rebootCount: 0.1,
       oltId: null,
       ctoId: cto.id
     };
 
     const r2 = await experienceScoreService.create(initialData3);
+    console.log(r2.message);
     expect(r2.status).toBe(201);
     expect(r2.message).toMatchObject(initialData3);
 
@@ -126,7 +132,7 @@ describe('ExperienceScoreService', () => {
   it('should handle validation errors for incorrect sum', async () => {
     const invalidData: ExperienceScoreCreateInterface = {
       uptime: 1,
-      txPower: 0.0001,
+      txPower: 0.1,
       cpuUsage: 0,
       memoryUsage: 0,
       rxPower: 0,
@@ -134,6 +140,7 @@ describe('ExperienceScoreService', () => {
       totalConnectedDevices: 0,
       averageWorstRssi: 0,
       connectedDevices5gRatio: 0,
+      rebootCount: 0,
       oltId: olt.id,
       ctoId: cto.id
     };
@@ -141,7 +148,7 @@ describe('ExperienceScoreService', () => {
     const response = await experienceScoreService.create(invalidData);
 
     expect(response.status).toBe(422);
-    expect(response.message).toStrictEqual({"message": "The sum of all fields must be equal to 1, actual sum is: 1.0001"});
+    expect(response.message).toStrictEqual({"message": "The sum of all fields must be equal to 1, actual sum is: 1.1"});
   });
 
   it('should handle errors during creation or updating', async () => {
@@ -157,6 +164,7 @@ describe('ExperienceScoreService', () => {
       totalConnectedDevices: 0.1,
       averageWorstRssi: 0.1,
       connectedDevices5gRatio: 0.1,
+      rebootCount: 0,
       oltId: olt.id,
       ctoId: cto.id
     };

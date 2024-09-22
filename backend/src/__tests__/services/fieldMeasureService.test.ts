@@ -3,14 +3,16 @@ import FieldMeasure from '../../database/models/fieldMeasure';
 import Device from '../../database/models/device';
 import { TranslateFields } from '../../utils/dataModelTypes';
 import Client from '../../database/models/client';
+import { FIELD_REBOOT_COUNT } from '../../constants/fieldConstants';
 
 describe('FieldMeasureService', () => {
   let fieldMeasureService: FieldMeasureService;
   let device: Device;
+  let client: Client;
 
   beforeAll(async () => {
     fieldMeasureService = new FieldMeasureService();
-    const client = await Client.create({
+    client = await Client.create({
       mac: '00:11:22:33:44:55',
       pppoeUsername: 'teste123',
       serialNumber: 'SN12345',
@@ -31,9 +33,9 @@ describe('FieldMeasureService', () => {
   });
 
   afterAll(async () => {
-  });
-
-  beforeEach(async () => {
+    await Device.destroy({ where: {} });
+    await Client.destroy({ where: {} });
+    await FieldMeasure.destroy({ where: {} });
   });
 
   it('should create general field measures for a device', async () => {
@@ -52,7 +54,7 @@ describe('FieldMeasureService', () => {
     await fieldMeasureService.generateFieldMeasures(device, translatedFields);
 
     const fieldMeasures = await FieldMeasure.findAll({ where: { deviceId: device.id } });
-    expect(fieldMeasures.length).toBe(10);
+    expect(fieldMeasures.length).toBe(10); // Including reboot count
 
     const uptime = await FieldMeasure.findOne({ where: { deviceId: device.id, field: 'uptime' } });
     expect(uptime?.value).toBe(28792);
@@ -74,6 +76,9 @@ describe('FieldMeasureService', () => {
 
     const voltage = await FieldMeasure.findOne({ where: { deviceId: device.id, field: 'voltage' } });
     expect(voltage?.value).toBe(3190);
+
+    const rebootCount = await FieldMeasure.findOne({ where: { deviceId: device.id, field: FIELD_REBOOT_COUNT } });
+    expect(rebootCount).toBe(null);
   });
 
   it('should create wifi field measures for a device', async () => {
@@ -83,54 +88,23 @@ describe('FieldMeasureService', () => {
       rxPower: -18.12,
       temperature: 49.71,
       txPower: 2.35,
-      uptime: 28792,
+      uptime: 200,
       voltage: 3190,
       connectedDevices: [
-        {
-          rssi: -40,
-          wifiIndex: null,
-          mac: '',
-          active: false,
-          connection: ''
-        },
-        {
-          rssi: -50,
-          wifiIndex: null,
-          mac: '',
-          active: false,
-          connection: ''
-        },
-        {
-          rssi: -60,
-          wifiIndex: null,
-          mac: '',
-          active: false,
-          connection: ''
-        }
+        { rssi: -40, wifiIndex: null, mac: '', active: false, connection: '' },
+        { rssi: -50, wifiIndex: null, mac: '', active: false, connection: '' },
+        { rssi: -60, wifiIndex: null, mac: '', active: false, connection: '' }
       ],
       wifiNetworks: [
         {
           wifi_type: '2.4G', autoChannelEnabled: true,
-            rssiDevices: [{
-                rssi: -40,
-                mac: ''
-              }, {
-                rssi: -50,
-                mac: ''
-              }],
-          index: 0,
-          ssid: '',
-          channel: 0
+          rssiDevices: [{ rssi: -40, mac: '' }, { rssi: -50, mac: '' }],
+          index: 0, ssid: '', channel: 0
         },
         {
           wifi_type: '5G', autoChannelEnabled: false,
-          rssiDevices: [{
-            rssi: -60,
-            mac: ''
-          }],
-          index: 0,
-          ssid: '',
-          channel: 0
+          rssiDevices: [{ rssi: -60, mac: '' }],
+          index: 0, ssid: '', channel: 0
         }
       ]
     };
@@ -138,57 +112,82 @@ describe('FieldMeasureService', () => {
     await fieldMeasureService.generateFieldMeasures(device, translatedFields);
 
     const fieldMeasures = await FieldMeasure.findAll({ where: { deviceId: device.id } });
-    expect(fieldMeasures.length).toBe(20);
+    expect(fieldMeasures.length).toBe(21); // Including reboot count
 
     const totalConnectedDevices = await FieldMeasure.findOne({
-      where: { deviceId: device.id, field: 'totalConnectedDevices' }, order: [['createdAt', 'DESC']], });
+      where: { deviceId: device.id, field: 'totalConnectedDevices' },
+      order: [['createdAt', 'DESC']],
+    });
     expect(totalConnectedDevices?.value).toBe(3);
 
     const connectedDevices5GRatio = await FieldMeasure.findOne({
-      where: { deviceId: device.id, field: 'connectedDevices5GRatio' }, order: [['createdAt', 'DESC']], });
-    expect(connectedDevices5GRatio?.value).toBeCloseTo(0.3, 1);
+      where: { deviceId: device.id, field: 'connectedDevices5GRatio' },
+      order: [['createdAt', 'DESC']],
+    });
+    expect(connectedDevices5GRatio?.value).toBeCloseTo(0.3333, 4);
 
-    const averageWorstRssi = await FieldMeasure.findOne({ where: { deviceId: device.id, field: 'averageWorstRssi' }, order: [['createdAt', 'DESC']], });
+    const averageWorstRssi = await FieldMeasure.findOne({
+      where: { deviceId: device.id, field: 'averageWorstRssi' },
+      order: [['createdAt', 'DESC']],
+    });
     expect(averageWorstRssi?.value).toBeCloseTo(-50);
+
+    const rebootCount = await FieldMeasure.findOne({
+      where: { deviceId: device.id, field: FIELD_REBOOT_COUNT },
+      order: [['createdAt', 'DESC']],
+    });
+    expect(rebootCount?.value).toBe(1);
   });
 
-  it('should handle a device with field measures from different fields', async () => {
+  it('should calculate reboot count correctly', async () => {
+    const initialTranslatedFields: TranslateFields = {
+      cpuUsage: 0.08,
+      memoryUsage: 0.63,
+      rxPower: -18.12,
+      temperature: 49.71,
+      txPower: 2.35,
+      uptime: 28792,
+      voltage: 3190,
+      connectedDevices: [],
+      wifiNetworks: []
+    };
 
-    device = await Device.create({
-      clientId: 1,
-      deviceTag: 'device1245',
-      manufacturer: 'ZTE',
-      oui: '123',
-      productClass: 'aa',
-      modelName: 'aaa',
-      hardwareVersion: '123',
-      softwareVersion: '123'
+    await fieldMeasureService.generateFieldMeasures(device, initialTranslatedFields);
+
+    const rebootTranslatedFields: TranslateFields = {
+      ...initialTranslatedFields,
+      uptime: 100 // Simulating a reboot
+    };
+
+    await fieldMeasureService.generateFieldMeasures(device, rebootTranslatedFields);
+
+    const rebootCount = await FieldMeasure.findOne({
+      where: { deviceId: device.id, field: FIELD_REBOOT_COUNT },
+      order: [['createdAt', 'DESC']],
     });
-    const fieldMeasureService = new FieldMeasureService();
+    expect(rebootCount?.value).toBe(1);
+  });
 
-    const fieldMeasures = [
-      { deviceId: device.id, clientId: device.clientId, field: 'cpuUsage', value: 0.5, createdAt: new Date(), updatedAt: new Date() },
-      { deviceId: device.id, clientId: device.clientId, field: 'cpuUsage', value: 0.1, createdAt: new Date(), updatedAt: new Date() },
-      { deviceId: device.id, clientId: device.clientId, field: 'memoryUsage', value: 0.7, createdAt: new Date(), updatedAt: new Date() },
-      { deviceId: device.id, clientId: device.clientId, field: 'rxPower', value: -20, createdAt: new Date(), updatedAt: new Date() },
-      { deviceId: device.id, clientId: device.clientId, field: 'temperature', value: 50, createdAt: new Date(), updatedAt: new Date() },
-      { deviceId: device.id, clientId: device.clientId, field: 'txPower', value: 3, createdAt: new Date(), updatedAt: new Date() },
-      { deviceId: device.id, clientId: device.clientId, field: 'uptime', value: 30000, createdAt: new Date(), updatedAt: new Date() },
-      { deviceId: device.id, clientId: device.clientId, field: 'voltage', value: 3200, createdAt: new Date(), updatedAt: new Date() },
-    ];
+  it('should handle null uptime values', async () => {
+    await FieldMeasure.destroy({ where: {} });
+    const translatedFields: TranslateFields = {
+      cpuUsage: 0.08,
+      memoryUsage: 0.63,
+      rxPower: -18.12,
+      temperature: 49.71,
+      txPower: 2.35,
+      uptime: null,
+      voltage: 3190,
+      connectedDevices: [],
+      wifiNetworks: []
+    };
 
-    await FieldMeasure.bulkCreate(fieldMeasures);
+    await fieldMeasureService.generateFieldMeasures(device, translatedFields);
 
-    const result = await fieldMeasureService.getFieldMeasuresLast7Days(device);
-
-    expect(Object.keys(result)).toEqual(['cpuUsage', 'memoryUsage', 'rxPower', 'temperature', 'txPower', 'uptime', 'voltage']);
-
-    expect(result.cpuUsage[0].value).toBe(0.5);
-    expect(result.memoryUsage[0].value).toBe(0.7);
-    expect(result.rxPower[0].value).toBe(-20);
-    expect(result.temperature[0].value).toBe(50);
-    expect(result.txPower[0].value).toBe(3);
-    expect(result.uptime[0].value).toBe(30000);
-    expect(result.voltage[0].value).toBe(3200);
+    const rebootCount = await FieldMeasure.findOne({
+      where: { deviceId: device.id, field: FIELD_REBOOT_COUNT },
+      order: [['createdAt', 'DESC']],
+    });
+    expect(rebootCount).toBeNull();
   });
 });

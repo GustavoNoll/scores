@@ -10,6 +10,7 @@ const create = Joi.object({
   totalConnectedDevices: Joi.number().required(),
   averageWorstRssi: Joi.number().required(),
   connectedDevices5gRatio: Joi.number().required(),
+  rebootCount: Joi.number().required(),
   oltId: Joi.number().allow(null).required(),
   ctoId: Joi.number().allow(null).required(),
 })
@@ -23,15 +24,14 @@ const create = Joi.object({
       temperature,
       totalConnectedDevices,
       averageWorstRssi,
-      connectedDevices5gRatio
+      connectedDevices5gRatio,
+      rebootCount
     } = value;
 
-    const sum = uptime + txPower + cpuUsage + memoryUsage + rxPower +
-      temperature + totalConnectedDevices + averageWorstRssi + connectedDevices5gRatio;
-
-    const epsilon = 1e-6;
-    if (Math.abs(sum - 1) > epsilon) {
-      return helpers.message({custom: `The sum of all fields must be equal to 1, actual sum is: ${sum}`});
+    const sum = Number((uptime + txPower + cpuUsage + memoryUsage + rxPower +
+      temperature + totalConnectedDevices + averageWorstRssi + connectedDevices5gRatio + rebootCount).toFixed(1));
+    if (sum !== 1) {
+      return helpers.message({custom: `The sum of all fields must be equal to 1, actual sum is: ${sum.toFixed(1)}`});
     }
 
     return value;

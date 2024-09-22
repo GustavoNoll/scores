@@ -114,7 +114,7 @@ describe('ClientScoreService', () => {
         connectedDevices5gRatio: 0.05,
         toJSON: jest.fn().mockReturnValue({})
       };
-      
+
       const mockFieldScores = [
         { field: 'uptime', value: 0.9 },
         { field: 'txPower', value: 0.5 },
@@ -180,6 +180,78 @@ describe('ClientScoreService', () => {
 
       expect(result).toBeCloseTo(0.625, 5);
       expect(ClientScore.createScore).toHaveBeenCalled();
+    });
+
+    it('deve incluir rebootCount no cálculo do score do cliente', async () => {
+      const mockClient = { id: 1 };
+      const mockExperienceScore = {
+        uptime: 0.2,
+        txPower: 0.1,
+        cpuUsage: 0.1,
+        memoryUsage: 0.1,
+        rxPower: 0.2,
+        rebootCount: 0.3,
+        toJSON: jest.fn().mockReturnValue({})
+      };
+      const mockFieldScores = [
+        { field: 'uptime', value: 0.9 },
+        { field: 'txPower', value: 0.8 },
+        { field: 'cpuUsage', value: 0.7 },
+        { field: 'memoryUsage', value: 0.6 },
+        { field: 'rxPower', value: 0.5 },
+        { field: 'rebootCount', value: 0.4 },
+      ];
+
+      (Client.findByPk as jest.Mock).mockResolvedValue(mockClient);
+      (ExperienceScore.getByClient as jest.Mock).mockResolvedValue(mockExperienceScore);
+      (ClientScore.createScore as jest.Mock).mockResolvedValue({ score: 0.65 });
+
+      const result = await clientScoreService.generateClientScore(1, mockFieldScores as FieldScore[]);
+
+      expect(result).toBeCloseTo(0.61, 5);
+      expect(ClientScore.createScore).toHaveBeenCalledWith(
+        1,
+        0.61,
+        expect.objectContaining({
+          uptime: 0.9,
+          txPower: 0.8,
+          cpuUsage: 0.7,
+          memoryUsage: 0.6,
+          rxPower: 0.5,
+          rebootCount: 0.4
+        }),
+        {}
+      );
+    });
+
+    it('deve calcular corretamente o score quando rebootCount está presente mas outros campos estão ausentes', async () => {
+      const mockClient = { id: 1 };
+      const mockExperienceScore = {
+        uptime: 0.2,
+        rebootCount: 0.8,
+        toJSON: jest.fn().mockReturnValue({})
+      };
+      const mockFieldScores = [
+        { field: 'uptime', value: 0.9 },
+        { field: 'rebootCount', value: 0.1 },
+      ];
+
+      (Client.findByPk as jest.Mock).mockResolvedValue(mockClient);
+      (ExperienceScore.getByClient as jest.Mock).mockResolvedValue(mockExperienceScore);
+      (ClientScore.createScore as jest.Mock).mockResolvedValue({ score: 0.26 });
+
+      const result = await clientScoreService.generateClientScore(1, mockFieldScores as FieldScore[]);
+
+      expect(result).toBeCloseTo(0.26, 5);
+      expect(ClientScore.createScore).toHaveBeenCalledWith(
+        1,
+        0.26,
+        expect.objectContaining({
+          uptime: 0.9,
+          rebootCount: 0.1
+        }),
+        {}
+      );
     });
   });
 });

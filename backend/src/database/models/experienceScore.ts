@@ -16,6 +16,7 @@ class ExperienceScore extends Model {
   declare totalConnectedDevices: number;
   declare averageWorstRssi: number;
   declare connectedDevices5gRatio: number;
+  declare rebootCount: number;
   declare oltId: number | null;
   declare ctoId: number | null;
   declare createdAt: Date;
@@ -69,6 +70,10 @@ ExperienceScore.init({
     type: sequelize.FLOAT,
     validate: { min: 0, max: 1 }
   },
+  rebootCount: {
+    type: sequelize.FLOAT,
+    validate: { min: 0, max: 1 }
+  },
   oltId: {
     type: sequelize.INTEGER,
     allowNull: true,
@@ -97,27 +102,26 @@ ExperienceScore.init({
     allowNull: false,
     type: sequelize.DATE,
     defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
-  }
-
+  },
 }, {
   sequelize: db,
   modelName: 'experience_scores',
   timestamps: true,
   underscored: true,
   hooks: {
-    beforeSave: (instance, options) => {
-      const total = instance.uptime +
-                    instance.txPower +
-                    instance.cpuUsage +
-                    instance.memoryUsage +
-                    instance.rxPower +
-                    instance.temperature +
-                    instance.totalConnectedDevices +
-                    instance.averageWorstRssi +
-                    instance.connectedDevices5gRatio;
-      const epsilon = 1e-6;
-      if (Math.abs(total - 1) > epsilon) {
-        throw new Error('The sum of all fields must be equal to 1');
+    beforeSave: (instance: ExperienceScore, options) => {
+      const fieldsToSum = [
+        'uptime', 'txPower', 'cpuUsage', 'memoryUsage', 'rxPower',
+        'temperature', 'totalConnectedDevices', 'averageWorstRssi',
+        'connectedDevices5gRatio', 'rebootCount'
+      ];
+
+      const total = fieldsToSum.reduce((sum, field) => {
+        const value = instance[field as keyof ExperienceScore]
+        return sum + (typeof value === 'number' ? value : 0);
+      }, 0);
+      if (total.toFixed(1) !== '1.0') {
+        throw new Error('The sum of all fields must be equal to 1, actual sum is: ' + total.toFixed(1));
       }
     }
   }

@@ -179,6 +179,7 @@ describe('processScores end-to-end', () => {
       totalConnectedDevices: 0.1,
       averageWorstRssi: 0.05,
       connectedDevices5gRatio: 0.05,
+      rebootCount: 0.05, // Added rebootCount
       toJSON: function() { return this; }
     };
 
@@ -190,7 +191,9 @@ describe('processScores end-to-end', () => {
       { field: 'cpuUsage', value: 50, createdAt: new Date('2023-05-01') },
       { field: 'cpuUsage', value: 60, createdAt: new Date('2023-05-02') },
       { field: 'memoryUsage', value: 70, createdAt: new Date('2023-05-01') },
-      { field: 'memoryUsage', value: 80, createdAt: new Date('2023-05-02') }
+      { field: 'memoryUsage', value: 80, createdAt: new Date('2023-05-02') },
+      { field: 'rebootCount', value: 100, createdAt: new Date('2023-05-01') },
+      { field: 'rebootCount', value: -50, createdAt: new Date('2023-05-02') }
     ];
 
     const mockFieldScoreRule = {
@@ -210,7 +213,8 @@ describe('processScores end-to-end', () => {
         { field: 'uptime', value: 0.2916666666666667 },
         { field: 'txPower', value: 0 },
         { field: 'cpuUsage', value: 0.5833333333333334 },
-        { field: 'memoryUsage', value: 0.9166666666666667 }
+        { field: 'memoryUsage', value: 0.9166666666666667 },
+        { field: 'rebootCount', value: 0.5 } // Added rebootCount
     ]);
     (Client.findByPk as jest.Mock).mockResolvedValue(mockClients[0]);
     (ClientScore.createScore as jest.Mock).mockResolvedValue({ score: 0.65 });
@@ -221,7 +225,7 @@ describe('processScores end-to-end', () => {
     expect(ClientScore.findOne).toHaveBeenCalledTimes(1);
     expect(ExperienceScore.getByClient).toHaveBeenCalledTimes(2);
     expect(FieldMeasure.findAll).toHaveBeenCalledTimes(1);
-    expect(FieldScoreRule.getFieldScoreRuleForDevice).toHaveBeenCalledTimes(4);
+    expect(FieldScoreRule.getFieldScoreRuleForDevice).toHaveBeenCalledTimes(5);
     expect(FieldScore.bulkCreateFieldScores).toHaveBeenCalledTimes(1);
     expect(ClientScore.createScore).toHaveBeenCalledTimes(1);
 
@@ -231,10 +235,23 @@ describe('processScores end-to-end', () => {
       txPower: 0,
       cpuUsage: 0.5833333333333334,
       memoryUsage: 0.9166666666666667,
+      rebootCount: 0.5 // Added rebootCount
     });
 
     const clientScoreCalls = (ClientScore.createScore as jest.Mock).mock.calls;
     expect(clientScoreCalls[0][0]).toBe(1);
-    expect(clientScoreCalls[0][1]).toBeCloseTo(0.4, 1);
+    expect(clientScoreCalls[0][1]).toBeCloseTo(0.425, 2); // Updated expected score
+
+    // Validate that rebootCount is included in the sum and score calculation
+    const expectedSum = 0.2 + 0.1 + 0.1 + 0.1 + 0.05;
+    const expectedScore = (
+      0.2916666666666667 * 0.2 +
+      0 * 0.1 +
+      0.5833333333333334 * 0.1 +
+      0.9166666666666667 * 0.1 +
+      0.5 * 0.05 // rebootCount contribution
+    ) / expectedSum;
+
+    expect(clientScoreCalls[0][1]).toBeCloseTo(expectedScore, 2);
   });
 });

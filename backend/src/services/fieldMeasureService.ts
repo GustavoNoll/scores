@@ -4,7 +4,7 @@ import { ConnectedDevices, TranslateFields, WifiNetworks } from "../utils/dataMo
 import Device from "../database/models/device";
 import AcsInform from "../database/models/acsInform";
 import translateModel from "../utils/translateModel";
-import { FIELD_CONNECTED_DEVICES_5G_RATIO, FIELD_AVERAGE_WORST_RSSI, FIELD_CPU_USAGE, FIELD_MEMORY_USAGE, FIELD_TOTAL_CONNECTED_DEVICES } from "../constants/fieldConstants";
+import { FIELD_CONNECTED_DEVICES_5G_RATIO, FIELD_AVERAGE_WORST_RSSI, FIELD_CPU_USAGE, FIELD_MEMORY_USAGE, FIELD_TOTAL_CONNECTED_DEVICES, FIELD_REBOOT_COUNT } from "../constants/fieldConstants";
 import { FieldMeasuresGrouped } from "../interfaces/fieldMeasureInterface";
 
 const NUM_WORST_RSSI_VALUES = 3;
@@ -111,9 +111,8 @@ class FieldMeasureService {
   async generateFieldMeasures(device: Device, translatedFields: TranslateFields) {
     const generalFieldMeasures = this.createGeneralFieldMeasures(device, translatedFields);
     const wifiFieldMeasures = this.createWifiFieldMeasures(device, translatedFields.wifiNetworks, translatedFields.connectedDevices);
-
-    const fieldMeasures = [...generalFieldMeasures, ...wifiFieldMeasures];
-
+    const comparisonFieldMeasures = await this.calculateComparisonFields(device, translatedFields);
+    const fieldMeasures = [...generalFieldMeasures, ...wifiFieldMeasures, ...comparisonFieldMeasures];
     return await this.model.bulkCreate(fieldMeasures);
   }
 
@@ -153,6 +152,49 @@ class FieldMeasureService {
     return groupedMeasures;
   }
 
+  private async calculateComparisonFields(device: Device, translatedFields: TranslateFields): Promise<Array<{clientId: number, deviceId: number, field: string, value: number, createdAt: Date, updatedAt: Date}>> {
+    const comparisonFields = [];
+
+    // Calculate reboot count
+    const currentUptime = translatedFields.uptime;
+    const lastUptime = await this.getLastUptime(device.id);
+    if (lastUptime !== null && currentUptime !== null) {
+      const rebootCount = currentUptime < lastUptime ? 1 : 0;
+
+      comparisonFields.push({
+        clientId: device.clientId,
+        deviceId: device.id,
+        field: FIELD_REBOOT_COUNT,
+        value: rebootCount,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+    }
+
+    // Add more comparison fields here if needed in the future
+    // Example:
+    // const someOtherField = calculateSomeOtherField(translatedFields);
+    // if (someOtherField !== null) {
+    //   comparisonFields.push({
+    //     clientId: device.clientId,
+    //     deviceId: device.id,
+    //     field: FIELD_SOME_OTHER_FIELD,
+    //     value: someOtherField,
+    //     createdAt: new Date(),
+    //     updatedAt: new Date(),
+    //   });
+    // }
+
+    return comparisonFields;
+  }
+
+  private async getLastUptime(deviceId: number): Promise<number | null> {
+    const lastUptimeMeasure = await this.model.findOne({
+      where: { deviceId, field: 'uptime' },
+      order: [['createdAt', 'DESC']],
+    });
+    return lastUptimeMeasure ? lastUptimeMeasure.value : null;
+  }
 }
 
 export default FieldMeasureService;

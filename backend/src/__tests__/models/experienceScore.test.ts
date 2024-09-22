@@ -43,12 +43,12 @@ describe('ExperienceScore Model', () => {
       txPower: 0.1,
       cpuUsage: 0.1,
       memoryUsage: 0.1,
-      rxPower: 0.1,
+      rxPower: 0.05,
       temperature: 0.1,
-      connectedDevices: 0.1,
-      rssi: 0.1,
-      autoChannel: 0.1,
-      highLowBandwidthRatio: 0.1,
+      totalConnectedDevices: 0.1,
+      averageWorstRssi: 0.1,
+      connectedDevices5gRatio: 0.1,
+      rebootCount: 0.15,
       oltId: null,
       ctoId: null
     });
@@ -64,10 +64,10 @@ describe('ExperienceScore Model', () => {
       memoryUsage: 0.1,
       rxPower: 0.1,
       temperature: 0.1,
-      connectedDevices: 0.1,
-      rssi: 0.1,
-      autoChannel: 0.1,
-      highLowBandwidthRatio: 0.1,
+      totalConnectedDevices: 0.1,
+      averageWorstRssi: 0.1,
+      connectedDevices5gRatio: 0.1,
+      rebootCount: 0.1,
       oltId: olt.id,
       ctoId: null
     });
@@ -85,10 +85,10 @@ describe('ExperienceScore Model', () => {
       memoryUsage: 0.1,
       rxPower: 0.1,
       temperature: 0.1,
-      connectedDevices: 0.1,
-      rssi: 0.1,
-      autoChannel: 0.1,
-      highLowBandwidthRatio: 0.1,
+      totalConnectedDevices: 0.1,
+      averageWorstRssi: 0.1,
+      connectedDevices5gRatio: 0.1,
+      rebootCount: 0.1,
       oltId: olt.id,
       ctoId: cto.id
     });

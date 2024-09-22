@@ -8,6 +8,7 @@ interface ExperienceScoreCreateInterface {
   totalConnectedDevices: number;
   averageWorstRssi: number;
   connectedDevices5gRatio: number;
+  rebootCount: number;
   oltId: number | null;
   ctoId: number | null;
 }
