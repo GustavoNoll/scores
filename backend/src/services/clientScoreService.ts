@@ -52,8 +52,6 @@ class ClientScoreService {
 
     // Calcular a porcentagem de ExperienceScore não calculado
     // Ajustar o totalScore com base na porcentagem não calculada
-    console.log('totalScore', totalScore)
-    console.log('calculatedExperienceScore', calculatedExperienceScore)
     const clientScore = totalScore / calculatedExperienceScore;
 
     // Salvar o clientScore no banco de dados com snapshots dos FieldScores e ExperienceScore

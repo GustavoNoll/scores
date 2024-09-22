@@ -8,6 +8,9 @@ import FieldScoreService from '../../services/fieldScoreService';
 import FieldScoreRule from '../../database/models/fieldScoreRule';
 import FieldMeasure from '../../database/models/fieldMeasure';
 
+// Mock FieldScoreService for all tests except end-to-end
+//jest.mock('../../services/fieldScoreService');
+
 jest.mock('../../constants/processConstants', () => ({
   ...jest.requireActual('../../constants/processConstants'),
   MIN_REQUIRED_DIFFERENT_DAYS_OF_A_FIELD_TO_CALCULATE_SCORE: 2
@@ -36,9 +39,12 @@ jest.mock('../../database/models/fieldMeasure', () => {
     }),
   };
 });
-
+const processScoresSpy = jest.spyOn(FieldScoreService.prototype, 'processScores');
 describe('processScores', () => {
   beforeEach(() => {
+    processScoresSpy.mockResolvedValue(true);
+  });
+  afterEach(() => {
     jest.clearAllMocks();
   });
 
@@ -162,9 +168,9 @@ describe('processScores', () => {
 
 describe('processScores end-to-end', () => {
   beforeEach(() => {
+    processScoresSpy.mockRestore();
     jest.clearAllMocks();
   });
-
   it('should process scores for multiple clients', async () => {
     const mockClients = [
       { id: 1, integrationId: 'client1', device: { id: 101 } },
