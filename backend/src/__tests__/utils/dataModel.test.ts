@@ -74,7 +74,7 @@ describe('DataModel', () => {
           SoftwareVersion: { _value: '2.0' },
           SerialNumber: { _value: "aaaa12345678"},
         },
-        WANDevice: 
+        WANDevice:
         { '1':
           {
             WANConnectionDevice: {
@@ -183,5 +183,29 @@ describe('DataModel', () => {
     };
 
     expect(DataModel.getBaseDevice(jsonData)).toEqual(expectedBaseDevice);
+  });
+
+  it('should handle unexpected JSON data format gracefully', () => {
+    const unexpectedJsonData = {
+      UnexpectedRoot: {
+        UnexpectedChild: {
+          SomeValue: { _value: 'Test' }
+        }
+      }
+    };
+
+    const expectedBaseDevice = {
+      manufacturer: null,
+      oui: null,
+      productClass: null,
+      modelName: null,
+      hardwareVersion: null,
+      softwareVersion: null,
+      serialNumber: null,
+      pppoeUsername: null,
+      mac: null,
+    };
+
+    expect(DataModel.getBaseDevice(unexpectedJsonData)).toEqual(expectedBaseDevice);
   });
 });

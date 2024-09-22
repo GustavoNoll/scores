@@ -157,6 +157,17 @@ describe('processScores', () => {
     expect(processScoresMock).toHaveBeenCalledTimes(3);
     expect(console.log).toHaveBeenCalledWith('Scores processados com sucesso!');
   });
+
+  it('should handle the case when there are no clients to process', async () => {
+    (Client.findAll as jest.Mock).mockResolvedValue([]);
+    console.log = jest.fn();
+
+    await processScores();
+
+    expect(console.log).toHaveBeenCalledWith('Encontrados 0 clientes para processamento.');
+    expect(FieldScoreService.prototype.processScores).not.toHaveBeenCalled();
+    expect(ClientScore.createScore).not.toHaveBeenCalled();
+  });
 });
 
 describe('processScores end-to-end', () => {
