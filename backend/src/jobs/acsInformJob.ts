@@ -1,10 +1,19 @@
 import { CronJob } from 'cron';
 import AcsInform from '../database/models/acsInform';
 import { Op } from 'sequelize';
-import DeviceService from '../services/deviceService';
 import AcsInformService from '../services/acsInformService';
 
+const BATCH_SIZE = 10;
+
 let startTime: Date | null = null;
+
+async function processAcsInformBatch(batch: AcsInform[]) {
+  const acsInformService = new AcsInformService();
+  return Promise.all(batch.map(acsInform =>
+    acsInformService.processAcsInform(acsInform)
+      .catch(error => console.error(`Error processing ACS inform ${acsInform.id}:`, error))
+  ));
+}
 
 export async function processAcsInforms() {
   try {
@@ -21,11 +30,11 @@ export async function processAcsInforms() {
     });
     console.log(`Encontrados ${acsInforms.length} acs informs para processamento.`);
 
-    // Processamento de cada acs inform encontrado
-    for (const acsInform of acsInforms) {
-      console.log(`Processando acs inform: ${acsInform.deviceTag}`);
-      await new AcsInformService().processAcsInform(acsInform)
-
+    // Process ACS informs in batches
+    for (let i = 0; i < acsInforms.length; i += BATCH_SIZE) {
+      const batch = acsInforms.slice(i, i + BATCH_SIZE);
+      console.log(`Processando batch ${i / BATCH_SIZE + 1} de ${Math.ceil(acsInforms.length / BATCH_SIZE)}`);
+      await processAcsInformBatch(batch);
     }
 
     const timestamp = new Date().toISOString();
@@ -35,12 +44,12 @@ export async function processAcsInforms() {
   }
 }
 
-const job = new CronJob('* * * * *', processAcsInforms);
 
-job.start();
+let job: CronJob;
+if (process.env.NODE_ENV !== 'test') {
+  job = new CronJob('* * * * *', processAcsInforms);
+  job.start();
+  console.log('Agendamento de processamento de acs informs configurado para rodar a cada 1 minuto.');
+}
 
-// Log de confirmação do agendamento
-console.log('Agendamento de processamento de acs informs configurado para rodar a cada 1 minuto.');
-
-// Exporte o job se necessário
-export default job;
+export { job };

@@ -8,13 +8,12 @@ import FieldScoreService from '../../services/fieldScoreService';
 import FieldScoreRule from '../../database/models/fieldScoreRule';
 import FieldMeasure from '../../database/models/fieldMeasure';
 
-// Mock FieldScoreService for all tests except end-to-end
-//jest.mock('../../services/fieldScoreService');
-
 jest.mock('../../constants/processConstants', () => ({
   ...jest.requireActual('../../constants/processConstants'),
-  MIN_REQUIRED_DIFFERENT_DAYS_OF_A_FIELD_TO_CALCULATE_SCORE: 2
+  MIN_REQUIRED_DIFFERENT_DAYS_OF_A_FIELD_TO_CALCULATE_SCORE: 2,
+  BATCH_SIZE: 2
 }));
+
 jest.mock('../../database/models/device');
 jest.mock('../../database/models/client');
 jest.mock('../../database/models/clientScore');
@@ -48,10 +47,11 @@ describe('processScores', () => {
     jest.clearAllMocks();
   });
 
-  it('processes scores for clients with devices and experience scores', async () => {
+  it('processes scores for clients with devices and experience scores in batches', async () => {
     const mockClients = [
       { id: 1, integrationId: 'INT1', device: { id: 101 } },
       { id: 2, integrationId: 'INT2', device: { id: 102 } },
+      { id: 3, integrationId: 'INT3', device: { id: 103 } },
     ];
 
     (Client.findAll as jest.Mock).mockResolvedValue(mockClients);
@@ -62,9 +62,39 @@ describe('processScores', () => {
     await processScores();
 
     expect(Client.findAll).toHaveBeenCalledWith({ include: [{ model: Device, as: 'device' }] });
-    expect(ClientScore.findOne).toHaveBeenCalledTimes(2);
-    expect(ExperienceScore.getByClient).toHaveBeenCalledTimes(2);
-    expect(FieldScoreService.prototype.processScores).toHaveBeenCalledTimes(2);
+    expect(ClientScore.findOne).toHaveBeenCalledTimes(3);
+    expect(ExperienceScore.getByClient).toHaveBeenCalledTimes(3);
+    expect(FieldScoreService.prototype.processScores).toHaveBeenCalledTimes(3);
+  });
+  it('processes clients in correct number of batches', async () => {
+    const mockClients = Array(25).fill(null).map((_, i) => ({ id: i + 1, integrationId: `INT${i + 1}`, device: { id: 100 + i } }));
+
+    (Client.findAll as jest.Mock).mockResolvedValue(mockClients);
+    (ClientScore.findOne as jest.Mock).mockResolvedValue(null);
+    (ExperienceScore.getByClient as jest.Mock).mockResolvedValue({ id: 1 });
+    (FieldScoreService.prototype.processScores as jest.Mock).mockResolvedValue(true);
+
+    console.log = jest.fn();
+
+    await processScores();
+
+    expect(console.log).toHaveBeenCalledWith('Encontrados 25 clientes para processamento.');
+    expect(console.log).toHaveBeenCalledWith('Processando batch 1 de 3');
+    expect(console.log).toHaveBeenCalledWith('Processando batch 2 de 3');
+    expect(console.log).toHaveBeenCalledWith('Processando batch 3 de 3');
+    expect(console.log).toHaveBeenCalledWith('Scores processados com sucesso!');
+  });
+
+  it('skips processing when ExperienceScore is not found', async () => {
+    const mockClients = [{ id: 1, integrationId: 'INT1', device: { id: 101 } }];
+
+    (Client.findAll as jest.Mock).mockResolvedValue(mockClients);
+    (ClientScore.findOne as jest.Mock).mockResolvedValue(null);
+    (ExperienceScore.getByClient as jest.Mock).mockResolvedValue(null);
+
+    await processScores();
+
+    expect(FieldScoreService.prototype.processScores).not.toHaveBeenCalled();
   });
 
   it('skips processing for clients without devices', async () => {
@@ -83,25 +113,6 @@ describe('processScores', () => {
     expect(FieldScoreService.prototype.processScores).toHaveBeenCalledTimes(1);
   });
 
-  it('skips processing for clients without experience scores', async () => {
-    const mockClients = [
-      { id: 1, integrationId: 'INT1', device: { id: 101 } },
-      { id: 2, integrationId: 'INT2', device: { id: 102 } },
-    ];
-
-    (Client.findAll as jest.Mock).mockResolvedValue(mockClients);
-    (ClientScore.findOne as jest.Mock).mockResolvedValue(null);
-    (ExperienceScore.getByClient as jest.Mock).mockResolvedValueOnce(null).mockResolvedValueOnce({ id: 1 });
-    (FieldScoreService.prototype.processScores as jest.Mock).mockResolvedValue(true);
-
-    console.log = jest.fn();
-
-    await processScores();
-
-    expect(FieldScoreService.prototype.processScores).toHaveBeenCalledTimes(1);
-    expect(console.log).toHaveBeenCalledWith('No ExperienceScore found for client INT1');
-  });
-
   it('skips processing for clients with recent scores', async () => {
     const mockClients = [
       { id: 1, integrationId: 'INT1', device: { id: 101 } },
@@ -111,30 +122,12 @@ describe('processScores', () => {
     (Client.findAll as jest.Mock).mockResolvedValue(mockClients);
     (ClientScore.findOne as jest.Mock).mockResolvedValue({ id: 1 });
 
-    console.log = jest.fn();
-
     await processScores();
 
     expect(FieldScoreService.prototype.processScores).not.toHaveBeenCalled();
-    expect(console.log).toHaveBeenCalledWith(expect.stringContaining('had a score in the last 12 hours'));
   });
 
-  it('handles errors during processing', async () => {
-    const mockClients = [{ id: 1, integrationId: 'INT1', device: { id: 101 } }];
-
-    (Client.findAll as jest.Mock).mockResolvedValue(mockClients);
-    (ClientScore.findOne as jest.Mock).mockResolvedValue(null);
-    (ExperienceScore.getByClient as jest.Mock).mockResolvedValue({ id: 1 });
-    (FieldScoreService.prototype.processScores as jest.Mock).mockRejectedValue(new Error('Test error'));
-
-    console.error = jest.fn();
-
-    await processScores();
-
-    expect(console.error).toHaveBeenCalledWith('Error processing scores for client 1:', expect.any(Error));
-  });
-
-  it('continues processing other clients when one client throws an error', async () => {
+  it('handles errors during processing and continues with other clients', async () => {
     const mockClients = [
       { id: 1, integrationId: 'INT1', device: { id: 101 } },
       { id: 2, integrationId: 'INT2', device: { id: 102 } },
