@@ -1,7 +1,7 @@
 import { ModelStatic, Sequelize } from "sequelize";
 import Client from "../database/models/client";
 import resp from "../utils/resp";
-import ClientInterface from "../interfaces/clientInterface";
+import { ClientInterface, ProtocolInterface, MassiveInterface } from "../interfaces/clientInterface";
 import schema from "./validations/clientSchema";
 import respM from "../utils/respM";
 import Olt from "../database/models/olt";
@@ -11,6 +11,8 @@ import { WeeklyParams, WeeklyScoreResult } from "../interfaces/searchInteface";
 import { startOfWeek, endOfWeek, subMonths, eachWeekOfInterval, format } from 'date-fns';
 import { Op } from 'sequelize';
 import FieldScore from "../database/models/fieldScore";
+import FieldMeasure from "../database/models/fieldMeasure";
+import Device from "../database/models/device";
 
 class ClientService {
   private model: ModelStatic<Client> = Client;
@@ -162,6 +164,52 @@ class ClientService {
     } catch (error) {
       return resp(500, { message: 'Error retrieving latest scores', error });
     }
+  }
+
+  async createProtocol(integrationId: string, protocol: ProtocolInterface) {
+    const client = await Client.findOne({ 
+      where: { integrationId },
+      include: [{
+        model: Device,
+        as: 'device'
+      }]
+    });
+    
+    if (!client) return respM(404, 'Client not found');
+    const device = (client as any).device;
+    if (!device) return respM(404, 'Client has no associated device');
+
+    const createdProtocol = await FieldMeasure.create({
+      clientId: client.id,
+      deviceId: device.id,
+      field: 'protocolCount',
+      value: 1,
+      createdAt: protocol.createdAt,
+    });
+    return resp(201, createdProtocol);
+  }
+
+  async createMassiveEvents(integrationId: string, event: MassiveInterface) {
+    const client = await Client.findOne({ 
+      where: { integrationId },
+      include: [{
+        model: Device,
+        as: 'device'
+      }]
+    });
+    
+    if (!client) return respM(404, 'Client not found');
+    const device = (client as any).device;
+    if (!device) return respM(404, 'Client has no associated device');
+
+    const createdEvent = await FieldMeasure.create({
+      clientId: client.id,
+      deviceId: device.id,
+      field: 'massiveEventCount',
+      value: 1,
+      createdAt: event.createdAt,
+    });
+    return resp(201, createdEvent);
   }
 }
 export default ClientService

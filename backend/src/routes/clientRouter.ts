@@ -13,4 +13,6 @@ clientRouter.patch('/clients/:integrationId', control.update.bind(control))
 
 clientRouter.get('/clients/:integrationId/weekScores', control.weekScores.bind(control))
 clientRouter.get('/clients/:integrationId/mapScores', control.mapScores.bind(control))
+clientRouter.post('/clients/:integrationId/protocol/create', control.createProtocol.bind(control))
+clientRouter.post('/clients/:integrationId/massiveEvent/create', control.createMassiveEvent.bind(control))
 export default clientRouter;

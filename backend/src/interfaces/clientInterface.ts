@@ -10,4 +10,10 @@ interface ClientInterface {
   oltIntegrationId: string;
   active: boolean;
 }
-export default ClientInterface;
+interface ProtocolInterface {
+  createdAt: Date;
+}
+interface MassiveInterface {
+  createdAt: Date;
+}
+export { ClientInterface, ProtocolInterface, MassiveInterface };

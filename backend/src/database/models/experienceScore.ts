@@ -17,6 +17,8 @@ class ExperienceScore extends Model {
   declare averageWorstRssi: number;
   declare connectedDevices5gRatio: number;
   declare rebootCount: number;
+  declare protocolCount: number;
+  declare massiveEventCount: number;
   declare oltId: number | null;
   declare ctoId: number | null;
   declare createdAt: Date;
@@ -74,6 +76,14 @@ ExperienceScore.init({
     type: sequelize.FLOAT,
     validate: { min: 0, max: 1 }
   },
+  protocolCount: {
+    type: sequelize.FLOAT,
+    validate: { min: 0, max: 1 }
+  },
+  massiveEventCount: {
+    type: sequelize.FLOAT,
+    validate: { min: 0, max: 1 }
+  },
   oltId: {
     type: sequelize.INTEGER,
     allowNull: true,
@@ -113,7 +123,7 @@ ExperienceScore.init({
       const fieldsToSum = [
         'uptime', 'txPower', 'cpuUsage', 'memoryUsage', 'rxPower',
         'temperature', 'totalConnectedDevices', 'averageWorstRssi',
-        'connectedDevices5gRatio', 'rebootCount'
+        'connectedDevices5gRatio', 'rebootCount', 'protocolCount', 'massiveEventCount'
       ];
 
       const total = fieldsToSum.reduce((sum, field) => {

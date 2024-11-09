@@ -51,5 +51,24 @@ class ClientController {
     }
   }
 
+  async createProtocol(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { integrationId } = req.params;
+      const { status, message } = await this.service.createProtocol(integrationId, req.body);
+      res.status(status).json(message);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async createMassiveEvent(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { integrationId } = req.params;
+      const { status, message } = await this.service.createMassiveEvents(integrationId, req.body);
+      res.status(status).json(message);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 export default ClientController

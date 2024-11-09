@@ -45,6 +45,14 @@ module.exports = {
         type: Sequelize.FLOAT,
         validate: { min: 0, max: 1 }
       },
+      protocol_count: {
+        type: Sequelize.FLOAT,
+        validate: { min: 0, max: 1 }
+      },
+      massive_event_count: {
+        type: Sequelize.FLOAT,
+        validate: { min: 0, max: 1 }
+      },
       olt_id: {
         type: Sequelize.INTEGER,
         allowNull: true,

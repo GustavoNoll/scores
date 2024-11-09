@@ -39,6 +39,8 @@ describe('ExperienceScoreService', () => {
       averageWorstRssi: 0.1,
       connectedDevices5gRatio: 0.1,
       rebootCount: 0,
+      protocolCount: 0,
+      massiveEventCount: 0,
       oltId: null,
       ctoId: null
     };
@@ -61,6 +63,8 @@ describe('ExperienceScoreService', () => {
       averageWorstRssi: 0.3,
       connectedDevices5gRatio: 0.15,
       rebootCount: 0,
+      protocolCount: 0,
+      massiveEventCount: 0,
       oltId: olt.id,
       ctoId: null
     };
@@ -80,6 +84,8 @@ describe('ExperienceScoreService', () => {
       averageWorstRssi: 0.3,
       connectedDevices5gRatio: 0.1,
       rebootCount: 0,
+      protocolCount: 0,
+      massiveEventCount: 0,
       oltId: olt.id,
       ctoId: null
     };
@@ -99,6 +105,8 @@ describe('ExperienceScoreService', () => {
       averageWorstRssi: 0.35,
       connectedDevices5gRatio: 0.1,
       rebootCount: 0,
+      protocolCount: 0,
+      massiveEventCount: 0,
       oltId: olt.id,
       ctoId: cto.id
     };
@@ -115,9 +123,11 @@ describe('ExperienceScoreService', () => {
       rxPower: 0.2,
       temperature: 0.05,
       totalConnectedDevices: 0.1,
-      averageWorstRssi: 0.35,
+      averageWorstRssi: 0.15,
       connectedDevices5gRatio: 0,
       rebootCount: 0.1,
+      protocolCount: 0.1,
+      massiveEventCount: 0.1,
       oltId: null,
       ctoId: cto.id
     };
@@ -141,6 +151,8 @@ describe('ExperienceScoreService', () => {
       averageWorstRssi: 0,
       connectedDevices5gRatio: 0,
       rebootCount: 0,
+      protocolCount: 0,
+      massiveEventCount: 0,
       oltId: olt.id,
       ctoId: cto.id
     };
@@ -165,6 +177,8 @@ describe('ExperienceScoreService', () => {
       averageWorstRssi: 0.1,
       connectedDevices5gRatio: 0.1,
       rebootCount: 0,
+      protocolCount: 0,
+      massiveEventCount: 0,
       oltId: olt.id,
       ctoId: cto.id
     };
