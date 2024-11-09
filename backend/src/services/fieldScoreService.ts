@@ -22,7 +22,7 @@ class FieldScoreService {
       const validMeasuresByDay = FieldMeasure.getFieldMeasureGroupedByDay(measures);
 
       // Step 4: Check if there are measures for at least 4 different days
-      if (hasEnoughDays(validMeasuresByDay)) {
+      if (hasEnoughDays(field, validMeasuresByDay)) {
         // Step 5: Calculate the average score for this field
         scores[field] = await this.calculateScoreForField(field,validMeasuresByDay, device);
       } else {
@@ -100,9 +100,14 @@ class FieldScoreService {
 
 const fieldCalculationMethods: Record<string, 'averageScores' | 'sumThenScore'> = {
   rebootCount: 'sumThenScore',
+  protocolCount: 'sumThenScore',
+  massiveEventCount: 'sumThenScore',
 };
 
-function hasEnoughDays(measuresByDay: Map<string, number[]>): boolean {
+function hasEnoughDays(field: string, measuresByDay: Map<string, number[]>): boolean {
+  if (fieldCalculationMethods[field] === 'sumThenScore') {
+    return true
+  }
   return measuresByDay.size >= MIN_REQUIRED_DIFFERENT_DAYS_OF_A_FIELD_TO_CALCULATE_SCORE;
 }
 export default FieldScoreService

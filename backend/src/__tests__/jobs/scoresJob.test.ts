@@ -181,20 +181,23 @@ describe('processScores end-to-end', () => {
     ];
 
     const mockExperienceScore = {
-      uptime: 0.2,
+      uptime: 0.1,
       txPower: 0.1,
       cpuUsage: 0.1,
       memoryUsage: 0.1,
-      rxPower: 0.2,
+      rxPower: 0.1,
       temperature: 0.1,
-      totalConnectedDevices: 0.1,
+      totalConnectedDevices: 0.05,
       averageWorstRssi: 0.05,
       connectedDevices5gRatio: 0.05,
-      rebootCount: 0.05, // Added rebootCount
+      rebootCount: 0.05,
+      protocolCount: 0.1,
+      massiveEventCount: 0.1,
       toJSON: function() { return this; }
     };
 
     const mockFieldMeasures = [
+      { field: 'connectedDevices5gRatio', value: 0.05, createdAt: new Date('2023-05-01') },
       { field: 'uptime', value: 25, createdAt: new Date('2023-05-01') },
       { field: 'uptime', value: 50, createdAt: new Date('2023-05-02') },
       { field: 'txPower', value: 10, createdAt: new Date('2023-05-01') },
@@ -204,7 +207,8 @@ describe('processScores end-to-end', () => {
       { field: 'memoryUsage', value: 70, createdAt: new Date('2023-05-01') },
       { field: 'memoryUsage', value: 80, createdAt: new Date('2023-05-02') },
       { field: 'rebootCount', value: 100, createdAt: new Date('2023-05-01') },
-      { field: 'rebootCount', value: -50, createdAt: new Date('2023-05-02') }
+      { field: 'protocolCount', value: 100, createdAt: new Date('2023-05-01') },
+      { field: 'massiveEventCount', value: 100, createdAt: new Date('2023-05-01') },
     ];
 
     const mockFieldScoreRule = {
@@ -225,7 +229,9 @@ describe('processScores end-to-end', () => {
         { field: 'txPower', value: 0 },
         { field: 'cpuUsage', value: 0.5833333333333334 },
         { field: 'memoryUsage', value: 0.9166666666666667 },
-        { field: 'rebootCount', value: 0.5 } // Added rebootCount
+        { field: 'rebootCount', value: 1 },
+        { field: 'protocolCount', value: 1 },
+        { field: 'massiveEventCount', value: 1 },
     ]);
     (Client.findByPk as jest.Mock).mockResolvedValue(mockClients[0]);
     (ClientScore.createScore as jest.Mock).mockResolvedValue({ score: 0.65 });
@@ -236,31 +242,36 @@ describe('processScores end-to-end', () => {
     expect(ClientScore.findOne).toHaveBeenCalledTimes(1);
     expect(ExperienceScore.getByClient).toHaveBeenCalledTimes(2);
     expect(FieldMeasure.findAll).toHaveBeenCalledTimes(1);
-    expect(FieldScoreRule.getFieldScoreRuleForDevice).toHaveBeenCalledTimes(5);
+    expect(FieldScoreRule.getFieldScoreRuleForDevice).toHaveBeenCalledTimes(7);
     expect(FieldScore.bulkCreateFieldScores).toHaveBeenCalledTimes(1);
     expect(ClientScore.createScore).toHaveBeenCalledTimes(1);
 
     const fieldScoreCalls = (FieldScore.bulkCreateFieldScores as jest.Mock).mock.calls;
     expect(fieldScoreCalls[0][0]).toEqual({
+      connectedDevices5gRatio: null, // dont have enough days to calculate score
       uptime: 0.2916666666666667,
       txPower: 0,
       cpuUsage: 0.5833333333333334,
       memoryUsage: 0.9166666666666667,
-      rebootCount: 0.5 // Added rebootCount
+      rebootCount: 1,
+      protocolCount: 1,
+      massiveEventCount: 1,
     });
 
     const clientScoreCalls = (ClientScore.createScore as jest.Mock).mock.calls;
     expect(clientScoreCalls[0][0]).toBe(1);
-    expect(clientScoreCalls[0][1]).toBeCloseTo(0.425, 2); // Updated expected score
+    expect(clientScoreCalls[0][1]).toBeCloseTo(0.66, 2); // Updated expected score
 
     // Validate that rebootCount is included in the sum and score calculation
-    const expectedSum = 0.2 + 0.1 + 0.1 + 0.1 + 0.05;
+    const expectedSum = 0.1 + 0.1 + 0.1 + 0.1 + 0.05 + 0.1 + 0.1;
     const expectedScore = (
-      0.2916666666666667 * 0.2 +
-      0 * 0.1 +
-      0.5833333333333334 * 0.1 +
-      0.9166666666666667 * 0.1 +
-      0.5 * 0.05 // rebootCount contribution
+      0.2916666666666667 * 0.1 + // uptime contribution
+      0 * 0.1 + // txPower contribution
+      0.5833333333333334 * 0.1 + // cpuUsage contribution
+      0.9166666666666667 * 0.1 + // memoryUsage contribution
+      1 * 0.05 + // rebootCount contribution
+      1 * 0.1 + // protocolCount contribution
+      1 * 0.1 // massiveEventCount contribution
     ) / expectedSum;
 
     expect(clientScoreCalls[0][1]).toBeCloseTo(expectedScore, 2);
