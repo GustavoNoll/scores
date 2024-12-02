@@ -28,7 +28,7 @@ class FieldMeasureService {
       return false;
     }
   }
-  private createGeneralFieldMeasures(device: Device, translateFields: TranslateFields) {
+  private async createGeneralFieldMeasures(device: Device, translateFields: TranslateFields) {
     return Object.entries(translateFields)
       .filter(([field]) => field !== "connectedDevices" && field !== "wifiNetworks")
       .map(([field, value]) => {
@@ -47,7 +47,7 @@ class FieldMeasureService {
       });
   }
 
-  private createWifiFieldMeasures(device: Device, wifiNetworks: WifiNetworks, connectedDevices: ConnectedDevices) {
+  private async createWifiFieldMeasures(device: Device, wifiNetworks: WifiNetworks, connectedDevices: ConnectedDevices) {
     let totalConnectedDevices = connectedDevices.length;
     let connectedDevices2G = 0;
     let connectedDevices5G = 0;
@@ -109,9 +109,11 @@ class FieldMeasureService {
   }
 
   async generateFieldMeasures(device: Device, translatedFields: TranslateFields) {
-    const generalFieldMeasures = this.createGeneralFieldMeasures(device, translatedFields);
-    const wifiFieldMeasures = this.createWifiFieldMeasures(device, translatedFields.wifiNetworks, translatedFields.connectedDevices);
-    const comparisonFieldMeasures = await this.calculateComparisonFields(device, translatedFields);
+    const [generalFieldMeasures, wifiFieldMeasures, comparisonFieldMeasures] = await Promise.all([
+      this.createGeneralFieldMeasures(device, translatedFields),
+      this.createWifiFieldMeasures(device, translatedFields.wifiNetworks, translatedFields.connectedDevices),
+      this.calculateComparisonFields(device, translatedFields)
+    ]);
     const fieldMeasures = [...generalFieldMeasures, ...wifiFieldMeasures, ...comparisonFieldMeasures];
     return await this.model.bulkCreate(fieldMeasures);
   }

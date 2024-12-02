@@ -4,7 +4,7 @@ import fs from 'fs';
 export const generateMockZteInform = () => {
   
   const timestamp = new Date().toISOString();
-  const serialNumber = `ZTELQJNN${Math.floor(Math.random() * 10000000)}`;
+  const serialNumber = `ZTELQJNN${Math.floor(Math.random() * 1000000000).toString().padStart(9, '0')}`;
   
   // Create a deep clone of the template
   const jsonModel = fs.readFileSync(path.join(__dirname, './zte_f670l_v9.json'), 'utf-8');

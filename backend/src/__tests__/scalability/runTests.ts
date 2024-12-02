@@ -10,6 +10,7 @@ async function main() {
   await sequelize.authenticate();
   await sequelize.sync({ force: true });
   try {
+    process.env.UV_THREADPOOL_SIZE = '16';
 
 
     // Initialize Sequelize connection

@@ -2,7 +2,6 @@ import { ModelStatic } from "sequelize";
 import AcsInform from "../database/models/acsInform";
 import resp from "../utils/resp";
 import schema from "./validations/schema";
-import respM from "../utils/respM";
 import AcsInformInterface from "../interfaces/acsInformInterface";
 import DeviceService from "./deviceService";
 import Device from "../database/models/device";
@@ -32,13 +31,19 @@ class AcsInformService {
 
   async processAcsInform(acsInform: AcsInform) {
     try {
+      // worker test
+      const acsInformObject = await this.model.findByPk(acsInform.id)
+      if (!acsInformObject) {
+        console.log('Acs inform not found', acsInform)
+        return
+      }
       const deviceService = new DeviceService()
       const fieldMeasureService = new FieldMeasureService()
-      let device = await Device.findOne({ where: { deviceTag: acsInform.deviceTag } });
+      let device = await Device.findOne({ where: { deviceTag: acsInformObject?.deviceTag } });
       if (!device) {
-        device = await deviceService.createDeviceByAcsInform(acsInform)
+        device = await deviceService.createDeviceByAcsInform(acsInformObject)
       } else {
-        await deviceService.updateDevice(device, acsInform.jsonData);
+        await deviceService.updateDevice(device, acsInformObject.jsonData);
       }
 
       if (device === null) {
@@ -47,7 +52,7 @@ class AcsInformService {
       }
 
       if (device.clientId !== null) {
-        const response = await fieldMeasureService.processFields(device, acsInform);
+        const response = await fieldMeasureService.processFields(device, acsInformObject);
         if (!response){
           return
         }
@@ -55,7 +60,7 @@ class AcsInformService {
         console.log("Device unlinked")
       }
 
-      await acsInform.destroy();
+      await acsInformObject.destroy();
     } catch (error) {
       console.error(`Error processing acsInform ${acsInform.id} in DeviceService:`, error);
       throw error;
