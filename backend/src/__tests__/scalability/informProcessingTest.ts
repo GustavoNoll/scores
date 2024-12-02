@@ -43,13 +43,14 @@ async function collectResourceMetrics(): Promise<ResourceMetrics> {
   
   const memory = process.memoryUsage();
   const cpuUsage = process.cpuUsage();
+  const cpuCores = os.cpus().length;
   
   return {
     heapUsed: Math.round(memory.heapUsed / 1024 / 1024 * 100) / 100,
     heapTotal: Math.round(memory.heapTotal / 1024 / 1024 * 100) / 100,
     external: Math.round(memory.external / 1024 / 1024 * 100) / 100,
     rss: Math.round(memory.rss / 1024 / 1024 * 100) / 100,
-    cpuUsage: Math.round((cpuUsage.user + cpuUsage.system) / 1000000 * 100) / 100,
+    cpuUsage: Math.round((cpuUsage.user + cpuUsage.system) / 1000000 * 100 / cpuCores) / 100,
     peakHeapUsed: 0,
     averageHeapUsed: 0
   };
