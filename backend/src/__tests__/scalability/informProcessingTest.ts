@@ -11,7 +11,9 @@ interface ResourceMetrics {
   heapTotal: number;
   external: number;
   cpuUsage: number;
-  rss: number;  // Added RSS memory metric
+  rss: number;
+  peakHeapUsed: number;  // Novo: pico de uso do heap
+  averageHeapUsed: number; // Novo: média de uso do heap
 }
 
 // Add new interface for system specs
@@ -36,15 +38,20 @@ interface TestResult {
 
 // Função para coletar métricas de recursos
 async function collectResourceMetrics(): Promise<ResourceMetrics> {
+  // Aguardar um momento para estabilizar a memória
+  await new Promise(resolve => setTimeout(resolve, 100));
+  
   const memory = process.memoryUsage();
   const cpuUsage = process.cpuUsage();
   
   return {
-    heapUsed: Math.round(memory.heapUsed / 1024 / 1024 * 100) / 100,    // MB with 2 decimals
-    heapTotal: Math.round(memory.heapTotal / 1024 / 1024 * 100) / 100,  // MB with 2 decimals
-    external: Math.round(memory.external / 1024 / 1024 * 100) / 100,     // MB with 2 decimals
-    rss: Math.round(memory.rss / 1024 / 1024 * 100) / 100,              // MB with 2 decimals
-    cpuUsage: Math.round((cpuUsage.user + cpuUsage.system) / 1000000 * 100) / 100  // Seconds with 2 decimals
+    heapUsed: Math.round(memory.heapUsed / 1024 / 1024 * 100) / 100,
+    heapTotal: Math.round(memory.heapTotal / 1024 / 1024 * 100) / 100,
+    external: Math.round(memory.external / 1024 / 1024 * 100) / 100,
+    rss: Math.round(memory.rss / 1024 / 1024 * 100) / 100,
+    cpuUsage: Math.round((cpuUsage.user + cpuUsage.system) / 1000000 * 100) / 100,
+    peakHeapUsed: 0,
+    averageHeapUsed: 0
   };
 }
 
@@ -77,29 +84,41 @@ export async function runScalabilityTest(
   for (const threadCount of threadCounts) {
     for (const informCount of informCounts) {
       console.log(`Gerando ${informCount} informs...`);
-      // Gerar informs de teste
-      await generateTestInforms(informCount);
       
-      const initialMetrics = await collectResourceMetrics();
+      const memoryReadings: number[] = [];
+      let peakHeapUsed = 0;
+      
+      // Monitorar uso de memória durante o processamento
+      const memoryMonitor = setInterval(() => {
+        const currentMemory = process.memoryUsage();
+        const heapUsedMB = currentMemory.heapUsed / 1024 / 1024;
+        memoryReadings.push(heapUsedMB);
+        peakHeapUsed = Math.max(peakHeapUsed, heapUsedMB);
+      }, 100);
+
+      await generateTestInforms(informCount);
       const chunks = await generateInformChunks(threadCount, informCount);
       const startTime = Date.now();
       
       const processedCount = await processInformsWithThreads(threadCount, informCount, chunks);
       
       const endTime = Date.now();
-      const finalMetrics = await collectResourceMetrics();
-      
+      clearInterval(memoryMonitor);
+
+      // Calcular média de uso de memória
+      const averageHeapUsed = memoryReadings.length > 0
+        ? Math.round((memoryReadings.reduce((a, b) => a + b, 0) / memoryReadings.length) * 100) / 100
+        : 0;
+
       const totalTimeMs = endTime - startTime;
       const informsPerSecond = (processedCount / totalTimeMs) * 1000;
       const successRate = (processedCount / informCount) * 100;
 
-      // Calcular diferença nas métricas
+      const finalMetrics = await collectResourceMetrics();
       const resourceMetrics: ResourceMetrics = {
-        heapUsed: finalMetrics.heapUsed - initialMetrics.heapUsed,
-        heapTotal: finalMetrics.heapTotal - initialMetrics.heapTotal,
-        external: finalMetrics.external - initialMetrics.external,
-        cpuUsage: finalMetrics.cpuUsage - initialMetrics.cpuUsage,
-        rss: finalMetrics.rss - initialMetrics.rss,
+        ...finalMetrics,
+        peakHeapUsed: Math.round(peakHeapUsed * 100) / 100,
+        averageHeapUsed
       };
 
       results.push({
@@ -112,8 +131,19 @@ export async function runScalabilityTest(
         systemSpecs: getSystemSpecs()
       });
 
-      // Limpar dados de teste
+      // Atualizar a exibição dos resultados
+      console.log('\nMemory Usage Statistics:');
+      console.table({
+        'Peak Heap Used (MB)': resourceMetrics.peakHeapUsed,
+        'Average Heap Used (MB)': resourceMetrics.averageHeapUsed,
+        'Final Heap Used (MB)': resourceMetrics.heapUsed,
+        'RSS Memory (MB)': resourceMetrics.rss
+      });
+
       await cleanupTestData();
+      
+      // Aguardar um pouco antes do próximo teste
+      await new Promise(resolve => setTimeout(resolve, 1000));
     }
   }
 
@@ -224,8 +254,9 @@ export async function runCompleteScalabilityAnalysis() {
       'Total Time (ms)': result.totalTimeMs,
       'Informs/second': Number(result.informsPerSecond.toFixed(2)),
       'Success Rate (%)': Number(result.successRate.toFixed(2)),
-      'Heap Used (MB)': Number(result.resourceMetrics.heapUsed.toFixed(2)),
-      'Heap Total (MB)': Number(result.resourceMetrics.heapTotal.toFixed(2)),
+      'Peak Heap (MB)': Number(result.resourceMetrics.peakHeapUsed.toFixed(2)),
+      'Avg Heap (MB)': Number(result.resourceMetrics.averageHeapUsed.toFixed(2)),
+      'Final Heap (MB)': Number(result.resourceMetrics.heapUsed.toFixed(2)),
       'RSS Memory (MB)': Number(result.resourceMetrics.rss.toFixed(2)),
       'CPU Usage (%)': Number((result.resourceMetrics.cpuUsage * 100).toFixed(2))
     }));
