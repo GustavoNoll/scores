@@ -2,7 +2,7 @@
   "_id":"042084-F670L-ZTELQJNN4708429",
   "InternetGatewayDevice":
    {"DeviceInfo":
-     {"AdditionalHardwareVersion":{"_object":false, "_writable":false},
+    {"AdditionalHardwareVersion":{"_object":false, "_writable":false},
       "Description":{"_object":false, "_writable":false},
       "DeviceLog":{"_object":false, "_writable":false},
       "HardwareVersion":{"_object":false, "_timestamp":"2024-07-03T00:20:46.604Z", "_type":"xsd:string", "_value":"V9.0", "_writable":false},
@@ -82,7 +82,7 @@
       "ProductClass":{"_object":false, "_timestamp":"2024-03-19T06:20:47.515Z", "_type":"xsd:string", "_value":"F670L", "_writable":false},
       "ProvisioningCode":
        {"_object":false, "_timestamp":"2024-07-03T00:20:46.604Z", "_type":"xsd:string", "_value":"TLCO.GRP2", "_writable":true},
-      "SerialNumber":{"_object":false, "_writable":false},
+      "SerialNumber":{"_object":false, "_writable":false, "_value":"AAAA12345678"},
       "SoftwareVersion":
        {"_object":false, "_timestamp":"2024-07-03T00:20:46.604Z", "_type":"xsd:string", "_value":"V9.0.11P1N10B", "_writable":false},
       "SpecVersion":{"_object":false, "_timestamp":"2024-07-03T00:20:46.604Z", "_type":"xsd:string", "_value":"1.0", "_writable":false},

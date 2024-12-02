@@ -45,6 +45,9 @@ class DataModel {
   }
 
   translateFields(jsonData: any): TranslateFields {
+    if (typeof jsonData === 'string') {
+      jsonData = JSON.parse(jsonData);
+    }
     let data = {
       uptime: this.getUptime(jsonData), // seconds
       temperature: this.getTemperature(jsonData), // celsius
@@ -96,6 +99,9 @@ class DataModel {
   }
   
   static getBaseDevice(jsonData: any): any {
+    if (typeof jsonData === 'string') {
+      jsonData = JSON.parse(jsonData);
+    }
     return {
       manufacturer: this.getManufacturer(jsonData),
       oui: this.getOui(jsonData),

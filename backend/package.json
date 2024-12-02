@@ -9,7 +9,9 @@
     "dev": "ts-node-dev .",
     "pretest": "NODE_ENV=test npx sequelize db:create; NODE_ENV=test npx sequelize db:migrate:undo:all; NODE_ENV=test npx sequelize db:migrate",
     "test": "NODE_ENV=test jest --detectOpenHandles",
-    "posttest": "NODE_ENV=test npx sequelize db:migrate:undo:all"
+    "posttest": "NODE_ENV=test npx sequelize db:migrate:undo:all",
+    "test:scalability": "NODE_ENV=test npx sequelize db:create; NODE_ENV=test npx sequelize db:migrate:undo:all; NODE_ENV; NODE_ENV=test npx sequelize db:migrate; NODE_ENV=test ts-node src/__tests__/scalability/runTests.ts",
+    "test:scalability:watch": "NODE_ENV=test npx sequelize db:create; NODE_ENV=test npx sequelize db:migrate; NODE_ENV=test ts-node-dev --respawn src/__tests__/scalability/runTests.ts"
   },
   "author": "",
   "license": "ISC",
