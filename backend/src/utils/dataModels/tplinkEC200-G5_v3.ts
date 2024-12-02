@@ -1,7 +1,7 @@
-import { deepFind, findWifiNetworkByMac, rssiStringTonNumber, standardizeMac, stringPercentToFloat, stringToFloat, usedPercentByTotalAndFree } from '../convertUtils';
+import { deepFind, usedPercentByTotalAndFree } from '../convertUtils';
 import DataModel from '../dataModel';
-import { Uptime, ConnectedDevices, WifiNetworks, RssiDevice, CpuUsage, Temperature, MemoryUsage, RxPower, TxPower } from '../dataModelTypes';
-import { getWifiNetworks } from '../trVersions/tr069';
+import { ConnectedDevices, WifiNetworks, CpuUsage, MemoryUsage, RxPower, TxPower } from '../dataModelTypes';
+import { getConnectedDevices, getWifiNetworks } from '../trVersions/tr069';
 
 class TplinkEC200_G5v3 extends DataModel {
   constructor() {
@@ -15,45 +15,11 @@ class TplinkEC200_G5v3 extends DataModel {
     });
   }
 
-  getConnectedDevices(jsonData: any): ConnectedDevices{
-    let devices: ConnectedDevices = []
-    const lanDevices = deepFind(jsonData, ['InternetGatewayDevice', 'LANDevice'])
-    for (const lanDeviceIndex in lanDevices) {
-      const hosts = deepFind(lanDevices[lanDeviceIndex], ["Hosts", "Host"])
-
-      if (hosts === null) continue
-
-      for (const hostIndex in hosts) {
-        const host = hosts[hostIndex]
-        const active = deepFind(host, ['Active', '_value'])
-        if (active === null || !active) continue
-
-        let mac = deepFind(host, ['MACAddress', '_value'])
-        mac = standardizeMac(mac)
-
-        let connection: string = 'ethernet'
-        let rssi: number | null = null
-        let wifiIndex: number | null = null
-        
-        
-        const result = findWifiNetworkByMac(this.getWifiNetworks(jsonData), mac);
-        if (result){
-          wifiIndex = result.index
-          connection = result.connection
-          rssi = result.rssi
-        }
-        devices.push({
-          mac: mac,
-          wifiIndex: wifiIndex,
-          active: true,
-          connection: connection,
-          rssi: rssi
-        })
-      }
-    }
-    return devices; 
+  getConnectedDevices(jsonData: any): ConnectedDevices {
+    const wifiNetworks = this.getWifiNetworks(jsonData);
+    return getConnectedDevices(jsonData, wifiNetworks);
   }
-  
+
   getCpuUsage(jsonData: any): CpuUsage {
     const cpuUsage = deepFind(jsonData, ['InternetGatewayDevice', 'DeviceInfo', 'ProcessStatus', 'CPUUsage', '_value']);
 

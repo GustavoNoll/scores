@@ -1,5 +1,5 @@
-import { deepFind, rssiStringTonNumber, standardizeMac } from "../convertUtils";
-import { RssiDevice, WifiNetworks } from "../dataModelTypes";
+import { deepFind, findWifiNetworkByMac, rssiStringTonNumber, standardizeMac } from "../convertUtils";
+import { ConnectedDevices, RssiDevice, WifiNetworks } from "../dataModelTypes";
 
 export function getWifiNetworks(json: any, rssiKey: string = 'AssociatedDeviceRssi'): WifiNetworks {
   let wifiNetworks: WifiNetworks = []
@@ -37,4 +37,43 @@ function getRssiDevices(wlanData: any, rssiKey: string): RssiDevice[] {
     rssiDevices.push({ mac, rssi })
   }
   return rssiDevices
+}
+
+export function getConnectedDevices(jsonData: any, wifiNetworks: WifiNetworks): ConnectedDevices {
+  let devices: ConnectedDevices = []
+  const lanDevices = deepFind(jsonData, ['InternetGatewayDevice', 'LANDevice'])
+  
+  for (const lanDeviceIndex in lanDevices) {
+    const hosts = deepFind(lanDevices[lanDeviceIndex], ["Hosts", "Host"])
+    if (hosts === null) continue
+
+    for (const hostIndex in hosts) {
+      const host = hosts[hostIndex]
+      const active = deepFind(host, ['Active', '_value'])
+      if (active === null || !active) continue
+
+      let mac = deepFind(host, ['MACAddress', '_value'])
+      mac = standardizeMac(mac)
+
+      let connection: string = 'ethernet'
+      let rssi: number | null = null
+      let wifiIndex: number | null = null
+      
+      const result = findWifiNetworkByMac(wifiNetworks, mac);
+      if (result) {
+        wifiIndex = result.index
+        connection = result.connection
+        rssi = result.rssi
+      }
+
+      devices.push({
+        mac,
+        wifiIndex,
+        active: true,
+        connection,
+        rssi
+      })
+    }
+  }
+  return devices
 }
