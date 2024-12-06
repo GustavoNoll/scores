@@ -44,7 +44,7 @@ async function collectResourceMetrics(): Promise<ResourceMetrics> {
   const memory = process.memoryUsage();
   const cpuUsage = process.cpuUsage();
   const cpuCores = os.cpus().length;
-  
+
   return {
     heapUsed: Math.round(memory.heapUsed / 1024 / 1024 * 100) / 100,
     heapTotal: Math.round(memory.heapTotal / 1024 / 1024 * 100) / 100,
@@ -84,6 +84,7 @@ export async function runScalabilityTest(
 
   for (const threadCount of threadCounts) {
     for (const informCount of informCounts) {
+      global.gc && global.gc();
       console.log(`Gerando ${informCount} informs...`);
       
       const memoryReadings: number[] = [];
@@ -231,7 +232,7 @@ async function cleanupTestData(): Promise<void> {
 // Script para executar os testes
 export async function runCompleteScalabilityAnalysis() {
   try {
-    const threadCounts = [1, 2, 4, 8, 16];
+    const threadCounts = [1];
     const informCounts = [100, 1000, 10000];
     
     console.log('Starting scalability analysis...');

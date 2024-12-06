@@ -1,0 +1,47 @@
+{
+  "systemSpecs": {
+    "platform": "darwin 24.1.0",
+    "cpuModel": "Apple M3 Pro",
+    "cpuCores": 11,
+    "totalMemory": 36,
+    "nodeVersion": "v22.7.0"
+  },
+  "results": [
+    {
+      "Threads": 4,
+      "Informs": 100,
+      "Total Time (ms)": 456,
+      "Informs/second": 219.3,
+      "Success Rate (%)": 100,
+      "Peak Heap (MB)": 40.32,
+      "Avg Heap (MB)": 37.97,
+      "Final Heap (MB)": 40.36,
+      "RSS Memory (MB)": 377.7,
+      "CPU Usage (%)": 17
+    },
+    {
+      "Threads": 4,
+      "Informs": 1000,
+      "Total Time (ms)": 1602,
+      "Informs/second": 624.22,
+      "Success Rate (%)": 100,
+      "Peak Heap (MB)": 146.33,
+      "Avg Heap (MB)": 110.71,
+      "Final Heap (MB)": 134.1,
+      "RSS Memory (MB)": 879.19,
+      "CPU Usage (%)": 60
+    },
+    {
+      "Threads": 4,
+      "Informs": 10000,
+      "Total Time (ms)": 18649,
+      "Informs/second": 536.22,
+      "Success Rate (%)": 100,
+      "Peak Heap (MB)": 614.55,
+      "Avg Heap (MB)": 460.98,
+      "Final Heap (MB)": 556.97,
+      "RSS Memory (MB)": 1668.27,
+      "CPU Usage (%)": 382
+    }
+  ]
+}
