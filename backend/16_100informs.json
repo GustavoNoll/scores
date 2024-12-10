@@ -1,0 +1,192 @@
+[
+  {
+    "systemSpecs": {
+      "platform": "darwin 24.1.0",
+      "cpuModel": "Apple M3 Pro",
+      "cpuCores": 11,
+      "totalMemory": 36,
+      "nodeVersion": "v22.7.0"
+    },
+    "results": [
+      {
+        "Threads": 16,
+        "Informs": 100,
+        "Total Time (s)": 1.013,
+        "Avg Heap (MB)": 41.75,
+        "Avg RSS (MB)": 578.21,
+        "Avg CPU Usage (%)": 657.58
+      }
+    ]
+  },
+  {
+    "systemSpecs": {
+      "platform": "darwin 24.1.0",
+      "cpuModel": "Apple M3 Pro",
+      "cpuCores": 11,
+      "totalMemory": 36,
+      "nodeVersion": "v22.7.0"
+    },
+    "results": [
+      {
+        "Threads": 16,
+        "Informs": 100,
+        "Total Time (s)": 0.892,
+        "Avg Heap (MB)": 40.23,
+        "Avg RSS (MB)": 611.76,
+        "Avg CPU Usage (%)": 716.01
+      }
+    ]
+  },
+  {
+    "systemSpecs": {
+      "platform": "darwin 24.1.0",
+      "cpuModel": "Apple M3 Pro",
+      "cpuCores": 11,
+      "totalMemory": 36,
+      "nodeVersion": "v22.7.0"
+    },
+    "results": [
+      {
+        "Threads": 16,
+        "Informs": 100,
+        "Total Time (s)": 0.886,
+        "Avg Heap (MB)": 41.32,
+        "Avg RSS (MB)": 598.28,
+        "Avg CPU Usage (%)": 721.28
+      }
+    ]
+  },
+  {
+    "systemSpecs": {
+      "platform": "darwin 24.1.0",
+      "cpuModel": "Apple M3 Pro",
+      "cpuCores": 11,
+      "totalMemory": 36,
+      "nodeVersion": "v22.7.0"
+    },
+    "results": [
+      {
+        "Threads": 16,
+        "Informs": 100,
+        "Total Time (s)": 0.881,
+        "Avg Heap (MB)": 40.26,
+        "Avg RSS (MB)": 615.88,
+        "Avg CPU Usage (%)": 710.91
+      }
+    ]
+  },
+  {
+    "systemSpecs": {
+      "platform": "darwin 24.1.0",
+      "cpuModel": "Apple M3 Pro",
+      "cpuCores": 11,
+      "totalMemory": 36,
+      "nodeVersion": "v22.7.0"
+    },
+    "results": [
+      {
+        "Threads": 16,
+        "Informs": 100,
+        "Total Time (s)": 0.842,
+        "Avg Heap (MB)": 42.25,
+        "Avg RSS (MB)": 625.35,
+        "Avg CPU Usage (%)": 726.69
+      }
+    ]
+  },
+  {
+    "systemSpecs": {
+      "platform": "darwin 24.1.0",
+      "cpuModel": "Apple M3 Pro",
+      "cpuCores": 11,
+      "totalMemory": 36,
+      "nodeVersion": "v22.7.0"
+    },
+    "results": [
+      {
+        "Threads": 16,
+        "Informs": 100,
+        "Total Time (s)": 0.834,
+        "Avg Heap (MB)": 40.43,
+        "Avg RSS (MB)": 612.42,
+        "Avg CPU Usage (%)": 701
+      }
+    ]
+  },
+  {
+    "systemSpecs": {
+      "platform": "darwin 24.1.0",
+      "cpuModel": "Apple M3 Pro",
+      "cpuCores": 11,
+      "totalMemory": 36,
+      "nodeVersion": "v22.7.0"
+    },
+    "results": [
+      {
+        "Threads": 16,
+        "Informs": 100,
+        "Total Time (s)": 0.916,
+        "Avg Heap (MB)": 40.15,
+        "Avg RSS (MB)": 624.24,
+        "Avg CPU Usage (%)": 669.62
+      }
+    ]
+  },
+  {
+    "systemSpecs": {
+      "platform": "darwin 24.1.0",
+      "cpuModel": "Apple M3 Pro",
+      "cpuCores": 11,
+      "totalMemory": 36,
+      "nodeVersion": "v22.7.0"
+    },
+    "results": [
+      {
+        "Threads": 16,
+        "Informs": 100,
+        "Total Time (s)": 0.835,
+        "Avg Heap (MB)": 41.47,
+        "Avg RSS (MB)": 662.98,
+        "Avg CPU Usage (%)": 710.93
+      }
+    ]
+  },
+  {
+    "systemSpecs": {
+      "platform": "darwin 24.1.0",
+      "cpuModel": "Apple M3 Pro",
+      "cpuCores": 11,
+      "totalMemory": 36,
+      "nodeVersion": "v22.7.0"
+    },
+    "results": [
+      {
+        "Threads": 16,
+        "Informs": 100,
+        "Total Time (s)": 0.868,
+        "Avg Heap (MB)": 41.56,
+        "Avg RSS (MB)": 595.04,
+        "Avg CPU Usage (%)": 695.83
+      }
+    ]
+  },
+  {
+    "systemSpecs": {
+      "platform": "darwin 24.1.0",
+      "cpuModel": "Apple M3 Pro",
+      "cpuCores": 11,
+      "totalMemory": 36,
+      "nodeVersion": "v22.7.0"
+    },
+    "results": [
+      {
+        "Threads": 16,
+        "Informs": 100,
+        "Total Time (s)": 1.049,
+        "Avg Heap (MB)": 40.58,
+        "Avg RSS (MB)": 632.47,
+        "Avg CPU Usage (%)": 595.73
+      }
+    ]
+  }
+]

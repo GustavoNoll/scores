@@ -2,9 +2,9 @@ import matplotlib.pyplot as plt
 
 # Dados
 threads = [1, 2, 4, 8, 16]
-informs_per_second_100 = [126.9, 105.26, 140.45, 104.28, 73.05]
-informs_per_second_1000 = [102.43, 162, 213.13, 168.18, 142.13]
-informs_per_second_10000 = [79.15, 138.01, 204.79, 180.09, 163.57]
+time_100 = [126.9, 105.26, 140.45, 104.28, 73.05]
+time_1000 = [102.43, 162, 213.13, 168.18, 142.13]
+time_10000 = [79.15, 138.01, 204.79, 180.09, 163.57]
 
 cpu_usage_100 = [64, 122, 158, 374, 686]
 cpu_usage_1000 = [689, 570, 596, 1122, 1611]
@@ -18,16 +18,33 @@ rss_memory_100 = [228.17, 1633.92, 1940.02, 2210.36, 2172.25]
 rss_memory_1000 = [391.34, 1265.16, 2284.11, 1981, 2061.17]
 rss_memory_10000 = [1464.52, 1718.92, 1827.38, 1516.81, 2652.31]
 
+# Desvios padrão (todos inicializados com zero)
+std_time_100 = [0, 0, 0, 0, 0]
+std_time_1000 = [0, 0, 0, 0, 0]
+std_time_10000 = [0, 0, 0, 0, 0]
+
+std_cpu_usage_100 = [0, 0, 0, 0, 0]
+std_cpu_usage_1000 = [0, 0, 0, 0, 0]
+std_cpu_usage_10000 = [0, 0, 0, 0, 0]
+
+std_peak_heap_100 = [0, 0, 0, 0, 0]
+std_peak_heap_1000 = [0, 0, 0, 0, 0]
+std_peak_heap_10000 = [0, 0, 0, 0, 0]
+
+std_rss_memory_100 = [0, 0, 0, 0, 0]
+std_rss_memory_1000 = [0, 0, 0, 0, 0]
+std_rss_memory_10000 = [0, 0, 0, 0, 0]
+
 # Criando o layout 2x2
 fig, axs = plt.subplots(2, 2, figsize=(15, 12))
 
 # Gráfico A: Threads vs Informs/segundo
-axs[0, 0].plot(threads, informs_per_second_100, marker='o', label='100 Informs', color='b')
-axs[0, 0].plot(threads, informs_per_second_1000, marker='o', label='1000 Informs', color='g')
-axs[0, 0].plot(threads, informs_per_second_10000, marker='o', label='10000 Informs', color='r')
-axs[0, 0].set_title('A. Threads vs Taxa de Informs/Segundo', fontsize=12)
+axs[0, 0].errorbar(threads, time_100, yerr=std_time_100, marker='o', label='100 Informs', color='b')
+axs[0, 0].errorbar(threads, time_1000, yerr=std_time_1000, marker='o', label='1000 Informs', color='g')
+axs[0, 0].errorbar(threads, time_10000, yerr=std_time_10000, marker='o', label='10000 Informs', color='r')
+axs[0, 0].set_title('A. Threads vs Tempo Total', fontsize=12)
 axs[0, 0].set_xlabel('Número de Threads', fontsize=10)
-axs[0, 0].set_ylabel('Taxa de Informs/Segundo', fontsize=10)
+axs[0, 0].set_ylabel('Tempo Total (s)', fontsize=10)
 axs[0, 0].legend(fontsize=10)
 axs[0, 0].grid(True)
 
