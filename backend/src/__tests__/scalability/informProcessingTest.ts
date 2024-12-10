@@ -3,17 +3,16 @@ import AcsInform from '../../database/models/acsInform';
 import Client from '../../database/models/client';
 import { Worker } from 'worker_threads';
 import os from 'os';
-
+import fs from 'fs';
 
 // Adicionar nova interface para métricas de recursos
 interface ResourceMetrics {
   heapUsed: number;
   heapTotal: number;
   external: number;
-  cpuUsage: number;
+  averageCpuUsage: number;
   rss: number;
-  peakHeapUsed: number;  // Novo: pico de uso do heap
-  averageHeapUsed: number; // Novo: média de uso do heap
+  averageHeapUsed: number;
 }
 
 // Add new interface for system specs
@@ -29,31 +28,10 @@ interface SystemSpecs {
 interface TestResult {
   threadCount: number;
   informCount: number;
-  totalTimeMs: number;
+  totalTimeSeconds: number;
   informsPerSecond: number;
-  successRate: number;
   resourceMetrics: ResourceMetrics;  // Nova propriedade
   systemSpecs: SystemSpecs;  // New property
-}
-
-// Função para coletar métricas de recursos
-async function collectResourceMetrics(): Promise<ResourceMetrics> {
-  // Aguardar um momento para estabilizar a memória
-  await new Promise(resolve => setTimeout(resolve, 100));
-  
-  const memory = process.memoryUsage();
-  const cpuUsage = process.cpuUsage();
-  const cpuCores = os.cpus().length;
-
-  return {
-    heapUsed: Math.round(memory.heapUsed / 1024 / 1024 * 100) / 100,
-    heapTotal: Math.round(memory.heapTotal / 1024 / 1024 * 100) / 100,
-    external: Math.round(memory.external / 1024 / 1024 * 100) / 100,
-    rss: Math.round(memory.rss / 1024 / 1024 * 100) / 100,
-    cpuUsage: Math.round((cpuUsage.user + cpuUsage.system) / 1000000 * 100 / cpuCores) / 100,
-    peakHeapUsed: 0,
-    averageHeapUsed: 0
-  };
 }
 
 // Function to collect system specifications
@@ -67,9 +45,25 @@ function getSystemSpecs(): SystemSpecs {
   };
 }
 
+async function getCpuUsage(): Promise<number> {
+  const startTime = process.hrtime();
+  const startUsage = process.cpuUsage();
+  
+  await new Promise(resolve => setTimeout(resolve, 100));
+  
+  const elapsedTime = process.hrtime(startTime);
+  const elapsedUsage = process.cpuUsage(startUsage);
+  
+  const elapsedTimeMs = (elapsedTime[0] * 1e9 + elapsedTime[1]) / 1e6;
+  const cpuPercent = ((elapsedUsage.user + elapsedUsage.system) / 1000) / elapsedTimeMs * 100;
+  
+  // Retornar o valor médio por core
+  return cpuPercent;
+}
+
 export async function runScalabilityTest(
-  threadCounts: number[],  // Ex: [1, 2, 4, 8, 16]
-  informCounts: number[]   // Ex: [100, 1000, 10000]
+  threadCounts: number[],
+  informCounts: number[]
 ): Promise<TestResult[]> {
   await Client.create({
     serialNumber: 'AAAA12345678',
@@ -84,68 +78,87 @@ export async function runScalabilityTest(
 
   for (const threadCount of threadCounts) {
     for (const informCount of informCounts) {
-      global.gc && global.gc();
       console.log(`Gerando ${informCount} informs...`);
       
       const memoryReadings: number[] = [];
-      let peakHeapUsed = 0;
+      const rssReadings: number[] = [];
+      const cpuReadings: number[] = [];
       
-      // Monitorar uso de memória durante o processamento
-      const memoryMonitor = setInterval(() => {
-        const currentMemory = process.memoryUsage();
-        const heapUsedMB = currentMemory.heapUsed / 1024 / 1024;
-        memoryReadings.push(heapUsedMB);
-        peakHeapUsed = Math.max(peakHeapUsed, heapUsedMB);
-      }, 100);
 
       await generateTestInforms(informCount);
       const chunks = await generateInformChunks(threadCount, informCount);
       const startTime = Date.now();
       
+
+      const resourceMonitor = setInterval(async () => {
+        const memory = process.memoryUsage();
+        const cpuUsage = await getCpuUsage();
+
+        memoryReadings.push(memory.heapUsed / 1024 / 1024);
+        rssReadings.push(memory.rss / 1024 / 1024);
+        cpuReadings.push(cpuUsage);
+
+        const currentAverageHeap = memoryReadings.reduce((a, b) => a + b, 0) / memoryReadings.length;
+        const currentAverageRss = rssReadings.reduce((a, b) => a + b, 0) / rssReadings.length;
+        const currentAverageCpu = cpuReadings.reduce((a, b) => a + b, 0) / cpuReadings.length;
+
+        console.log('\nCurrent Resource Usage (Averages):');
+        console.log(`Average Heap Used: ${currentAverageHeap.toFixed(2)} MB`);
+        console.log(`Average RSS: ${currentAverageRss.toFixed(2)} MB`);
+        console.log(`Average CPU Usage: ${currentAverageCpu.toFixed(2)}%`);
+      }, 100);
+
       const processedCount = await processInformsWithThreads(threadCount, informCount, chunks);
       
       const endTime = Date.now();
-      clearInterval(memoryMonitor);
+      clearInterval(resourceMonitor);
 
-      // Calcular média de uso de memória
       const averageHeapUsed = memoryReadings.length > 0
-        ? Math.round((memoryReadings.reduce((a, b) => a + b, 0) / memoryReadings.length) * 100) / 100
+        ? Math.round((memoryReadings.slice(0, 15).reduce((a, b) => a + b, 0) / Math.min(memoryReadings.length, 15)) * 100) / 100
         : 0;
 
-      const totalTimeMs = endTime - startTime;
-      const informsPerSecond = (processedCount / totalTimeMs) * 1000;
-      const successRate = (processedCount / informCount) * 100;
+      const averageRss = rssReadings.length > 0
+        ? Math.round((rssReadings.slice(0, 15).reduce((a, b) => a + b, 0) / Math.min(rssReadings.length, 15)) * 100) / 100
+        : 0;
 
-      const finalMetrics = await collectResourceMetrics();
+      const averageCpuUsage = cpuReadings.length > 0
+        ? Math.round((cpuReadings.slice(0, 15).reduce((a, b) => a + b, 0) / Math.min(cpuReadings.length, 15)) * 100) / 100
+        : 0;
+
+
+      const totalTimeSeconds = (endTime - startTime) / 1000;
+      const informsPerSecond = processedCount / totalTimeSeconds;
+
       const resourceMetrics: ResourceMetrics = {
-        ...finalMetrics,
-        peakHeapUsed: Math.round(peakHeapUsed * 100) / 100,
+        heapUsed: averageHeapUsed,
+        heapTotal: 0,
+        external: 0,
+        averageCpuUsage,
+        rss: averageRss,
         averageHeapUsed
       };
 
       results.push({
         threadCount,
         informCount,
-        totalTimeMs,
+        totalTimeSeconds,
         informsPerSecond,
-        successRate,
         resourceMetrics,
         systemSpecs: getSystemSpecs()
       });
 
-      // Atualizar a exibição dos resultados
-      console.log('\nMemory Usage Statistics:');
+      // Update console output to show only averages
+      console.log('\nResource Usage Statistics (Averages):');
       console.table({
-        'Peak Heap Used (MB)': resourceMetrics.peakHeapUsed,
         'Average Heap Used (MB)': resourceMetrics.averageHeapUsed,
-        'Final Heap Used (MB)': resourceMetrics.heapUsed,
-        'RSS Memory (MB)': resourceMetrics.rss
+        'Average RSS Memory (MB)': resourceMetrics.rss,
+        'Average CPU Usage (%)': resourceMetrics.averageCpuUsage
       });
 
       await cleanupTestData();
       
       // Aguardar um pouco antes do próximo teste
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // await new Promise(resolve => setTimeout(resolve, 5000));
     }
   }
 
@@ -233,7 +246,7 @@ async function cleanupTestData(): Promise<void> {
 export async function runCompleteScalabilityAnalysis() {
   try {
     const threadCounts = [1];
-    const informCounts = [100, 1000, 10000];
+    const informCounts = [1000];
     
     console.log('Starting scalability analysis...');
     
@@ -253,14 +266,10 @@ export async function runCompleteScalabilityAnalysis() {
     const formattedResults = results.map(result => ({
       'Threads': result.threadCount,
       'Informs': result.informCount,
-      'Total Time (ms)': result.totalTimeMs,
-      'Informs/second': Number(result.informsPerSecond.toFixed(2)),
-      'Success Rate (%)': Number(result.successRate.toFixed(2)),
-      'Peak Heap (MB)': Number(result.resourceMetrics.peakHeapUsed.toFixed(2)),
+      'Total Time (s)': result.totalTimeSeconds,
       'Avg Heap (MB)': Number(result.resourceMetrics.averageHeapUsed.toFixed(2)),
-      'Final Heap (MB)': Number(result.resourceMetrics.heapUsed.toFixed(2)),
-      'RSS Memory (MB)': Number(result.resourceMetrics.rss.toFixed(2)),
-      'CPU Usage (%)': Number((result.resourceMetrics.cpuUsage * 100).toFixed(2))
+      'Avg RSS (MB)': Number(result.resourceMetrics.rss.toFixed(2)),
+      'Avg CPU Usage (%)': Number(result.resourceMetrics.averageCpuUsage.toFixed(2))
     }));
 
     console.log('\nResults:');
