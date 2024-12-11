@@ -10,7 +10,8 @@ const config: Options = {
         process.env.DB_NAME,
     "host": process.env.DB_HOST || 'localhost',
     "dialect": 'postgres',
-    "logging": false,
+    logging: false,
+    benchmark: true,
 }
 
 export = config;

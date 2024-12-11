@@ -31,7 +31,12 @@ def process_data(df):
 def create_analysis_plots(df):
     fig, axes = plt.subplots(2, 2, figsize=(15, 12))
     
-    colors = {'1000': 'b', '5000': 'g', '10000': 'r'}
+    colors = {
+        '1000': 'b',
+        '5000': 'g', 
+        '10000': 'r',
+        '50000': 'purple'
+    }
     
     # Plot A: Threads vs Total Time
     for inform_count in df['Informs'].unique():
