@@ -9,12 +9,12 @@
     },
     "results": [
       {
-        "Threads": 1,
-        "Informs": 100,
-        "Total Time (s)": 0.835,
-        "Avg Heap (MB)": 41.72,
-        "Avg RSS (MB)": 208.84,
-        "Avg CPU Usage (%)": 68.65
+        "Threads": 16,
+        "Informs": 5000,
+        "Total Time (s)": 6.724,
+        "Avg Heap (MB)": 291.39,
+        "Avg RSS (MB)": 1382.23,
+        "Avg CPU Usage (%)": 606.51
       }
     ]
   },
@@ -28,12 +28,12 @@
     },
     "results": [
       {
-        "Threads": 1,
-        "Informs": 100,
-        "Total Time (s)": 0.855,
-        "Avg Heap (MB)": 41.13,
-        "Avg RSS (MB)": 209.92,
-        "Avg CPU Usage (%)": 66.9
+        "Threads": 16,
+        "Informs": 5000,
+        "Total Time (s)": 7.194,
+        "Avg Heap (MB)": 288.59,
+        "Avg RSS (MB)": 1546.38,
+        "Avg CPU Usage (%)": 623.19
       }
     ]
   },
@@ -47,12 +47,12 @@
     },
     "results": [
       {
-        "Threads": 1,
-        "Informs": 100,
-        "Total Time (s)": 0.946,
-        "Avg Heap (MB)": 40.97,
-        "Avg RSS (MB)": 209.51,
-        "Avg CPU Usage (%)": 70.94
+        "Threads": 16,
+        "Informs": 5000,
+        "Total Time (s)": 6.828,
+        "Avg Heap (MB)": 289.68,
+        "Avg RSS (MB)": 1286.9,
+        "Avg CPU Usage (%)": 632
       }
     ]
   },
@@ -66,12 +66,12 @@
     },
     "results": [
       {
-        "Threads": 1,
-        "Informs": 100,
-        "Total Time (s)": 1.58,
-        "Avg Heap (MB)": 40.9,
-        "Avg RSS (MB)": 216.63,
-        "Avg CPU Usage (%)": 66.3
+        "Threads": 16,
+        "Informs": 5000,
+        "Total Time (s)": 6.707,
+        "Avg Heap (MB)": 290.43,
+        "Avg RSS (MB)": 1567.13,
+        "Avg CPU Usage (%)": 639.8
       }
     ]
   },
@@ -85,12 +85,12 @@
     },
     "results": [
       {
-        "Threads": 1,
-        "Informs": 100,
-        "Total Time (s)": 0.903,
-        "Avg Heap (MB)": 41.46,
-        "Avg RSS (MB)": 208.43,
-        "Avg CPU Usage (%)": 65.42
+        "Threads": 16,
+        "Informs": 5000,
+        "Total Time (s)": 7.078,
+        "Avg Heap (MB)": 289.65,
+        "Avg RSS (MB)": 1332.67,
+        "Avg CPU Usage (%)": 554.08
       }
     ]
   },
@@ -104,12 +104,12 @@
     },
     "results": [
       {
-        "Threads": 1,
-        "Informs": 100,
-        "Total Time (s)": 0.828,
-        "Avg Heap (MB)": 40.64,
-        "Avg RSS (MB)": 209.54,
-        "Avg CPU Usage (%)": 64.9
+        "Threads": 16,
+        "Informs": 5000,
+        "Total Time (s)": 6.608,
+        "Avg Heap (MB)": 290.39,
+        "Avg RSS (MB)": 1580.23,
+        "Avg CPU Usage (%)": 650.26
       }
     ]
   },
@@ -123,12 +123,12 @@
     },
     "results": [
       {
-        "Threads": 1,
-        "Informs": 100,
-        "Total Time (s)": 0.698,
-        "Avg Heap (MB)": 40.98,
-        "Avg RSS (MB)": 208.24,
-        "Avg CPU Usage (%)": 69.85
+        "Threads": 16,
+        "Informs": 5000,
+        "Total Time (s)": 6.724,
+        "Avg Heap (MB)": 290.43,
+        "Avg RSS (MB)": 1350.38,
+        "Avg CPU Usage (%)": 608.4
       }
     ]
   },
@@ -142,12 +142,12 @@
     },
     "results": [
       {
-        "Threads": 1,
-        "Informs": 100,
-        "Total Time (s)": 0.896,
-        "Avg Heap (MB)": 40.73,
-        "Avg RSS (MB)": 208.54,
-        "Avg CPU Usage (%)": 67.84
+        "Threads": 16,
+        "Informs": 5000,
+        "Total Time (s)": 7.021,
+        "Avg Heap (MB)": 289.87,
+        "Avg RSS (MB)": 1554.96,
+        "Avg CPU Usage (%)": 608.86
       }
     ]
   },
@@ -161,12 +161,12 @@
     },
     "results": [
       {
-        "Threads": 1,
-        "Informs": 100,
-        "Total Time (s)": 1.06,
-        "Avg Heap (MB)": 42.63,
-        "Avg RSS (MB)": 212.83,
-        "Avg CPU Usage (%)": 59.41
+        "Threads": 16,
+        "Informs": 5000,
+        "Total Time (s)": 6.592,
+        "Avg Heap (MB)": 293.01,
+        "Avg RSS (MB)": 1712.01,
+        "Avg CPU Usage (%)": 644.51
       }
     ]
   }

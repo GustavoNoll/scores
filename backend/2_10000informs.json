@@ -9,12 +9,12 @@
     },
     "results": [
       {
-        "Threads": 16,
-        "Informs": 100,
-        "Total Time (s)": 1.013,
-        "Avg Heap (MB)": 41.75,
-        "Avg RSS (MB)": 578.21,
-        "Avg CPU Usage (%)": 657.58
+        "Threads": 2,
+        "Informs": 10000,
+        "Total Time (s)": 30.437,
+        "Avg Heap (MB)": 563.14,
+        "Avg RSS (MB)": 1579.6,
+        "Avg CPU Usage (%)": 131.06
       }
     ]
   },
@@ -28,12 +28,12 @@
     },
     "results": [
       {
-        "Threads": 16,
-        "Informs": 100,
-        "Total Time (s)": 0.892,
-        "Avg Heap (MB)": 40.23,
-        "Avg RSS (MB)": 611.76,
-        "Avg CPU Usage (%)": 716.01
+        "Threads": 2,
+        "Informs": 10000,
+        "Total Time (s)": 28.746,
+        "Avg Heap (MB)": 561.89,
+        "Avg RSS (MB)": 1504.76,
+        "Avg CPU Usage (%)": 130.07
       }
     ]
   },
@@ -47,12 +47,12 @@
     },
     "results": [
       {
-        "Threads": 16,
-        "Informs": 100,
-        "Total Time (s)": 0.886,
-        "Avg Heap (MB)": 41.32,
-        "Avg RSS (MB)": 598.28,
-        "Avg CPU Usage (%)": 721.28
+        "Threads": 2,
+        "Informs": 10000,
+        "Total Time (s)": 28.845,
+        "Avg Heap (MB)": 560.37,
+        "Avg RSS (MB)": 1506.13,
+        "Avg CPU Usage (%)": 130.53
       }
     ]
   },
@@ -66,12 +66,12 @@
     },
     "results": [
       {
-        "Threads": 16,
-        "Informs": 100,
-        "Total Time (s)": 0.881,
-        "Avg Heap (MB)": 40.26,
-        "Avg RSS (MB)": 615.88,
-        "Avg CPU Usage (%)": 710.91
+        "Threads": 2,
+        "Informs": 10000,
+        "Total Time (s)": 28.993,
+        "Avg Heap (MB)": 563.91,
+        "Avg RSS (MB)": 1493.2,
+        "Avg CPU Usage (%)": 130.5
       }
     ]
   },
@@ -85,12 +85,12 @@
     },
     "results": [
       {
-        "Threads": 16,
-        "Informs": 100,
-        "Total Time (s)": 0.842,
-        "Avg Heap (MB)": 42.25,
-        "Avg RSS (MB)": 625.35,
-        "Avg CPU Usage (%)": 726.69
+        "Threads": 2,
+        "Informs": 10000,
+        "Total Time (s)": 28.515,
+        "Avg Heap (MB)": 560.48,
+        "Avg RSS (MB)": 1487.2,
+        "Avg CPU Usage (%)": 130.51
       }
     ]
   },
@@ -104,12 +104,12 @@
     },
     "results": [
       {
-        "Threads": 16,
-        "Informs": 100,
-        "Total Time (s)": 0.834,
-        "Avg Heap (MB)": 40.43,
-        "Avg RSS (MB)": 612.42,
-        "Avg CPU Usage (%)": 701
+        "Threads": 2,
+        "Informs": 10000,
+        "Total Time (s)": 28.817,
+        "Avg Heap (MB)": 560.55,
+        "Avg RSS (MB)": 1473.44,
+        "Avg CPU Usage (%)": 138.6
       }
     ]
   },
@@ -123,12 +123,12 @@
     },
     "results": [
       {
-        "Threads": 16,
-        "Informs": 100,
-        "Total Time (s)": 0.916,
-        "Avg Heap (MB)": 40.15,
-        "Avg RSS (MB)": 624.24,
-        "Avg CPU Usage (%)": 669.62
+        "Threads": 2,
+        "Informs": 10000,
+        "Total Time (s)": 29.538,
+        "Avg Heap (MB)": 561.59,
+        "Avg RSS (MB)": 1485.92,
+        "Avg CPU Usage (%)": 136.94
       }
     ]
   },
@@ -142,12 +142,12 @@
     },
     "results": [
       {
-        "Threads": 16,
-        "Informs": 100,
-        "Total Time (s)": 0.835,
-        "Avg Heap (MB)": 41.47,
-        "Avg RSS (MB)": 662.98,
-        "Avg CPU Usage (%)": 710.93
+        "Threads": 2,
+        "Informs": 10000,
+        "Total Time (s)": 30.966,
+        "Avg Heap (MB)": 560.84,
+        "Avg RSS (MB)": 1480.55,
+        "Avg CPU Usage (%)": 134.83
       }
     ]
   },
@@ -161,12 +161,12 @@
     },
     "results": [
       {
-        "Threads": 16,
-        "Informs": 100,
-        "Total Time (s)": 0.868,
-        "Avg Heap (MB)": 41.56,
-        "Avg RSS (MB)": 595.04,
-        "Avg CPU Usage (%)": 695.83
+        "Threads": 2,
+        "Informs": 10000,
+        "Total Time (s)": 30.029,
+        "Avg Heap (MB)": 565.95,
+        "Avg RSS (MB)": 1476.74,
+        "Avg CPU Usage (%)": 136.95
       }
     ]
   },
@@ -180,12 +180,12 @@
     },
     "results": [
       {
-        "Threads": 16,
-        "Informs": 100,
-        "Total Time (s)": 1.049,
-        "Avg Heap (MB)": 40.58,
-        "Avg RSS (MB)": 632.47,
-        "Avg CPU Usage (%)": 595.73
+        "Threads": 2,
+        "Informs": 10000,
+        "Total Time (s)": 30.13,
+        "Avg Heap (MB)": 561.32,
+        "Avg RSS (MB)": 1505.21,
+        "Avg CPU Usage (%)": 136.72
       }
     ]
   }

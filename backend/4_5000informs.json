@@ -10,11 +10,11 @@
     "results": [
       {
         "Threads": 4,
-        "Informs": 100,
-        "Total Time (s)": 0.467,
-        "Avg Heap (MB)": 40.13,
-        "Avg RSS (MB)": 310.96,
-        "Avg CPU Usage (%)": 290.56
+        "Informs": 5000,
+        "Total Time (s)": 7.437,
+        "Avg Heap (MB)": 292.32,
+        "Avg RSS (MB)": 1008.57,
+        "Avg CPU Usage (%)": 237.11
       }
     ]
   },
@@ -29,11 +29,11 @@
     "results": [
       {
         "Threads": 4,
-        "Informs": 100,
-        "Total Time (s)": 0.481,
-        "Avg Heap (MB)": 40.14,
-        "Avg RSS (MB)": 307.24,
-        "Avg CPU Usage (%)": 289.88
+        "Informs": 5000,
+        "Total Time (s)": 7.407,
+        "Avg Heap (MB)": 289.84,
+        "Avg RSS (MB)": 1005.59,
+        "Avg CPU Usage (%)": 229.34
       }
     ]
   },
@@ -48,11 +48,11 @@
     "results": [
       {
         "Threads": 4,
-        "Informs": 100,
-        "Total Time (s)": 0.445,
-        "Avg Heap (MB)": 42.14,
-        "Avg RSS (MB)": 309.27,
-        "Avg CPU Usage (%)": 292.19
+        "Informs": 5000,
+        "Total Time (s)": 7.469,
+        "Avg Heap (MB)": 288.94,
+        "Avg RSS (MB)": 1010.32,
+        "Avg CPU Usage (%)": 231.53
       }
     ]
   },
@@ -67,11 +67,11 @@
     "results": [
       {
         "Threads": 4,
-        "Informs": 100,
-        "Total Time (s)": 0.451,
-        "Avg Heap (MB)": 39.83,
-        "Avg RSS (MB)": 306.88,
-        "Avg CPU Usage (%)": 295.38
+        "Informs": 5000,
+        "Total Time (s)": 7.489,
+        "Avg Heap (MB)": 291.42,
+        "Avg RSS (MB)": 995.34,
+        "Avg CPU Usage (%)": 231.24
       }
     ]
   },
@@ -86,11 +86,11 @@
     "results": [
       {
         "Threads": 4,
-        "Informs": 100,
-        "Total Time (s)": 0.503,
-        "Avg Heap (MB)": 40.44,
-        "Avg RSS (MB)": 304.5,
-        "Avg CPU Usage (%)": 300.86
+        "Informs": 5000,
+        "Total Time (s)": 7.455,
+        "Avg Heap (MB)": 289.18,
+        "Avg RSS (MB)": 988.98,
+        "Avg CPU Usage (%)": 232.75
       }
     ]
   },
@@ -105,11 +105,11 @@
     "results": [
       {
         "Threads": 4,
-        "Informs": 100,
-        "Total Time (s)": 0.441,
-        "Avg Heap (MB)": 41.07,
-        "Avg RSS (MB)": 310.76,
-        "Avg CPU Usage (%)": 294.91
+        "Informs": 5000,
+        "Total Time (s)": 7.449,
+        "Avg Heap (MB)": 289.55,
+        "Avg RSS (MB)": 1005.72,
+        "Avg CPU Usage (%)": 232.75
       }
     ]
   },
@@ -124,11 +124,11 @@
     "results": [
       {
         "Threads": 4,
-        "Informs": 100,
-        "Total Time (s)": 0.449,
-        "Avg Heap (MB)": 40.93,
-        "Avg RSS (MB)": 304.7,
-        "Avg CPU Usage (%)": 298.13
+        "Informs": 5000,
+        "Total Time (s)": 7.406,
+        "Avg Heap (MB)": 287.04,
+        "Avg RSS (MB)": 1054.69,
+        "Avg CPU Usage (%)": 237.9
       }
     ]
   },
@@ -143,11 +143,11 @@
     "results": [
       {
         "Threads": 4,
-        "Informs": 100,
-        "Total Time (s)": 0.476,
-        "Avg Heap (MB)": 40.29,
-        "Avg RSS (MB)": 307.31,
-        "Avg CPU Usage (%)": 310.23
+        "Informs": 5000,
+        "Total Time (s)": 7.481,
+        "Avg Heap (MB)": 288.34,
+        "Avg RSS (MB)": 1082.85,
+        "Avg CPU Usage (%)": 232.17
       }
     ]
   },
@@ -162,11 +162,30 @@
     "results": [
       {
         "Threads": 4,
-        "Informs": 100,
-        "Total Time (s)": 0.752,
-        "Avg Heap (MB)": 40.83,
-        "Avg RSS (MB)": 300.67,
-        "Avg CPU Usage (%)": 238.12
+        "Informs": 5000,
+        "Total Time (s)": 7.842,
+        "Avg Heap (MB)": 290.17,
+        "Avg RSS (MB)": 999.5,
+        "Avg CPU Usage (%)": 233.56
+      }
+    ]
+  },
+  {
+    "systemSpecs": {
+      "platform": "darwin 24.1.0",
+      "cpuModel": "Apple M3 Pro",
+      "cpuCores": 11,
+      "totalMemory": 36,
+      "nodeVersion": "v22.7.0"
+    },
+    "results": [
+      {
+        "Threads": 4,
+        "Informs": 5000,
+        "Total Time (s)": 7.841,
+        "Avg Heap (MB)": 292.81,
+        "Avg RSS (MB)": 950.56,
+        "Avg CPU Usage (%)": 240.51
       }
     ]
   }

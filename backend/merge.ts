@@ -19,7 +19,7 @@ function main() {
   });
 
   // Write merged results to new file
-  const outputPath = path.join(__dirname, '16_100informs.json');
+  const outputPath = path.join(__dirname, '1_5000informs.json');
   fs.writeFileSync(outputPath, JSON.stringify(mergedResults, null, 2));
 
   // Optionally, remove original files after merging
