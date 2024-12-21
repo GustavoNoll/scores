@@ -246,7 +246,7 @@ async function cleanupTestData(): Promise<void> {
 export async function runCompleteScalabilityAnalysis() {
   try {
     const threadCounts = [4];
-    const informCounts = [50000];
+    const informCounts = [30000];
     
     console.log('Starting scalability analysis...');
   

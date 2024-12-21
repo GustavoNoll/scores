@@ -32,14 +32,16 @@ def create_analysis_plots(df):
     fig, axes = plt.subplots(2, 2, figsize=(15, 12))
     
     colors = {
-        '1000': 'b',
-        '5000': 'g', 
         '10000': 'r',
-        '50000': 'purple'
+        '30000': 'b',
+        '50000': 'g'
     }
     
-    # Plot A: Threads vs Total Time
-    for inform_count in df['Informs'].unique():
+    # Filter out 1000 informs and get valid inform counts
+    valid_informs = [count for count in df['Informs'].unique() if count in [10000, 30000, 50000]]
+    
+    # Plot A: Threads vs Total Time (with log scale)
+    for inform_count in valid_informs:
         data = df[df['Informs'] == inform_count]
         axes[0, 0].errorbar(data['Threads'], data['Total Time (s)'],
                           yerr=data['Total Time Std'],
@@ -47,14 +49,16 @@ def create_analysis_plots(df):
                           label=f'{inform_count} Informs',
                           color=colors[str(inform_count)])
     
-    axes[0, 0].set_title('A. Threads vs Tempo Total (s)', fontsize=12)
+    axes[0, 0].set_title('A. Threads vs Tempo Total (s) - Escala Log', fontsize=12)
     axes[0, 0].set_xlabel('Número de Threads', fontsize=10)
-    axes[0, 0].set_ylabel('Tempo Total (s)', fontsize=10)
+    axes[0, 0].set_ylabel('Tempo Total (s) - Log Scale', fontsize=10)
+    axes[0, 0].set_yscale('log')  # Set logarithmic scale for y-axis
     axes[0, 0].legend(fontsize=10)
-    axes[0, 0].grid(True)
+    axes[0, 0].grid(True, which="both")  # Show grid for both major and minor ticks
+    axes[0, 0].grid(True, which="minor", alpha=0.2)  # Make minor grid less prominent
     
     # Plot B: CPU Usage
-    for inform_count in df['Informs'].unique():
+    for inform_count in valid_informs:
         data = df[df['Informs'] == inform_count]
         axes[0, 1].errorbar(data['Threads'], data['CPU Usage (%)'],
                           yerr=data['CPU Usage Std'],
@@ -69,7 +73,7 @@ def create_analysis_plots(df):
     axes[0, 1].grid(True)
     
     # Plot C: Peak Heap Memory
-    for inform_count in df['Informs'].unique():
+    for inform_count in valid_informs:
         data = df[df['Informs'] == inform_count]
         axes[1, 0].errorbar(data['Threads'], data['Peak Heap (MB)'],
                           yerr=data['Peak Heap Std'],
@@ -84,7 +88,7 @@ def create_analysis_plots(df):
     axes[1, 0].grid(True)
     
     # Plot D: RSS Memory
-    for inform_count in df['Informs'].unique():
+    for inform_count in valid_informs:
         data = df[df['Informs'] == inform_count]
         axes[1, 1].errorbar(data['Threads'], data['RSS Memory (MB)'],
                           yerr=data['RSS Memory Std'],

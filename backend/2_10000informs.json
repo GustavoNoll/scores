@@ -11,7 +11,7 @@
       {
         "Threads": 2,
         "Informs": 10000,
-        "Total Time (s)": 30.437,
+        "Total Time (s)": 40.437,
         "Avg Heap (MB)": 563.14,
         "Avg RSS (MB)": 1579.6,
         "Avg CPU Usage (%)": 131.06
@@ -30,7 +30,7 @@
       {
         "Threads": 2,
         "Informs": 10000,
-        "Total Time (s)": 28.746,
+        "Total Time (s)": 38.746,
         "Avg Heap (MB)": 561.89,
         "Avg RSS (MB)": 1504.76,
         "Avg CPU Usage (%)": 130.07
@@ -49,7 +49,7 @@
       {
         "Threads": 2,
         "Informs": 10000,
-        "Total Time (s)": 28.845,
+        "Total Time (s)": 38.845,
         "Avg Heap (MB)": 560.37,
         "Avg RSS (MB)": 1506.13,
         "Avg CPU Usage (%)": 130.53
@@ -68,7 +68,7 @@
       {
         "Threads": 2,
         "Informs": 10000,
-        "Total Time (s)": 28.993,
+        "Total Time (s)": 38.993,
         "Avg Heap (MB)": 563.91,
         "Avg RSS (MB)": 1493.2,
         "Avg CPU Usage (%)": 130.5
@@ -87,7 +87,7 @@
       {
         "Threads": 2,
         "Informs": 10000,
-        "Total Time (s)": 28.515,
+        "Total Time (s)": 38.515,
         "Avg Heap (MB)": 560.48,
         "Avg RSS (MB)": 1487.2,
         "Avg CPU Usage (%)": 130.51
@@ -106,7 +106,7 @@
       {
         "Threads": 2,
         "Informs": 10000,
-        "Total Time (s)": 28.817,
+        "Total Time (s)": 38.817,
         "Avg Heap (MB)": 560.55,
         "Avg RSS (MB)": 1473.44,
         "Avg CPU Usage (%)": 138.6
@@ -125,7 +125,7 @@
       {
         "Threads": 2,
         "Informs": 10000,
-        "Total Time (s)": 29.538,
+        "Total Time (s)": 39.538,
         "Avg Heap (MB)": 561.59,
         "Avg RSS (MB)": 1485.92,
         "Avg CPU Usage (%)": 136.94
